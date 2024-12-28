@@ -1,0 +1,14 @@
+@startuml
+skinparam handwritten true
+skinparam defaultFontName Arial
+skinparam shadowing false
+
+node "Project Guide" {
+    component "Essential Commands" -- "Explanations"
+    component "Explanations" -- "Examples"
+    component "Examples" -- "Exercises"
+    component "Exercises" -- "User Feedback"
+    component "User Feedback" -- "Document Refinement"
+    component "Document Refinement" -- "Final Guide"
+}
+@enduml

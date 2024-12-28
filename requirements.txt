@@ -13,3 +13,6 @@ pydantic-settings~=2.6.1
 protobuf~=5.29.1
 uvicorn~=0.20.0
 google-ai-generativelanguage
+google-generativeai~=0.8.3
+python-multipart~=0.0.20
+argon2_cffi~=23.1.0

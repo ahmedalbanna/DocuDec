@@ -1,3 +1,5 @@
 .vscode-server
 .dbclient
 .lightning_studio
+__pycache__
+venv

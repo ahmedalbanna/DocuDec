@@ -1,0 +1,32 @@
+@startuml
+entity User {
+    - userId : int
+    - userName : String
+    - email : String
+    - password : String
+}
+
+entity Command {
+    - commandId : int
+    - commandName : String
+    - description : String
+    - syntax : String
+    - example : String
+    - category : String  // e.g., Navigation, File Management
+}
+
+entity Exercise {
+    - exerciseId : int
+    - exerciseName : String
+    - instructions : String
+    - input : String
+    - expectedOutput : String
+    - commandUsed : String //links to Command
+}
+
+User "1" -- "*" Command : uses
+User "1" -- "*" Exercise : uses
+Command "1" -- "*" Exercise : used in
+
+
+@enduml
