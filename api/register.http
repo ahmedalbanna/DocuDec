@@ -1,0 +1,11 @@
+POST /signup HTTP/1.1
+Host: http://localhost:8081
+Content-Type: application/json
+Content-Length: 121
+
+{
+  "username": "ahmed",
+  "password": "Ahmed@2024",
+  "phone_number": "772909766",
+  "full_name": "Ahmed Murtada"
+}

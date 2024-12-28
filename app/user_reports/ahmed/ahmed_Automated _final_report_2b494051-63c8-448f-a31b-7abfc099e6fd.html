@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>tmp_tmpe6ngyobx</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+</head>
+<body>
+<h2 id="chapter-2-system-analysis-and-requirements">Chapter 2: System
+Analysis and Requirements</h2>
+<p>This chapter details the system analysis, data modeling, and
+requirements for the Automated Generation of Graduation Project Reports
+system. It outlines the intended users, their needs, the
+functionalities, and the critical non-functional aspects that ensure the
+system’s success.</p>
+<h3 id="data-modeling-diagrams">2.1 Data Modeling Diagrams</h3>
+<p>The following Entity-Relationship Diagram (ERD) depicts the core data
+structures and relationships within the project report generation
+system.</p>
+<figure>
+<img src="G:\Docudec\app\temp_processing\images_folder\block1.png"
+alt="PlantUML Diagram 1" />
+<figcaption aria-hidden="true">PlantUML Diagram 1</figcaption>
+</figure>
+<p><strong>Diagram Explanation:</strong></p>
+<p>The ERD models the relationships between <code>Project</code>,
+<code>Student</code>, <code>DocumentSection</code>, and
+<code>Report</code> entities. Each <code>Project</code> has multiple
+<code>DocumentSection</code> instances (e.g., Introduction, Methodology,
+Results). A <code>Project</code> generates a single <code>Report</code>,
+and a <code>Student</code> can submit multiple <code>Project</code>s.
+The diagram showcases the structured data flow crucial for the automated
+report generation process. Crucially, the <code>sectionContent</code>
+for each <code>DocumentSection</code> is crucial input to the Gemini API
+and the report generation process. The <code>reportFormat</code>
+attribute allows for customization of the final report format.</p>
+<h3 id="system-requirements">2.2 System Requirements</h3>
+<h4 id="clients-customers-and-users">2.2.1 Clients, Customers, and
+Users</h4>
+<ul>
+<li><strong>Project Supervisors:</strong> Need a system that quickly
+generates professional-looking reports from student submissions,
+facilitating review and feedback. They expect accuracy and clarity in
+the generated text and visuals. Potential pain points include
+conflicting formatting preferences and differing project
+complexities.</li>
+<li><strong>Students:</strong> Require a user-friendly interface to
+input their project documents. They need a system that handles different
+document formats and provides clear feedback on errors or
+inconsistencies.</li>
+<li><strong>System Administrators:</strong> Responsible for maintaining
+the system’s infrastructure, security, and updates. They need access to
+configuration settings, logs, and system performance metrics.</li>
+</ul>
+<h4 id="functional-and-data-requirements">2.2.2 Functional and Data
+Requirements</h4>
+<ul>
+<li><strong>Input:</strong> The system must accept various document
+formats (e.g., .docx, .pdf, .txt). Conversion to a consistent internal
+data format is required.</li>
+<li><strong>Storage:</strong> Data must be stored securely and
+efficiently in a database. JSON will be used for intermediate
+representation for data exchange between the various system
+components.</li>
+<li><strong>Manipulation:</strong> The Gemini API will be used to
+process the input content, extract key information, and synthesize
+report sections. This includes content summarization, formatting, and
+referencing.</li>
+<li><strong>Output:</strong> The system should generate project reports
+in a predefined format (e.g., .pdf, .docx), with clear and consistent
+structure. Generated reports should include accurate citations and
+references (if present in the input).</li>
+</ul>
+<h4 id="non-functional-requirements">2.2.3 Non-functional
+Requirements</h4>
+<ul>
+<li><strong>Look and Feel Requirements:</strong> The FlutterFlow
+application should have a modern, intuitive design, aligned with the
+university branding. The system should be responsive across different
+screen sizes. Accessibility guidelines (WCAG) will be adhered to.</li>
+<li><strong>Usability Requirements:</strong> The system should be
+user-friendly, allowing easy navigation and input of project documents.
+Clear error messages and prompts will prevent user confusion and
+expedite the input process.</li>
+<li><strong>Security Requirements:</strong> Authentication and
+authorization mechanisms will be implemented to protect user accounts
+and project data. Encryption will be used for sensitive data
+transmission and storage.</li>
+<li><strong>Performance Requirements:</strong> The system must generate
+reports within a reasonable time frame for all document sizes and
+complexities. Scalability considerations will be factored in for future
+growth.</li>
+<li><strong>Portability Requirements:</strong> The system should be
+platform-independent, functioning on different operating systems
+(Windows, macOS, Linux) and supported browsers.</li>
+</ul>
+<h3 id="proposed-solutions">2.3 Proposed Solutions</h3>
+<p>Our proposed solution involves leveraging FlutterFlow for the user
+interface, the Gemini API for natural language processing, and a backend
+structure to integrate these elements. This approach allows flexibility
+in input formats and customization of report layouts.</p>
+<h3 id="alternative-solutions">2.4 Alternative Solutions</h3>
+<p>Other options, such as using simpler NLP models or custom Python
+scripts for report generation, were considered but discarded due to the
+need for greater accuracy, the potential cost and complexity of
+implementing a completely custom solution, and the need for a readily
+usable and visually appealing front-end. The Gemini API offers a
+balanced solution for both accuracy and ease of integration.</p>
+</body>
+</html>

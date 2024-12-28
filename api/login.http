@@ -1,0 +1,7 @@
+POST /login HTTP/1.1
+Host: http://127.0.0.1:8081
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 36
+
+username = ahmed &
+password = Ahmed%402024

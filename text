@@ -1,0 +1,13 @@
+project_title: str
+    student_name: str
+    department: str
+    university: str
+    date: str
+    email_address: str
+    phone_number: str
+    student_id_number: str
+    supervisor_name: str
+    supervisor_email: str
+    supervisor_phone: str
+    head_of_department: str
+    acknowledgement: str

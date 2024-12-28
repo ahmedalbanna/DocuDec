@@ -1,0 +1,23 @@
+POST /generate_project/ HTTP/1.1
+Host: http://localhost:8081
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJ1c2VybmFtZSI6ImFobWVkIiwiZXhwIjoxNzM0NzM2MzU0fQ.mlNaZYo8Eh97J2VfOp1HfmpLbG0gWUeUWd2bV_Ad3Ls
+Content-Type: application/json
+Content-Length: 645
+
+{
+  "project_title": "Automated Generation of Graduation Project Reports with FlutterFlow and Gemini API and PlantUML Diagrams",
+  "student_name": "Ahmed Murtada Albanna",
+  "department": "Computer Science",
+  "university": "Sanaa university",
+  "date": "2024-09-25",
+  "email_address": "ahmedalbanna966@gmail.com",
+  "phone_number": "+967772909766",
+  "student_id_number": "804628250",
+  "supervisor_name": "Mustafa Ali Albasha",
+  "supervisor_email": "mustafa@gmail.com",
+  "supervisor_phone": "+96778545656",
+  "head_of_department": "Abdullah Ahmed",
+  "acknowledgement": "my Brother and Suervisor"
+}
+
+

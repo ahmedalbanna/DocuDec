@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>tmp_tmphpz4ilap</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+</head>
+<body>
+<h2 id="chapter-2-system-analysis-and-requirements">Chapter 2: System
+Analysis and Requirements</h2>
+<p>This chapter details the system analysis for the Automated Graduation
+Project Report Generator, outlining the data model, system requirements,
+proposed solutions, and alternative considerations.</p>
+<h3 id="data-modeling-diagrams">2.1 Data Modeling Diagrams</h3>
+<p><span class="citation" data-cites="startuml">@startuml</span>
+!include <c4/C4_Context> System_Boundary(ProjectReportGenerator) {
+Entity(ProjectData) { – Attributes – String projectTitle String
+problemStatement String methodology String results String authorName
+String studentID }</p>
+<p>Entity(ReportTemplate) { – Attributes – String templateName String
+structure String style }</p>
+<p>Entity(GeneratedReport) { – Attributes – String reportContent String
+reportFormat String diagramData }</p>
+<p>Rel(ProjectData, ProjectReportGenerator, “Input Project Data”)
+Rel(ReportTemplate, ProjectReportGenerator, “Select Template”)
+Rel(ProjectReportGenerator, GeneratedReport, “Generate Report”)
+Rel(GeneratedReport, Output, “Output Generated Report”)</p>
+<p>} <span class="citation" data-cites="enduml">@enduml</span></p>
+<p><strong>Diagram Explanation:</strong></p>
+<p>The Entity-Relationship Diagram (ERD) depicts the core data
+structures. <code>ProjectData</code> represents the input data from the
+student, encompassing project title, problem statement, methodology,
+results, and author information. <code>ReportTemplate</code> holds
+various report structures and styles. The <code>GeneratedReport</code>
+entity captures the final report, including the generated text and the
+output format (e.g., PDF, HTML). The relationships highlight the flow of
+data through the system: project data is input; a template is selected;
+and a generated report is output.</p>
+<h3 id="system-requirements">2.2 System Requirements</h3>
+<h4 id="clients-customers-and-users">2.2.1 Clients, Customers, and
+Users</h4>
+<p>The intended users are:</p>
+<ul>
+<li><strong>Students:</strong> Submit project data, access and download
+reports, and review generated content. Their needs include a
+user-friendly interface, error messages, and clear generation process
+guidance. Pain points include potential time constraints, reliance on
+accurate data input, and the unknown quality of the automated
+report.</li>
+<li><strong>Faculty Advisors:</strong> Review generated reports, provide
+feedback, and offer guidance to the students. They require access
+controls, feedback mechanisms, and the ability to compare the generated
+report with standard formats. Pain points include a lack of human touch,
+potential errors in understanding project specifics.</li>
+</ul>
+<h4 id="functional-and-data-requirements">2.2.2 Functional and Data
+Requirements</h4>
+<ul>
+<li><strong>Functional Requirements:</strong>
+<ul>
+<li>Input Project Data: The system must accept project details (text and
+potentially images or code snippets) from the user.</li>
+<li>Template Selection: Users must be able to choose from predefined
+report templates.</li>
+<li>Report Generation: The system should automatically generate a report
+based on input data and the selected template.</li>
+<li>Report Output: The system must provide download options for
+generated reports (PDF, DOCX, HTML).</li>
+</ul></li>
+<li><strong>Data Requirements:</strong>
+<ul>
+<li>Input: Project data in various formats (text, images, potentially
+code snippets).</li>
+<li>Storage: The system must store project data and generated reports in
+a secure and accessible manner.</li>
+<li>Manipulation: Data must be processed to extract key information for
+report generation.</li>
+<li>Output: Reports should be well-formatted and visually appealing,
+ideally including automatically generated diagrams from input data.</li>
+</ul></li>
+</ul>
+<h4 id="non-functional-requirements">2.2.3 Non-functional
+Requirements</h4>
+<ul>
+<li><strong>Look and Feel Requirements:</strong> The system should have
+a clean, modern design, using intuitive navigation and clear visual
+cues. Aesthetics should follow the university’s branding guidelines,
+with a focus on readability and accessibility.</li>
+<li><strong>Usability Requirements:</strong> The system should be
+intuitive and easy to use. Clear instructions and error messages should
+be provided to guide the user.</li>
+<li><strong>Security Requirements:</strong> User authentication and
+authorization mechanisms are essential to protect sensitive data. Data
+encryption and secure storage are crucial.</li>
+<li><strong>Performance Requirements:</strong> The system should
+generate reports within a reasonable time frame, considering potential
+data volume. Scalability is important to handle an increasing number of
+user requests.</li>
+<li><strong>Portability Requirements:</strong> The application should be
+adaptable to various operating systems (Windows, MacOS, Linux) and
+mobile platforms.</li>
+</ul>
+<h3 id="proposed-solutions">2.3 Proposed Solutions</h3>
+<p>The proposed solution is to develop a multi-tiered system utilizing
+FlutterFlow for the UI, the Gemini API for report summarization and text
+generation, and PlantUML for diagram generation. This allows automation
+of report-writing tasks. The strengths include automation, potential
+cost savings, and improved report quality. Weaknesses include the
+possibility of errors in summarization and understanding nuances.
+Feasibility is high, given the availability of the Gemini API and
+FlutterFlow. Technical complexity is moderate.</p>
+<h3 id="alternative-solutions">2.4 Alternative Solutions</h3>
+<ul>
+<li><strong>Manual Report Generation:</strong> This solution is
+time-consuming, error-prone, and does not scale.</li>
+<li><strong>Customized Report Template Development:</strong> Creating
+custom report templates from scratch would require significant time and
+effort, without offering automation.</li>
+</ul>
+<p><strong>Justification for Rejection of Alternatives:</strong> Manual
+report generation lacks efficiency and scalability. Custom report
+development defeats the automation goal. The chosen solution, while
+presenting challenges, offers a more complete approach by addressing
+report structuring and automation.</p>
+</body>
+</html>

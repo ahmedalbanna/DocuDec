@@ -1,0 +1,40 @@
+<style>
+h1 {
+  font-family: "Times New Roman", serif;
+  color: #0057b8; /* Example color */
+  text-align: center;
+}
+
+p {
+    font-family: Arial, sans-serif;
+    font-size: 12pt;
+    line-height: 1.5;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+table, th, td {
+  border: 1px solid black;
+}
+
+.code-block {
+    background-color: #f8f8f8;
+    padding: 10px;
+    font-family: "Courier New", monospace;
+}
+
+/* Style for PlantUML diagrams */
+.plantuml-diagram {
+  text-align: center; /* Or left, right, as needed */
+  margin: 20px 0; /* Add some spacing */
+}
+.plantuml-diagram img {
+  max-width: 100%; /* Ensure images scale within page width */
+  height: auto;
+}
+
+
+
+</style>

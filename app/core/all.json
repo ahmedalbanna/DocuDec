@@ -1,0 +1,570 @@
+{
+    "TableOfContents": {
+        "Chapter 1": {
+            "Title": "INTRODUCTION",
+            "Sections": {
+                "1.1": "Purpose of the Project",
+                "1.2": "Problem Definition",
+                "1.3": "Overview of the Project Document",
+                "1.4": "Existing Systems"
+            }
+        },
+        "Chapter 2": {
+            "Title": "SYSTEM ANALYSIS",
+            "Sections": {
+                "2.1": "Data Modeling Diagrams",
+                "2.2": "System Requirements",
+                "2.2.1": "Clients, Customer and Users",
+                "2.2.2": "Functional and Data Requirements",
+                "2.2.3": "Non-functional Requirements",
+                "2.2.3.1": "Look and Feel Requirements",
+                "2.2.3.2": "Usability Requirements",
+                "2.2.3.3": "Security Requirements",
+                "2.2.3.4": "Performance Requirement",
+                "2.2.3.5": "Portability Requirements",
+                "2.3": "Proposed Solutions",
+                "2.4": "Alternative Solutions"
+            }
+        },
+        "Chapter 3": {
+            "Title": "DESIGN CONSIDERATIONS",
+            "Sections": {
+                "3.1": "Design Constraints",
+                "3.1.1": "Hardware and Software Environment",
+                "3.1.2": "End User Characteristics",
+                "3.2": "Architectural Strategies",
+                "3.2.1": "Used Algorithms",
+                "3.2.2": "Reuse of Existing Software Components",
+                "3.2.3": "Project Management",
+                "3.2.3.1": "Management Strategies",
+                "3.2.3.2": "Tasks",
+                "3.2.3.3": "Tasks Description, Resources, and Risks",
+                "3.2.3.4": "Gantt Chart",
+                "3.2.4": "Development Method",
+                "3.2.5": "Future Enhancements/Plans",
+                "3.3": "Costs and Benefits"
+            }
+        },
+        "Chapter 4": {
+            "Title": "SYSTEM DESIGN",
+            "Sections": {
+                "4.1": "System Architecture and Program Flow",
+                "4.1.1": "Major Modules",
+                "4.1.2": "Sub-modules",
+                "4.2": "Detailed System Design",
+                "4.2.1": "Detailed Component Description",
+                "4.3": "User Interface Design",
+                "4.3.1": "System Interface Description",
+                "4.3.2": "Screen Layouts",
+                "4.3.3": "Objects and Actions"
+            }
+        },
+        "Chapter 5": {
+            "Title": "SYSTEM PROGRAMMING AND IMPLEMENTATION",
+            "Sections": {
+                "5.1": "Introduction",
+                "5.1.1": "System Implementation Preparations",
+                "5.1.2": "System Development Languages and Environments",
+                "5.2": "System Programming",
+                "5.2.1": "Data Structures",
+                "5.2.2": "Modules Programming",
+                "5.2.3": "System Components Integration",
+                "5.2.4": "Interface Programming",
+                "5.3": "System Product",
+                "5.4": "Implementation Problems"
+            }
+        },
+        "Chapter 6": {
+            "Title": "SYSTEM TESTING AND VALIDATION",
+            "Sections": {
+                "6.1": "Introduction",
+                "6.1.1": "Testing System Overview",
+                "6.1.2": "Test Approach",
+                "6.2": "Test Plan",
+                "6.2.1": "Features to be Tested",
+                "6.2.2": "Features not to be Tested",
+                "6.2.3": "Testing Tools and Environment",
+                "6.3": "Test Cases",
+                "6.3.n": "Case-n (Repeat for each test case)",
+                "6.3.n.1": "Purpose",
+                "6.3.n.2": "Inputs",
+                "6.3.n.3": "Expected Outputs & Pass/Fail criteria",
+                "6.3.n.4": "Test Procedure"
+            }
+        },
+        "Chapter 7": {
+            "Title": "CONCLUSIONS",
+            "Sections": {
+                "7.1": "Summary of Findings",
+                "7.2": "Project Contributions",
+                "7.3": "Future Work"
+            }
+        },
+        "References": "Provide a complete list of cited sources in APA format",
+        "Glossary": "Define technical terms used in the report",
+        "Appendices": {
+            "User Manual": "Provide a user manual for your system",
+            "Code Listing": "Provide your complete source code",
+            "Testing Results": "Provide detailed testing results",
+            "Additive Appendices": "Include any additional supporting materials",
+            "Attachments": "Include any relevant attachments"
+        }
+    },
+    "Chapter 1": {
+        "Title": "INTRODUCTION",
+        "Sections": {
+            "1.1": {
+                "Title": "Purpose of the Project",
+                "Description": "Explain the project's purpose."
+            },
+            "1.2": {
+                "Title": "Problem Definition",
+                "Description": "Describe the problem being addressed in detail."
+            },
+            "1.3": {
+                "Title": "Overview of the Project Document",
+                "Description": "Outline the structure and content of the report."
+            },
+            "1.4": {
+                "Title": "Existing Systems",
+                "Description": "Describe similar systems, their strengths and weaknesses."
+            }
+        }
+    },
+    "Chapter 2": {
+        "Title": "SYSTEM ANALYSIS",
+        "Sections": {
+            "2.1": {
+                "Title": "Data Modeling Diagrams",
+                "Subsections": {
+                    "2.1.1": "Use Case Diagrams and Functional Requirements",
+                    "2.1.2": "Entity-Relationship Diagram (ERD)"
+                }
+            },
+            "2.2": {
+                "Title": "System Requirements",
+                "Subsections": {
+                    "2.2.1": "Clients, Customer and Users",
+                    "2.2.2": "Functional and Data Requirements",
+                    "2.2.3": {
+                        "Title": "Non-functional Requirements",
+                        "Subsections": {
+                            "2.2.3.1": "Look and Feel Requirements",
+                            "2.2.3.2": "Usability Requirements",
+                            "2.2.3.3": "Security Requirements",
+                            "2.2.3.4": "Performance Requirement",
+                            "2.2.3.5": "Portability Requirements"
+                        }
+                    }
+                }
+            },
+            "2.3": {
+                "Title": "Proposed Solutions",
+                "Description": "Explain the chosen solution and its rationale."
+            },
+            "2.4": {
+                "Title": "Alternative Solutions",
+                "Description": "Discuss other considered solutions."
+            }
+        }
+    },
+    "Chapter 3": {
+        "Title": "DESIGN CONSIDERATIONS",
+        "Sections": {
+            "3.1": {
+                "Title": "Design Constraints",
+                "Subsections": {
+                    "3.1.1": {
+                        "Title": "Hardware and Software Environment",
+                        "Description": "Describe the target environment."
+                    },
+                    "3.1.2": {
+                        "Title": "End User Characteristics",
+                        "Description": "Detail the end-user profile."
+                    }
+                }
+            },
+            "3.2": {
+                "Title": "Architectural Strategies",
+                "Subsections": {
+                    "3.2.1": {
+                        "Title": "Used Algorithms",
+                        "Description": "Explain algorithms used in the solution."
+                    },
+                    "3.2.2": {
+                        "Title": "Reuse of Existing Software Components",
+                        "Description": "Describe any reused components and specify the programming languages used for each component."
+                    },
+                    "3.2.3": {
+                        "Title": "Project Management",
+                        "Subsections": {
+                            "3.2.3.1": {
+                                "Title": "Management Strategies",
+                                "Description": "Outline project management approach."
+                            },
+                            "3.2.3.2": {
+                                "Title": "Tasks",
+                                "Description": "List project tasks."
+                            },
+                            "3.2.3.3": {
+                                "Title": "Tasks Description, Resources, and Risks",
+                                "Description": "Detail tasks, resources, and risks."
+                            },
+                            "3.2.3.4": {
+                                "Title": "Gantt Chart",
+                                "Description": "Provide data for Gantt chart generation (e.g., task names, start and end dates)."
+                            }
+                        }
+                    },
+                    "3.2.4": {
+                        "Title": "Development Method",
+                        "Description": "Explain the chosen development methodology."
+                    },
+                    "3.2.5": {
+                        "Title": "Future Enhancements/Plans",
+                        "Description": "Discuss potential future improvements."
+                    }
+                }
+            },
+            "3.3": {
+                "Title": "Costs and Benefits",
+                "Description": "Analyze project costs and benefits."
+            }
+        }
+    },
+    "Chapter 4": {
+        "Title": "SYSTEM DESIGN",
+        "Sections": {
+            "4.1": {
+                "Title": "System Architecture and Program Flow",
+                "Subsections": {
+                    "4.1.1": {
+                        "Title": "Major Modules",
+                        "Description": "Describe the main modules of the system."
+                    },
+                    "4.1.2": {
+                        "Title": "Sub-modules",
+                        "Description": "Detail the sub-modules within each major module."
+                    }
+                }
+            },
+            "4.2": {
+                "Title": "Detailed System Design",
+                "Subsections": {
+                    "4.2.1": {
+                        "Title": "Detailed Component Description",
+                        "Description": "Provide detailed descriptions of each component."
+                    }
+                }
+            },
+            "4.3": {
+                "Title": "User Interface Design",
+                "Subsections": {
+                    "4.3.1": {
+                        "Title": "System Interface Description",
+                        "Description": "Describe the overall user interface."
+                    },
+                    "4.3.2": {
+                        "Title": "Screen Layouts",
+                        "Description": "Provide descriptions or rough sketches of screen layouts (wireframes)."
+                    },
+                    "4.3.3": {
+                        "Title": "Objects and Actions",
+                        "Description": "Explain the interactive elements and their functionalities."
+                    }
+                }
+            }
+        }
+    },
+    "Chapter 5": {
+        "Title": "SYSTEM PROGRAMMING AND IMPLEMENTATION",
+        "Sections": {
+            "5.1": {
+                "Title": "Introduction",
+                "Subsections": {
+                    "5.1.1": {
+                        "Title": "System Implementation Preparations",
+                        "Description": "Describe the preparations made for implementation."
+                    },
+                    "5.1.2": {
+                        "Title": "System Development Languages and Environments",
+                        "Description": "List the languages and tools used (Specify languages for each component if multiple languages are used)."
+                    }
+                }
+            },
+            "5.2": {
+                "Title": "System Programming",
+                "Subsections": {
+                    "5.2.1": {
+                        "Title": "Data Structures",
+                        "Description": "Explain the data structures used in the implementation."
+                    },
+                    "5.2.2": {
+                        "Title": "Modules Programming",
+                        "Description": "Describe the programming of each module."
+                    },
+                    "5.2.3": {
+                        "Title": "System Components Integration",
+                        "Description": "Explain how components are integrated."
+                    },
+                    "5.2.4": {
+                        "Title": "Interface Programming",
+                        "Description": "Describe the programming of user interfaces."
+                    }
+                }
+            },
+            "5.3": {
+                "Title": "System Product",
+                "Description": "Describe the final implemented system."
+            },
+            "5.4": {
+                "Title": "Implementation Problems",
+                "Description": "Discuss any challenges faced during implementation."
+            }
+        }
+    },
+    "Chapter 6": {
+        "Title": "SYSTEM TESTING AND VALIDATION",
+        "Sections": {
+            "6.1": {
+                "Title": "Introduction",
+                "Subsections": {
+                    "6.1.1": {
+                        "Title": "Testing System Overview",
+                        "Description": "Provide an overview of the testing process."
+                    },
+                    "6.1.2": {
+                        "Title": "Test Approach",
+                        "Description": "Explain the chosen testing methodology."
+                    }
+                }
+            },
+            "6.2": {
+                "Title": "Test Plan",
+                "Subsections": {
+                    "6.2.1": {
+                        "Title": "Features to be Tested",
+                        "Description": "List the features that will be tested."
+                    },
+                    "6.2.2": {
+                        "Title": "Features not to be Tested",
+                        "Description": "List any features not included in testing."
+                    },
+                    "6.2.3": {
+                        "Title": "Testing Tools and Environment",
+                        "Description": "Describe the tools and environment used for testing."
+                    }
+                }
+            },
+            "6.3": {
+                "Title": "Test Cases",
+                "Description": "Provide multiple test cases with detailed information.",
+                "Subsections": {
+                    "6.3.n": {
+                        "Title": "Case-n",
+                        "Subsections": {
+                            "6.3.n.1": {
+                                "Title": "Purpose",
+                                "Description": "State the objective of the test case."
+                            },
+                            "6.3.n.2": {
+                                "Title": "Inputs",
+                                "Description": "Specify the input values for the test case."
+                            },
+                            "6.3.n.3": {
+                                "Title": "Expected Outputs & Pass/Fail Criteria",
+                                "Description": "Define expected results and pass/fail conditions."
+                            },
+                            "6.3.n.4": {
+                                "Title": "Test Procedure",
+                                "Description": "Outline the steps to execute the test case."
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "Chapter 7": {
+        "Title": "CONCLUSIONS",
+        "Sections": {
+            "7.1": {
+                "Title": "Summary of Findings",
+                "Description": "Summarize the key findings and results of the project."
+            },
+            "7.2": {
+                "Title": "Project Contributions",
+                "Description": "Discuss the project's impact and contributions."
+            },
+            "7.3": {
+                "Title": "Future Work",
+                "Description": "Suggest potential future improvements, extensions, or applications."
+            }
+        }
+    },
+    "References": {
+        "Format": "APA",
+        "Items": [
+            {
+                "Author": "Author(s)",
+                "Year": "year",
+                "Title": "Article title",
+                "Journal": "Journal Title",
+                "Volume": "Volume",
+                "Issue": "number",
+                "Pages": "Page range"
+            },
+            {
+                "Author": "Author(s)",
+                "Year": "year",
+                "Title": "title of the paper",
+                "Editor": "Editor(s)",
+                "ConferenceTitle": "Title of the conference proceedings",
+                "Pages": "page range",
+                "Publisher": "Publisher"
+            },
+            {
+                "Author": "Author(s)",
+                "Year": "year",
+                "Month": "month",
+                "Day": "today",
+                "WebPageTitle": "web page title",
+                "WebsiteName": "website name",
+                "URL": "link"
+            },
+            {
+                "Author": "Author(s)",
+                "Year": "year",
+                "BookTitle": "Book title",
+                "Publisher": "Publisher"
+            },
+            {
+                "Author": "Author(s)",
+                "Year": "year",
+                "ReportTitle": "Report title",
+                "ReportNumber": "Report number if available",
+                "Publisher": "Publisher"
+            }
+        ]
+    },
+    "Glossary": {
+        "Terms": [
+            {
+                "Term": "API",
+                "Definition": "Application Programming Interfaces"
+            },
+            {
+                "Term": "Diagram Generation",
+                "Definition": "Producing graphics"
+            },
+            {
+                "Term": "Real-world Impact",
+                "Definition": "Realistic effect"
+            },
+            {
+                "Term": "Diagram Format",
+                "Definition": "PlantUML"
+            },
+            {
+                "Term": "UI/UX",
+                "Definition": "User interface refers to the visual elements of a product or digital interface, while user experience takes into account the overall experience and interaction a user has with the product or service."
+            },
+            {
+                "Term": "RESTful API",
+                "Definition": "An API that uses HTTP requests to fetch, place, publish, and delete data, providing a lightweight, maintainable, and scalable interface to web services."
+            },
+            {
+                "Term": "Natural Language Processing (NLP)",
+                "Definition": "The branch of artificial intelligence that deals with the interaction between computers and humans using natural language, and involves actively reading, understanding, and analyzing human languages."
+            },
+            {
+                "Term": "OAuth 2.0",
+                "Definition": "An open standard for access delegation, typically used to give websites or apps limited access to user information without revealing passwords."
+            },
+            {
+                "Term": "Entity-Relationship Diagram (ERD)",
+                "Definition": "A diagram that shows the relationships between entities in a database, often used in data design to organize the relationships between them."
+            },
+            {
+                "Term": "Gantt",
+                "Definition": "Gantt charts to display project schedules and timelines."
+            }
+        ]
+    },
+    "Appendices": {
+        "Sections": [
+            {
+                "Title": "User Manual",
+                "Description": "Provide a user manual for your system."
+            },
+            {
+                "Title": "Code Listing",
+                "Description": "Provide your complete source code."
+            },
+            {
+                "Title": "Testing Results",
+                "Description": "Provide detailed testing results."
+            },
+            {
+                "Title": "Additive Appendices",
+                "Description": "Include any additional supporting materials."
+            },
+            {
+                "Title": "Attachments",
+                "Description": "Include any relevant attachments."
+            },
+            {
+                "Title": "Meeting Records",
+                "Description": "Notes or minutes from team meetings providing insight into the development process."
+            },
+            {
+                "Title": "Slides",
+                "Description": "Include slides or notes if you presented your project."
+            },
+            {
+                "Title": "User Training Materials",
+                "Description": "Any training materials not included in the documentation and user guides at this testing stage."
+            },
+            {
+                "Title": "Marketing Materials",
+                "Description": "Pamphlets or brochures prepared for promoting the system."
+            },
+            {
+                "Title": "Performance Metrics",
+                "Description": "Data on system performance, such as loading times, response, and system stability."
+            },
+            {
+                "Title": "User Operations",
+                "Description": "Detailed instructions on how to perform common tasks, such as creating a report, generating diagrams, and exporting documents."
+            },
+            {
+                "Title": "Project Planning Documents",
+                "Description": "Gantt charts, timelines, or workflow diagrams used throughout project management."
+            },
+            {
+                "Title": "Licensing and Legal Documentation",
+                "Description": "Any agreements, licenses, or legal documents associated with the project."
+            },
+            {
+                "Title": "Survey Results or User Feedback",
+                "Description": "Data collected from user tests or surveys that influenced system development."
+            },
+            {
+                "Title": "Installation Guide",
+                "Description": "Instructions on setting up the system, including installation or access procedures."
+            },
+            {
+                "Title": "Wireframes",
+                "Description": "Add wireframes to illustrate the user interface design."
+            },
+            {
+                "Title": "State Diagrams",
+                "Description": "Include state diagrams to show states and transitions between objects."
+            },
+            {
+                "Title": "Activity and Sequence Diagrams",
+                "Description": "Add activity and sequence diagrams to show testing scenarios."
+            }
+        ]
+    }
+}

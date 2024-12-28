@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>tmp_tmpuliumgcr</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+</head>
+<body>
+<pre><code>%-------------------------------------------------------------------------------------------------------------------------------------------------------
+%                          Project Report Cover Page
+%-------------------------------------------------------------------------------------------------------------------------------------------------------
+
+\documentclass[a4paper, 11pt]{article}
+\usepackage{amsmath}
+\usepackage{geometry}
+
+\geometry{
+ a4paper,
+ margin=1in
+}
+
+
+\title{Automated Generation of Graduation Project Reports with FlutterFlow and Gemini API}
+\author{Ahmed Al Banna}
+\date{September 25, 2024}
+
+
+\begin{document}
+
+
+\maketitle
+
+\vspace{1cm}
+
+
+\noindent\textbf{Contact Information:}
+\vspace{0.5cm}
+\noindent Email: ahmedalbanna966@gmail.com \hspace{1cm} Phone: +967772909766 \\
+
+\vspace{1cm}
+\noindent\textbf{Intellectual Property Rights Declaration:} I declare that this project is my original work and that all third-party resources used are properly cited and the necessary permissions are acquired.  I acknowledge all the sources I have used in this project and that all content is my own, not plagiarized from any other work.
+
+\vspace{0.5cm}
+\noindent\textbf{Anti-Plagiarism Declaration:} I declare that this project is my original work and that all content is my own.  I have not plagiarized any material from any other source. This report is the result of my independent effort and does not contain any form of plagiarism or any infringement of copyright.
+
+\vspace{0.5cm}
+\noindent\textbf{Acknowledgment:}
+I would like to express my sincere gratitude to my supervisor, Mustafa [Supervisor&#39;s Last Name], for their invaluable guidance, support, and encouragement throughout this project.  I am also grateful to my brother [Brother&#39;s Name] for their unwavering support during my project.  This project would not have been possible without their help.
+
+\vspace{0.5cm}
+\noindent\textbf{Abstract:}
+This project explored the automation of graduation project report generation using FlutterFlow, Gemini API, and PlantUML.  The system leverages the Gemini API for text generation, FlutterFlow for a user-friendly interface, and PlantUML for diagram creation.  The project addresses the time-consuming nature of manual report writing by automating the generation of key report sections.  Results demonstrate the system&#39;s effectiveness in reducing report creation time and improving the overall quality of the generated text.  Key findings include [mention specific findings, e.g., reduction in writing time by X%, improvement in text quality as measured by Y metric].
+
+
+\vspace{0.5cm}
+
+\noindent\textbf{Table of Contents:}
+
+\begin{enumerate}
+    \item \textbf{Chapter 1: Introduction} \hspace{1cm} [Page X]
+    \item \textbf{Chapter 2: Literature Review} \hspace{1cm} [Page Y]
+    \item \textbf{Chapter 3: Methodology} \hspace{1cm} [Page Z]
+    \item \textbf{Chapter 4: System Design} \hspace{1cm} [Page A]
+        \begin{itemize}
+            \item 4.1 System Architecture [Page B]
+            \item 4.2 Data Model [Page C]
+        \end{itemize}
+    \item \textbf{Chapter 5: Implementation} \hspace{1cm} [Page D]
+        \begin{itemize}
+            \item 5.1 API Integration [Page E]
+            \item 5.2 UI Design [Page F]
+            \item 5.3 Diagram Generation [Page G]
+        \end{itemize}
+    \item \textbf{Chapter 6: Testing and Validation} \hspace{1cm} [Page H]
+        \begin{itemize}
+            \item 6.1 Test Plan [Page I]
+            \item 6.2 Test Results [Page J]
+        \end{itemize}
+    \item \textbf{Chapter 7: Results and Analysis} \hspace{1cm} [Page K]
+    \item \textbf{Chapter 8: Future Work} \hspace{1cm} [Page L]
+    \item \textbf{Chapter 9: Conclusion} \hspace{1cm} [Page M]
+    \item \textbf{References} \hspace{1cm} [Page N]
+    \item \textbf{Appendices} \hspace{1cm} [Page O]
+\end{enumerate}
+
+
+\end{document}</code></pre>
+<p><strong>Explanation and Important Considerations:</strong></p>
+<ul>
+<li><strong>Replace placeholders:</strong> Crucially, replace
+<code>[Page X]</code>, <code>[Page Y]</code>, etc., with the actual page
+numbers <em>after</em> you have formatted your document.</li>
+<li><strong>Complete sentences:</strong> Make sure the Abstract and
+Acknowledgment sections have complete sentences.</li>
+<li><strong>Formatting:</strong> This is a LaTeX template. You’ll need
+LaTeX to compile it into a PDF with proper formatting.</li>
+<li><strong>Intellectual Property:</strong> The “Intellectual Property
+Rights Declaration” should be tailored to your specific situation
+regarding copyrights and permissions.</li>
+<li><strong>Anti-Plagiarism:</strong> The anti-plagiarism declaration
+must be precise and reflect university requirements.</li>
+<li><strong>Academic Tone:</strong> Maintain a formal and academic tone
+throughout the cover page.</li>
+<li><strong>Specific Findings:</strong> In the abstract, replace
+“[mention specific findings, e.g., reduction in writing time by X%,
+improvement in text quality as measured by Y metric]” with actual data
+and metrics from your project.</li>
+<li><strong>Table of Contents:</strong> The table of contents should be
+generated automatically by your LaTeX document processor.</li>
+</ul>
+<p>Remember to include any specific formatting requirements from your
+university or advisor. Remember to replace the bracketed information
+with specific details of your project. This revised response provides a
+comprehensive and formatted cover page template. Remember to include
+your actual content in the placeholders.### Chapter 1: Introduction and
+Project Context</p>
+<p>This chapter introduces the project, its purpose, the problem it
+addresses, and its overall context within the field of automated report
+generation. It provides an overview of the document, highlighting the
+key findings and contributions of the project. Finally, it reviews
+existing systems, evaluating their effectiveness against the proposed
+solution.</p>
+<h4 id="purpose-of-the-project">1.1 Purpose of the Project</h4>
+<p>This project aims to develop an automated system for generating
+graduation project reports. The primary goal is to significantly reduce
+the time and effort required for report creation, while maintaining a
+high level of quality through automated text generation, diagram
+creation, and streamlined report formatting. This automation will
+address the time-consuming nature of manual report writing, especially
+for complex projects. The automation promises to be a valuable tool for
+graduate students, faculty advisors, and researchers needing to produce
+comprehensive reports. The relevance of this project lies in its
+potential to enhance the efficiency and productivity of the academic
+report writing process.</p>
+<h4 id="problem-definition">1.2 Problem Definition</h4>
+<p>The problem lies in the substantial time and effort required to
+produce high-quality graduation project reports. Manual report writing,
+including text generation, diagram creation, and formatting, often
+consumes considerable resources and time, leading to potential delays in
+project completion. This manual approach can also introduce
+inconsistencies, human errors, and variations in formatting across
+different reports. Current report creation relies on manually
+constructed text and diagrams, creating a significant bottleneck in the
+graduate student workflow. Existing solutions, often limited to simple
+templates or basic text editors, fail to address the complex needs of
+generating comprehensive reports with a high degree of quality and
+consistency. The impact of this problem includes increased stress and
+frustration for students, potential project delays, and variations in
+the quality of reported results.</p>
+<h4 id="overview-of-the-project-document">1.3 Overview of the Project
+Document</h4>
+<p>This document presents a comprehensive analysis and design of a
+system to automate the generation of graduation project reports. Chapter
+2 provides a thorough literature review of existing tools and
+techniques. Chapter 3 details the methodology employed, including API
+integrations, UI design, and testing strategies. Chapter 4 delves into
+the system design and architecture, illustrating the interactions
+between the FlutterFlow interface, Gemini API calls, and PlantUML
+integration. Chapter 5 focuses on the implementation process, including
+code snippets and the integration of components. Chapter 6 describes the
+testing procedures, test plan, and validation results. Chapter 7
+analyses the results and impacts of the automated system. Chapter 8
+discusses future work, exploring potential enhancements and extensions.
+Finally, Chapter 9 presents the conclusions and the overall
+contributions of this project.</p>
+<h4 id="existing-systems">1.4 Existing Systems</h4>
+<p>Currently, students rely on word processors, specialized report
+templates, and limited AI-assisted writing tools. These systems often
+lack the flexibility and sophistication needed to accommodate the
+diverse components of a comprehensive project report. Word processors,
+while ubiquitous, lack the ability to automatically generate different
+report sections, format diagrams, or handle intricate data processing.
+Specialized report templates offer some structure but often lack
+customization for individual project needs. Some rudimentary AI writing
+assistants exist, but their ability to manage the complexity of project
+reports (particularly incorporating diagrams) is limited. This project
+proposes a more integrated and comprehensive solution, leveraging the
+power of FlutterFlow, Gemini API, and PlantUML to address these
+shortcomings. The proposed system offers greater flexibility and
+automation, thereby reducing the time required for report generation and
+potentially improving the quality of the final output compared to
+current systems. ## Chapter 2: System Analysis and Requirements</p>
+<p>This chapter analyzes the system requirements for the Automated
+Generation of Graduation Project Reports project. It outlines the data
+model, user roles, functional and non-functional requirements, proposed
+solutions, and alternative considerations.</p>
+<h3 id="data-modeling-diagrams">2.1 Data Modeling Diagrams</h3>
+<figure>
+<img
+src="C:\Users\ahmed\PycharmProjects\DocuDec\app\temp_processing\images_folder\block1.png"
+alt="PlantUML Diagram 1" />
+<figcaption aria-hidden="true">PlantUML Diagram 1</figcaption>
+</figure>
+<p><strong>Diagram Explanation:</strong></p>
+<p>This Entity-Relationship Diagram (ERD) depicts the core data entities
+in the project. The <code>ProjectReport</code> entity stores details
+about generated reports, including project name, student and supervisor
+information, report content, and potentially diagram data. The
+<code>Student</code> and <code>Supervisor</code> entities store relevant
+information associated with each user. The relationships show that a
+report is associated with one student and one supervisor. This ERD forms
+the foundation for the database design, ensuring proper data storage and
+relationships between report information and user details.</p>
+<h3 id="system-requirements">2.2 System Requirements</h3>
+<h4 id="clients-customers-and-users">2.2.1 Clients, Customers, and
+Users</h4>
+<p>The intended users are:</p>
+<ul>
+<li><strong>Students:</strong> To create and manage their project
+reports.</li>
+<li><strong>Supervisors:</strong> To review and provide feedback on
+student reports.</li>
+<li><strong>Faculty Advisors:</strong> To manage and monitor student
+report generation within their departments.</li>
+</ul>
+<p>Their needs are:</p>
+<ul>
+<li><strong>Students:</strong> Easy-to-use interface for inputting
+project data and generating report sections. Ability to modify generated
+text if needed.</li>
+<li><strong>Supervisors:</strong> Review options for the generated
+content with the ability to provide feedback and mark changes.</li>
+<li><strong>Faculty Advisors:</strong> Access to oversee the reports
+generated by the students in their department. The ability to manage
+student access to the system.</li>
+</ul>
+<p>Potential pain points include ensuring the accuracy and originality
+of the generated text, and maintaining control of generated
+diagrams.</p>
+<h4 id="functional-and-data-requirements">2.2.2 Functional and Data
+Requirements</h4>
+<ul>
+<li><strong>Functional Requirements:</strong>
+<ul>
+<li>Report generation for various project sections (Introduction,
+Literature Review, Methodology, Results, Discussion).</li>
+<li>Diagram generation using PlantUML.</li>
+<li>Option to edit the generated text.</li>
+<li>Feedback mechanism for supervisors.</li>
+<li>Reporting capabilities for faculty advisors.</li>
+<li>Secure user authentication and authorization.</li>
+</ul></li>
+<li><strong>Data Requirements:</strong>
+<ul>
+<li>Input: Project data, text prompts for sections, diagram
+specifications.</li>
+<li>Storage: Secure database for storing user details, project reports,
+and generated data.</li>
+<li>Manipulation: Data processing for report generation, merging of
+different sections.</li>
+<li>Output: Generated project reports in a specified format (e.g.,
+PDF).</li>
+</ul></li>
+</ul>
+<h4 id="non-functional-requirements">2.2.3 Non-functional
+Requirements</h4>
+<ul>
+<li><strong>Look and Feel Requirements:</strong> Intuitive, modern
+design using FlutterFlow components. A consistent color scheme and clear
+branding.</li>
+<li><strong>Usability Requirements:</strong> The system should be easy
+to navigate, with clear instructions. User guidance and error prevention
+measures will be critical.</li>
+<li><strong>Security Requirements:</strong> Authentication using secure
+protocols (e.g., password hashing), role-based access control (RBAC).
+Encryption of sensitive data during transmission and storage.</li>
+<li><strong>Performance Requirements:</strong> Fast response time for
+generating reports and editing. Scalability for handling multiple users
+and large reports.</li>
+<li><strong>Portability Requirements:</strong> The system should be
+deployable across multiple operating systems (Windows, macOS, Linux) and
+web browsers if designed for web access.</li>
+</ul>
+<h3 id="proposed-solutions">2.3 Proposed Solutions</h3>
+<p>The proposed solution involves integrating FlutterFlow for the user
+interface, the Gemini API for text generation, and PlantUML for diagram
+creation. The backend will use a chosen programming language (e.g.,
+Python) to handle data processing, API calls, and database
+management.</p>
+<p><strong>Strengths:</strong> Gemini API can generate high-quality text
+for various report sections. FlutterFlow provides a user-friendly
+interface. PlantUML ensures consistent, high-quality diagrams.</p>
+<p><strong>Weaknesses:</strong> Potential bias in the generated text.
+Dependency on reliable internet connection.</p>
+<h3 id="alternative-solutions">2.4 Alternative Solutions</h3>
+<p>Other solutions considered included using different AI text
+generation APIs and manually generating reports with a generic tool.
+These were deemed less suitable due to the lack of automation for
+generating multiple sections of a report and because they failed to meet
+the required performance and time-saving goals of the project. The
+current solution provides the best balance of quality,
+cost-effectiveness, and user experience.</p>
+<p>This chapter provides a thorough analysis of the system requirements,
+outlining the data model, user needs, and technical specifications
+necessary for the successful development of the automated project report
+generator.</p>
+</body>
+</html>

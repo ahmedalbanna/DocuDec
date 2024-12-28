@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>tmp_tmppxzp565s</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+</head>
+<body>
+<h2 id="chapter-2-system-analysis-and-requirements">Chapter 2: System
+Analysis and Requirements</h2>
+<p>This chapter details the system analysis, data modeling, and
+requirements for the automated generation of graduation project reports.
+It outlines the data structures, user roles, functional requirements,
+and non-functional characteristics that will guide the system’s design
+and implementation.</p>
+<h3 id="data-modeling-diagrams">2.1 Data Modeling Diagrams</h3>
+<p><span class="citation" data-cites="startuml">@startuml</span> Entity
+Relationship Diagram for Graduation Project Report Generator</p>
+<p>entity Project { projectId : int (PK) projectName : String
+problemStatement : String methodology : String results : String
+conclusions : String reportFormat : String //e.g., PDF, DOCX studentId :
+int (FK, references Student) advisorId : int (FK, references
+Advisor)</p>
+<p>}</p>
+<p>entity Student { studentId : int (PK) studentName : String
+studentEmail : String }</p>
+<p>entity Advisor { advisorId : int (PK) advisorName : String
+advisorEmail : String }</p>
+<p>Project “1” – “N” Student : Assigned To Project “1” – “1” Advisor :
+Supervised By</p>
+<p>entity ReportTemplate { templateId : int (PK) templateName : String
+templateContent : String }</p>
+<p>Project “0..1” – “1” ReportTemplate : Uses Template</p>
+<p><span class="citation" data-cites="enduml">@enduml</span></p>
+<p><strong>Explanation:</strong> The ERD models the core entities in the
+system: <code>Project</code>, <code>Student</code>,
+<code>Advisor</code>, and <code>ReportTemplate</code>. A
+<code>Project</code> is linked to a single <code>Student</code> and
+<code>Advisor</code> (many-to-one). <code>Project</code> entities can
+potentially reference templates for pre-existing report structures if
+required by the project’s specifics. This allows for the use of
+templates, enhancing report generation efficiency. Primary and foreign
+keys are designated (<code>PK</code> and <code>FK</code>) for clarity.
+The diagram helps to visualize how data will be stored and related
+within the database.</p>
+<h3 id="system-requirements">2.2 System Requirements</h3>
+<h4 id="clients-customers-and-users">2.2.1 Clients, Customers, and
+Users</h4>
+<ul>
+<li><strong>Students:</strong> The primary users, responsible for
+inputting project details (problem statement, methodology, results,
+etc.). They need a user-friendly interface to quickly and accurately
+provide the necessary information. A crucial expectation is an intuitive
+interface to minimize input errors.</li>
+<li><strong>Advisors:</strong> They will need access to the system to
+track student projects and review generated reports. They need access to
+comprehensive report details and the option to edit certain areas if
+necessary.</li>
+<li><strong>Faculty:</strong> Faculty overseeing the system can also
+monitor student project progress. They would require comprehensive
+statistics and an overall report visualization dashboard to monitor
+project completion for the department.</li>
+</ul>
+<h4 id="functional-and-data-requirements">2.2.2 Functional and Data
+Requirements</h4>
+<ul>
+<li><strong>Input:</strong> The system must accept detailed project
+information (text, diagrams).</li>
+<li><strong>Storage:</strong> Data needs to be stored securely and
+persistently in a database to enable repeated access.</li>
+<li><strong>Manipulation:</strong> The system needs to process input,
+format data according to report specifications, perform text generation
+through the Gemini API, and process diagram creation using
+PlantUML.</li>
+<li><strong>Output:</strong> A formatted graduation project report (PDF
+or similar), incorporating both text output from the Gemini API and
+generated diagrams.</li>
+</ul>
+<h4 id="non-functional-requirements">2.2.3 Non-functional
+Requirements</h4>
+<ul>
+<li><strong>Look and Feel:</strong> The FlutterFlow interface will need
+a clean, modern design. Color schemes, typography, and button designs
+should align with the university’s branding for a cohesive user
+experience. Accessibility is crucial to ensure inclusivity.</li>
+<li><strong>Usability:</strong> The interface must be intuitive,
+allowing users to navigate and input information efficiently. It should
+provide clear feedback and prevent common errors.</li>
+<li><strong>Security:</strong> Robust authentication and authorization
+mechanisms are needed to protect sensitive student and project data.
+Encryption and access control are essential.</li>
+<li><strong>Performance:</strong> The system must generate reports
+within an acceptable time frame. A clear response time target is needed
+to ensure efficient and timely use. Scalability is a requirement for the
+future addition of more users.</li>
+<li><strong>Portability:</strong> The application will target modern web
+browsers, ensuring cross-platform compatibility (Windows, macOS,
+Linux).</li>
+</ul>
+<h3 id="proposed-solutions">2.3 Proposed Solutions</h3>
+<ul>
+<li>Utilizing FlutterFlow for the UI/UX to create a dynamic, engaging,
+and adaptable user experience. This solution allows for efficient
+development of the interface.</li>
+<li>Employing the Gemini API for high-quality natural language
+processing and text generation. This is an appropriate choice given the
+need to generate report content.</li>
+<li>Leveraging PlantUML for diagram creation, which will directly
+translate data into visual representations in the report.</li>
+<li>Utilizing a relational database like PostgreSQL for data storage,
+ensuring efficient and organized data management.</li>
+</ul>
+<h3 id="alternative-solutions">2.4 Alternative Solutions</h3>
+<ul>
+<li>Using other AI text generation models or libraries instead of
+Gemini.</li>
+<li>Choosing different visualization libraries instead of PlantUML.</li>
+<li>Implementing the report generation using a different front-end
+framework instead of FlutterFlow.</li>
+</ul>
+<p>These alternatives were considered, but ultimately dismissed due to
+factors like Gemini’s strong performance in natural language processing,
+FlutterFlow’s ease of UI/UX development, PlantUML’s efficiency in
+diagram generation, and overall cost-effectiveness and feasibility in
+the given timeframe. The choice of these technologies aligns with the
+project’s goals and constraints.</p>
+</body>
+</html>

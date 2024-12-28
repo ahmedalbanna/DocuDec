@@ -1,0 +1,29 @@
+@startuml
+entity Student {
+    studentId : int
+    name : string
+    projectName : string
+    projectDescription : string
+    reportContent : string
+}
+
+entity ReportTemplate {
+    templateId : int
+    templateName : string
+    sections : string
+    formattingStyle : string
+}
+
+entity ProjectData {
+    projectDataId : int
+    projectId : int
+    dataContent : string
+    dataType : string  //e.g., Literature Review, Results, etc.
+}
+
+
+Student --|> ReportTemplate : Uses
+Student --o ProjectData : Has
+
+
+@enduml

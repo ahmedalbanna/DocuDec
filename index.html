@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>إنشاء تقرير مشروع</title>
+</head>
+<body>
+<h1>إنشاء تقرير مشروع</h1>
+
+<form id="project-form">
+    <label for="project-title">عنوان المشروع:</label><br>
+    <input type="text" id="project-title" name="project-title"><br>
+
+    <label for="university-major">التخصص الجامعي:</label><br>
+    <input type="text" id="university-major" name="university-major"><br>
+
+    <label for="additional-notes">ملاحظات إضافية:</label><br>
+    <textarea id="additional-notes" name="additional-notes"></textarea><br><br>
+
+    <button type="submit">إنشاء التقرير</button>
+</form>
+
+<script>
+    const form = document.getElementById('project-form');
+    form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        const formData = new FormData(form);
+        const projectTitle = formData.get('project-title');
+        const universityMajor = formData.get('university-major');
+        const additionalNotes = formData.get('additional-notes');
+
+        const response = await fetch('/generate_project', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                project_title: projectTitle,
+                university_major: universityMajor,
+                additional_notes: additionalNotes
+            })
+        });
+
+        if (response.ok) {
+            const reportUrl = await response.text();
+            window.location.href = reportUrl;
+        } else {
+            alert('حدث خطأ أثناء إنشاء التقرير.');
+        }
+    });
+</script>
+</body>
+</html>

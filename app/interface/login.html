@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Signup/Login</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="authContainer">
+    <div id="signupForm" class="authForm">
+      <h2>Signup</h2>
+      <form id="signup">
+        <input type="text" id="signupUsername" placeholder="Username">
+        <input type="password" id="signupPassword" placeholder="Password">
+        <button type="submit">Signup</button>
+      </form>
+    </div>
+
+    <div id="loginForm" class="authForm">
+      <h2>Login</h2>
+      <form id="login">
+        <input type="text" id="loginUsername" placeholder="Username">
+        <input type="password" id="loginPassword" placeholder="Password">
+        <button type="submit">Login</button>
+      </form>
+    </div>
+  </div>
+  <div id="message"></div>
+
+  <script>
+    const signupForm = document.getElementById('signup');
+const loginForm = document.getElementById('login');
+const messageDiv = document.getElementById('message');
+
+signupForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  // Send signup data to your backend
+  // ... (Handle signup response) ...
+});
+
+loginForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  // Send login data to your backend
+  // ... (Handle login response) ...
+});
+
+//Example for handling successful login or signup
+function handleSuccess(message){
+    messageDiv.innerHTML = `<p style="color:green;">${message}</p>`;
+}
+
+// Example for handling errors during signup or login
+function handleError(error){
+    messageDiv.innerHTML = `<p style="color:red;">${error}</p>`;
+}
+
+
+  </script>
+</body>
+</html>

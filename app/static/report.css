@@ -1,0 +1,17 @@
+body {
+    font-family: sans-serif;
+    line-height: 1.6;
+    margin: 20px;
+}
+
+h1, h2, h3, h4 {
+    font-weight: bold;
+}
+
+ul {
+    list-style-type: disc;
+    margin-left: 20px;
+}
+strong{
+    font-weight: bold;
+}
