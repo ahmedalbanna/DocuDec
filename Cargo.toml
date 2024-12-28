@@ -1,0 +1,7 @@
+[workspace]
+resolver = "2"
+members = [ 
+  "database",
+  "docu_dec_api",
+  "gemini_ai"
+]
