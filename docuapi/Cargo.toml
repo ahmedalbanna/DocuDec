@@ -1,5 +1,5 @@
 [package]
-name = "docu_dec_api"
+name = "docuapi"
 version = "0.1.0"
 edition = "2021"
 
@@ -14,4 +14,4 @@ tower-http = { version = "0.6.2", features = ["fs"] }
 uuid = { version = "1.11.0", features = ["v4"] }
 google-generative-ai-rs = {workspace = true}
 
-gemini_ai = {path = "../gemini_ai"}
+docuai = {path = "../docuai"}

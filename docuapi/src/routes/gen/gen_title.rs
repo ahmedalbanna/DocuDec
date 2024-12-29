@@ -1,7 +1,7 @@
 use std::sync::Arc;
 
 use axum::{extract::State, response::IntoResponse, Json};
-use gemini_ai::{
+use docuai::{
     docu_requests::{DocuRequest, DocuRequestInfo},
     get_text, request,
 };

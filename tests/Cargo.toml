@@ -4,4 +4,4 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-gemini_ai = {path = "../gemini_ai"}
+docuai = {path = "../docuai"}
