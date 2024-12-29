@@ -1,10 +1,10 @@
-use axum::Router;
+use axum::{routing::post, Router};
 
 mod login;
 mod signup;
 
-pub fn routes() -> Router {
+pub async fn routes() -> Router {
     Router::new()
-        .nest("/login", login::route())
-        .nest("/signup", signup::route())
+        .route("/login", post(login::login))
+        .route("/signup", post(signup::signup))
 }

@@ -5,9 +5,9 @@ mod routes;
 #[tokio::main]
 async fn main() {
     let routes = Router::new()
-        .nest("/auth", routes::auth::routes())
-        .merge(routes::file::download::route())
-        .merge(routes::gen::generate_project::route());
+        .nest("/auth", routes::auth::routes().await)
+        .nest("/gen", routes::gen::routes().await)
+        .nest("/file", routes::file::route().await);
 
     let tcp = tokio::net::TcpListener::bind("127.0.0.1:3000")
         .await

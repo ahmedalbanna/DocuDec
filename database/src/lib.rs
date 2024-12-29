@@ -1,14 +1,18 @@
-pub fn add(left: u64, right: u64) -> u64 {
-    left + right
+use dotenv::dotenv;
+use sqlx::{mysql::MySqlPool, MySql, Pool};
+use std::env;
+
+#[derive(Clone, Debug)]
+pub struct Database {
+    pub pool: Pool<MySql>,
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
+impl Database {
+    pub async fn create_pool() -> Result<Self, sqlx::Error> {
+        dotenv().ok();
+        let db_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set in .env file");
 
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
+        let pool = MySqlPool::connect(&db_url).await?;
+        Ok(Database { pool })
     }
 }

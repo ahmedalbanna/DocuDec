@@ -5,10 +5,13 @@ edition = "2021"
 
 [dependencies]
 axum = "0.7.9"
-dotenv = "0.15.0"
-serde = { version = "1.0.217", features = ["derive"] }
-serde_json = "1.0.134"
+dotenv = {workspace = true}
+serde = {workspace = true}
+serde_json = {workspace = true}
 sqlx = { version = "0.8.2", features = ["macros"] }
-tokio = { version = "1.42.0", features = ["full"] }
+tokio = {workspace = true}
 tower-http = { version = "0.6.2", features = ["fs"] }
 uuid = { version = "1.11.0", features = ["v4"] }
+google-generative-ai-rs = {workspace = true}
+
+gemini_ai = {path = "../gemini_ai"}

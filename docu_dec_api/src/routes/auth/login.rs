@@ -1,10 +1,6 @@
-use axum::{response::IntoResponse, routing::post, Router};
+use axum::response::IntoResponse;
 
-pub fn route() -> Router {
-    Router::new().route("/login", post(login))
-}
-
-async fn login() -> impl IntoResponse {
+pub async fn login() -> impl IntoResponse {
     // Your code here
     "Hello, World!"
 }
