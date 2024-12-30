@@ -101,5 +101,3 @@ fn create_project_info_schema() -> Value {
         .property("targetAudience", target_aud)
         .build()
 }
-
-// Lazy initialization of the configuration

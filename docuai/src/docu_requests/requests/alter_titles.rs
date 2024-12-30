@@ -6,7 +6,7 @@ use google_generative_ai_rs::v1::gemini::{
 };
 
 use super::super::schemas::alter_titles::ALTER_TITLES;
-use super::super::sysinst::alter_titles::ALTER_TITLES_SYSTEM_INSTRUCTION;
+use super::super::sysinsts::alter_titles::ALTER_TITLES_SYSTEM_INSTRUCTION;
 
 pub fn get_request(original_title: String) -> Request {
     Request {

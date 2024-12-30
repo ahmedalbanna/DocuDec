@@ -6,7 +6,7 @@ use google_generative_ai_rs::v1::gemini::{
 };
 
 use super::super::schemas::project_info::PROJECT_INFO;
-use super::super::sysinst::project_info::PROJECT_INFO_SYSTEM_INSTRUCTION;
+use super::super::sysinsts::project_info::PROJECT_INFO_SYSTEM_INSTRUCTION;
 
 pub fn get_request(title: String) -> Request {
     Request {

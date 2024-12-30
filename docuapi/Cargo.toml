@@ -13,5 +13,6 @@ tokio = {workspace = true}
 tower-http = { version = "0.6.2", features = ["fs"] }
 uuid = { version = "1.11.0", features = ["v4"] }
 google-generative-ai-rs = {workspace = true}
-
+tracing = {workspace = true}
+tracing-subscriber = {workspace = true}
 docuai = {path = "../docuai"}
