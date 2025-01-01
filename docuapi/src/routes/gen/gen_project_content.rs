@@ -9,23 +9,29 @@ use docuai::{
     DocuError,
 };
 use google_generative_ai_rs::v1::api::Client;
+use serde::Deserialize;
 use tracing::{debug, error, info, instrument};
 
 use super::error::{map_ai_error, GenError};
 
+#[derive(Deserialize, Debug)]
+pub struct ProjectContentPayload {
+    pub project_info: ProjectInfo,
+}
+
 #[instrument(skip(model))]
 pub async fn generate_project_content(
     State(model): State<Arc<Client>>,
-    Json(payload): Json<ProjectInfo>,
+    Json(payload): Json<ProjectContentPayload>,
 ) -> Result<Json<ProjectContent>, GenError> {
     info!(
         ">> Generating project content based on the provided project info: {:#?}",
-        payload
+        payload.project_info
     );
 
     let result = docuai::request::<ProjectContent>(
         model.as_ref(),
-        DocuRequest::ProjectContent(&payload),
+        DocuRequest::ProjectContent(&payload.project_info),
         100,
     )
     .await;
@@ -34,7 +40,7 @@ pub async fn generate_project_content(
     .map_err(|e| {
         if let DocuError::ApiRequest(ge) = e {
                 error!(
-                    "Couldn't complete the AI request for generating the project info, error: {}, status code: {:?}",
+                    "Couldn't complete the AI request for generating the project content, error: {}, status code: {:?}",
                     ge.message, ge.code
                 );
                 map_ai_error(ge)
@@ -45,7 +51,7 @@ pub async fn generate_project_content(
             }
     })?;
 
-    debug!("\n>> Generated titles: \n\n{:#?}\n", result);
+    debug!("\n>> Generated project content: \n\n{:#?}\n", result);
 
     Ok(Json(result))
 }

@@ -3,8 +3,10 @@ use std::sync::Arc;
 use axum::{routing::post, Router};
 
 pub mod error;
+mod gen_additional_instructions;
 mod gen_project_content;
 mod gen_project_info;
+mod gen_project_structure;
 mod gen_title;
 
 pub async fn routes() -> Router {
@@ -19,6 +21,14 @@ pub async fn routes() -> Router {
         .route(
             "/project-content",
             post(gen_project_content::generate_project_content),
+        )
+        .route(
+            "/project-structure",
+            post(gen_project_structure::generate_project_structure),
+        )
+        .route(
+            "/additional-instructions",
+            post(gen_additional_instructions::generate_additional_instructions),
         )
         .with_state(model)
 }

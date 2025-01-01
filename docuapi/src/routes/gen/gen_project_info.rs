@@ -53,7 +53,7 @@ pub async fn generate_project_info(
             }
     })?;
 
-    debug!("\n>> Generated titles: \n\n{:#?}\n", result);
+    debug!("\n>> Generated project info: \n\n{:#?}\n", result);
 
     Ok(Json(result))
 }
