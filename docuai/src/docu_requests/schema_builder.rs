@@ -18,7 +18,7 @@ impl Display for SchemaType {
     }
 }
 
-#[derive(Default)]
+#[derive(Default, Clone)]
 pub struct Schema {
     schema_type: String,
     description: Option<String>,

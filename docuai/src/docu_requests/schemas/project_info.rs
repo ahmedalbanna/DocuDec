@@ -4,24 +4,9 @@ use crate::{
     string,
 };
 
-use google_generative_ai_rs::v1::gemini::request::GenerationConfig;
-use once_cell::sync::Lazy;
 use serde_json::Value;
 
-pub static PROJECT_INFO: Lazy<GenerationConfig> = Lazy::new(|| {
-    GenerationConfig {
-        temperature: Some(1.0),
-        top_p: Some(0.95),
-        top_k: Some(40),
-        candidate_count: None,
-        max_output_tokens: Some(8192),
-        stop_sequences: None,
-        response_mime_type: Some("application/json".to_string()),
-        response_schema: Some(create_project_info_schema()), // Use the created schema here
-    }
-});
-
-fn create_project_info_schema() -> Value {
+pub(crate) fn create_project_info_schema() -> Value {
     // --- ProjectScope
     let resource_alloc = Schema::new(SchemaType::Object)
         .required(&["teamResponsibilities"])

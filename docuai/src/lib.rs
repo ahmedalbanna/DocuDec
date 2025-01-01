@@ -5,7 +5,7 @@ mod macros;
 
 pub use error::DocuError;
 
-pub use docu_requests::{DocuRequest, DocuRequestInfo};
+pub use docu_requests::DocuRequest;
 
 use dotenv::dotenv;
 use google_generative_ai_rs::v1::{
@@ -16,14 +16,13 @@ use serde::de::DeserializeOwned;
 
 pub async fn request<R>(
     client: &Client,
-    request_type: DocuRequest,
-    info: DocuRequestInfo,
+    request_type: DocuRequest<'_>,
     timeout: u64,
 ) -> Result<R, DocuError>
 where
     R: DeserializeOwned,
 {
-    let request_object = request_type.to_request(info)?;
+    let request_object = request_type.to_request()?;
 
     let post_result = client.post(timeout, &request_object).await?;
 

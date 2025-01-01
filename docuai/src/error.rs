@@ -2,9 +2,6 @@ use google_generative_ai_rs::v1::errors::GoogleAPIError;
 
 #[derive(Debug, thiserror::Error)]
 pub enum DocuError {
-    #[error("{0}")]
-    TitleNotFound(String),
-
     #[error("Internal API request error: {0}")]
     ApiRequest(#[from] GoogleAPIError),
 

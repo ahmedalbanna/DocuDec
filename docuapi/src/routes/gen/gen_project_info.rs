@@ -2,7 +2,7 @@ use std::sync::Arc;
 
 use axum::{extract::State, Json};
 use docuai::{
-    docu_requests::{responses::project_info::ProjectInfo, DocuRequest, DocuRequestInfo},
+    docu_requests::{responses::project_info::ProjectInfo, DocuRequest},
     DocuError,
 };
 use google_generative_ai_rs::v1::api::Client;
@@ -33,8 +33,7 @@ pub async fn generate_project_info(
 
     let result = docuai::request::<ProjectInfo>(
         model.as_ref(),
-        DocuRequest::ProjectInfo,
-        DocuRequestInfo::title(payload.title),
+        DocuRequest::ProjectInfo(payload.title),
         100,
     )
     .await;

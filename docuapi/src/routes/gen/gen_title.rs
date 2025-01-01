@@ -2,7 +2,7 @@ use std::sync::Arc;
 
 use axum::{extract::State, Json};
 use docuai::{
-    docu_requests::{responses::alter_titles::Titles, DocuRequest, DocuRequestInfo},
+    docu_requests::{responses::alter_titles::Titles, DocuRequest},
     DocuError,
 };
 use google_generative_ai_rs::v1::api::Client;
@@ -30,13 +30,9 @@ pub async fn generate_titles(
 
     info!(">> Generating titles based on: {}", payload.title);
 
-    let result = docuai::request::<Titles>(
-        model.as_ref(),
-        DocuRequest::AlterTitles,
-        DocuRequestInfo::title(payload.title),
-        100,
-    )
-    .await;
+    let result =
+        docuai::request::<Titles>(model.as_ref(), DocuRequest::AlterTitles(payload.title), 100)
+            .await;
 
     let result = result
     .map_err(|e| {
