@@ -13,5 +13,5 @@ serde_json = {version = "1.0.134", features = ["preserve_order"]}
 tokio = { version = "1.42.0", features = ["full"] }
 tracing = "0.1"
 tracing-subscriber = {version = "0.3", features = ["env-filter"]}
-
 google-generative-ai-rs = {version = "0.3.4", features = ["beta"]}
+thiserror = "2"

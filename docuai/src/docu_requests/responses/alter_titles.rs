@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Default)]
 pub struct AlternativeTitles {
     #[serde(rename = "focusingOnAutomation")]
     pub automation: Vec<String>,
@@ -14,7 +14,7 @@ pub struct AlternativeTitles {
     pub technical: Vec<String>,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Default)]
 pub struct Titles {
     #[serde(rename = "originalTitle")]
     pub original: String,

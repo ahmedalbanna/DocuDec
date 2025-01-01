@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Default)]
 pub struct ProjectInfo {
     #[serde(rename = "fieldOfStudy")]
     pub field_of_study: FieldOfStudy,
@@ -12,7 +12,7 @@ pub struct ProjectInfo {
     pub audience: TargetAudience,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Default)]
 pub struct FieldOfStudy {
     #[serde(rename = "academicField")]
     pub academic_field: String,
@@ -20,7 +20,7 @@ pub struct FieldOfStudy {
     pub justifications: Vec<String>,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Default)]
 pub struct ProjectScope {
     #[serde(rename = "approvalProcess")]
     pub approval_process: String,
@@ -40,13 +40,13 @@ pub struct ProjectScope {
     pub timeline: Timeline,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Default)]
 pub struct ResourceAllocation {
     #[serde(rename = "teamResponsibilities")]
     pub team_responsibilities: Vec<String>,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Default)]
 pub struct Timeline {
     #[serde(rename = "start")]
     pub start: String,
@@ -56,7 +56,7 @@ pub struct Timeline {
     pub milestones: Vec<String>,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Default)]
 pub struct TargetAudience {
     #[serde(rename = "audienceFeedback")]
     pub feedback: Vec<String>,
@@ -72,7 +72,7 @@ pub struct TargetAudience {
     pub psychographics: Vec<String>,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Default)]
 pub struct Demographics {
     #[serde(rename = "age")]
     pub age: String,

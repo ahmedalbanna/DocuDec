@@ -1,17 +1,17 @@
 use serde::{Deserialize, Serialize};
 
-#[derive(Deserialize, Serialize, Debug)]
+#[derive(Deserialize, Serialize, Debug, Default)]
 pub struct ChapterStructure {
     pub description: String,
     pub chapters: Vec<String>,
 }
 
-#[derive(Deserialize, Serialize, Debug)]
+#[derive(Deserialize, Serialize, Debug, Default)]
 pub struct VisualAids {
     pub description: String,
 }
 
-#[derive(Deserialize, Serialize, Debug)]
+#[derive(Deserialize, Serialize, Debug, Default)]
 pub struct StructureAndFormat {
     #[serde(rename = "targetLength")]
     pub target_length: String,
@@ -23,7 +23,7 @@ pub struct StructureAndFormat {
     pub visual_aids: VisualAids,
 }
 
-#[derive(Deserialize, Serialize, Debug)]
+#[derive(Deserialize, Serialize, Debug, Default)]
 pub struct ProjectStructure {
     #[serde(rename = "structureAndFormat")]
     pub structure_and_format: StructureAndFormat,

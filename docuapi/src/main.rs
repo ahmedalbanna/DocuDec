@@ -21,7 +21,14 @@ async fn main() {
         .nest("/gen", routes::gen::routes().await)
         .nest("/file", routes::file::route().await);
 
-    let tcp = tokio::net::TcpListener::bind("127.0.0.1:3000")
+    dotenv::dotenv().expect("Failed to find a .env file, make sure it's in the root directory");
+
+    let port = std::env::var("PORT")
+        .expect("Failed to get the PORT env, make sure to set it")
+        .parse::<u16>()
+        .expect("Failed to parse the PORT as a number");
+
+    let tcp = tokio::net::TcpListener::bind(("127.0.0.1", port))
         .await
         .expect("Port 3000 is not avaliabel");
 

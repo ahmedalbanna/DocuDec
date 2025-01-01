@@ -14,5 +14,5 @@ fn test_additional_instructions_conversion() {
     let additional_instructions: 
 docuai::docu_requests::responses::additional_instructions::AdditionalInstructions = serde_json::from_str(json_data).expect("Failed to convert a JSON to AdditionalInstructions");
 
-    println!("{:#?}", additional_instructions);
+    assert!(!additional_instructions.additional_instructions.tone_and_style.is_empty())
 }

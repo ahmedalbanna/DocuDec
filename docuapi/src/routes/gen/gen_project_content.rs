@@ -1,6 +1,10 @@
 use std::sync::Arc;
 
-use axum::{extract::State, Json};
+use axum::{
+    extract::{rejection::JsonRejection, State},
+    http::StatusCode,
+    Json,
+};
 use docuai::{
     docu_requests::{
         responses::{project_content::ProjectContent, project_info::ProjectInfo},
@@ -9,12 +13,14 @@ use docuai::{
     DocuError,
 };
 use google_generative_ai_rs::v1::api::Client;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use tracing::{debug, error, info, instrument};
+
+use crate::routes::gen::error::map_json_rejection;
 
 use super::error::{map_ai_error, GenError};
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Serialize, Debug, Default)]
 pub struct ProjectContentPayload {
     pub project_info: ProjectInfo,
 }
@@ -22,8 +28,13 @@ pub struct ProjectContentPayload {
 #[instrument(skip(model))]
 pub async fn generate_project_content(
     State(model): State<Arc<Client>>,
-    Json(payload): Json<ProjectContentPayload>,
-) -> Result<Json<ProjectContent>, GenError> {
+    payload: Result<Json<ProjectContentPayload>, JsonRejection>,
+) -> Result<(StatusCode, Json<ProjectContent>), GenError> {
+    let payload = match payload {
+        Ok(p) => p.0,
+        Err(err) => return Err(map_json_rejection::<ProjectContentPayload>(err)),
+    };
+
     info!(
         ">> Generating project content based on the provided project info: {:#?}",
         payload.project_info
@@ -53,5 +64,5 @@ pub async fn generate_project_content(
 
     debug!("\n>> Generated project content: \n\n{:#?}\n", result);
 
-    Ok(Json(result))
+    Ok((StatusCode::OK, Json(result)))
 }

@@ -1,12 +1,12 @@
 use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Default)]
 pub struct ProjectContentRequiredSchema {
     pub description: String,
     pub steps: Vec<String>,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Default)]
 pub struct ProjectContentSchema {
     #[serde(rename = "problemStatement")]
     pub problem_statement: ProjectContentRequiredSchema,
@@ -36,7 +36,7 @@ pub struct ProjectContentSchema {
     pub contributions: ProjectContentRequiredSchema,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Default)]
 pub struct ProjectContent {
     #[serde(rename = "projectContent")]
     pub project_content: ProjectContentSchema,

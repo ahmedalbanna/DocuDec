@@ -27,5 +27,9 @@ fn test_project_structure_conversion() {
     let project_structure: docuai::docu_requests::responses::project_structure::ProjectStructure =
         serde_json::from_str(json_data).expect("Failed to convert a JSON to a ProjectStructure");
 
-    println!("{:#?}", project_structure);
+    assert!(!project_structure
+        .structure_and_format
+        .visual_aids
+        .description
+        .is_empty())
 }

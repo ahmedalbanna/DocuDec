@@ -1,6 +1,9 @@
 use std::sync::Arc;
 
-use axum::{extract::State, Json};
+use axum::{
+    extract::{rejection::JsonRejection, State},
+    Json,
+};
 use docuai::{
     docu_requests::{
         responses::{
@@ -12,12 +15,14 @@ use docuai::{
     DocuError,
 };
 use google_generative_ai_rs::v1::api::Client;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use tracing::{debug, error, info, instrument};
+
+use crate::routes::gen::error::map_json_rejection;
 
 use super::error::{map_ai_error, GenError};
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Serialize, Debug, Default)]
 pub struct ProjectStructurePayload {
     project_info: ProjectInfo,
     project_content: ProjectContent,
@@ -26,8 +31,13 @@ pub struct ProjectStructurePayload {
 #[instrument(skip(model))]
 pub async fn generate_project_structure(
     State(model): State<Arc<Client>>,
-    Json(payload): Json<ProjectStructurePayload>,
+    payload: Result<Json<ProjectStructurePayload>, JsonRejection>,
 ) -> Result<Json<ProjectStructure>, GenError> {
+    let payload = match payload {
+        Ok(p) => p.0,
+        Err(err) => return Err(map_json_rejection::<ProjectStructurePayload>(err)),
+    };
+
     info!(
         ">> Generating project content based on the provided project info: {:#?}\n\n project_content: {:#?}",
         payload.project_info, payload.project_content

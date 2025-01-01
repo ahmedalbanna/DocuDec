@@ -38,5 +38,5 @@ fn test_titles_conversion() {
     let titles: docuai::docu_requests::responses::alter_titles::Titles =
         serde_json::from_str(json_data).expect("Failed to parse the json to Titles");
 
-    println!("{:#?}", titles);
+    assert!(!titles.recommendation.is_empty())
 }

@@ -90,5 +90,9 @@ fn test_project_content_conversion() {
     let project_content: docuai::docu_requests::responses::project_content::ProjectContent =
         serde_json::from_str(json_data).expect("Failed to parse JSON to ProjectContent");
 
-    println!("{:#?}", project_content);
+    assert!(!project_content
+        .project_content
+        .future_work
+        .description
+        .is_empty())
 }

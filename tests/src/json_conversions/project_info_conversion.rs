@@ -79,9 +79,9 @@ fn test_project_info_conversion() {
         }
     }
     "#;
-    // Deserialize JSON into the ProjectInfo struct
-    let titles: docuai::docu_requests::responses::project_info::ProjectInfo =
+
+    let project_info: docuai::docu_requests::responses::project_info::ProjectInfo =
         serde_json::from_str(json_data).expect("Failed to parse json to ProjectInfo");
 
-    println!("{:#?}", titles);
+    assert!(!project_info.field_of_study.academic_field.is_empty())
 }
