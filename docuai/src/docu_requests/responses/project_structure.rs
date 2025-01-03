@@ -12,19 +12,21 @@ pub struct VisualAids {
 }
 
 #[derive(Deserialize, Serialize, Debug, Default)]
+#[serde(rename_all = "camelCase")]
 pub struct StructureAndFormat {
-    #[serde(rename = "targetLength")]
+    #[serde(alias = "target_length")]
     pub target_length: String,
 
-    #[serde(rename = "chapterStructure")]
+    #[serde(alias = "chapter_structure")]
     pub chapter_structure: ChapterStructure,
 
-    #[serde(rename = "visualAids")]
+    #[serde(alias = "visual_aids")]
     pub visual_aids: VisualAids,
 }
 
 #[derive(Deserialize, Serialize, Debug, Default)]
+#[serde(rename_all = "camelCase")]
 pub struct ProjectStructure {
-    #[serde(rename = "structureAndFormat")]
+    #[serde(alias = "structure_and_format")]
     pub structure_and_format: StructureAndFormat,
 }

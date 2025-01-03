@@ -45,7 +45,7 @@ impl DocuRequest<'_> {
             }
 
             Self::AdditionalInstructoins(_, _, _) => schema::get_gen_config(
-                schemas::additoinal_instructions::create_additional_instructions_schema(),
+                schemas::additoinal_instruction::create_additional_instructions_schema(),
             ),
         }
     }
@@ -69,7 +69,8 @@ impl DocuRequest<'_> {
             }
 
             Self::AdditionalInstructoins(_, _, _) => {
-                sysinsts::additional_instructions::ALTER_TITLES_SYSTEM_INSTRUCTION.to_string()
+                sysinsts::additional_instruction::ADDITIONAL_INSTRUCTION_SYSTEM_INSTRUCTION
+                    .to_string()
             }
         }
     }

@@ -5,7 +5,7 @@ pub mod tests {
     use serde_json::json;
 
     #[tokio::test]
-    async fn test_empty_title() {
+    async fn test_empty_project_info_title() {
         let client = get_client();
 
         let res = client
@@ -25,11 +25,11 @@ pub mod tests {
             .as_str()
             .expect("Failed to get the error value");
 
-        assert!(error_json.contains("The title cannot be empty"))
+        assert!(error_json.contains("The title was not provided"))
     }
 
     #[tokio::test]
-    async fn test_valid_title() {
+    async fn test_valid_project_info_title() {
         let client = get_client();
 
         let res = client
@@ -42,6 +42,8 @@ pub mod tests {
             .await
             .unwrap();
 
+        println!("{:#?}", res.json_body().unwrap());
+
         assert_eq!(res.status().as_u16(), 200);
 
         let json_body = res
@@ -49,6 +51,6 @@ pub mod tests {
             .expect("Failed convert the return JSON back to a ProjectInfo struct");
 
         println!("{:#?}", json_body);
-        assert!(!json_body.title.is_empty());
+        assert!(!json_body.project_title.is_empty());
     }
 }

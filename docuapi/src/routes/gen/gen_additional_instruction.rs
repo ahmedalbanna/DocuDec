@@ -7,7 +7,7 @@ use axum::{
 use docuai::{
     docu_requests::{
         responses::{
-            additional_instructions::AdditionalInstructions, project_content::ProjectContent,
+            additional_instruction::AdditionalInstructions, project_content::ProjectContent,
             project_info::ProjectInfo, project_structure::ProjectStructure,
         },
         DocuRequest,

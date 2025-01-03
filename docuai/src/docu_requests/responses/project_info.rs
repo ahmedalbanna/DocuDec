@@ -1,83 +1,86 @@
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug, Default)]
+#[serde(rename_all = "camelCase")]
 pub struct ProjectInfo {
-    #[serde(rename = "fieldOfStudy")]
+    #[serde(alias = "field_of_study")]
     pub field_of_study: FieldOfStudy,
-    #[serde(rename = "projectScope")]
-    pub scope: ProjectScope,
-    #[serde(rename = "projectTitle")]
-    pub title: String,
-    #[serde(rename = "targetAudience")]
-    pub audience: TargetAudience,
+
+    #[serde(alias = "project_scope")]
+    pub project_scope: ProjectScope,
+
+    #[serde(alias = "project_title")]
+    pub project_title: String,
+
+    #[serde(alias = "target_audience")]
+    pub target_audience: TargetAudience,
 }
 
 #[derive(Serialize, Deserialize, Debug, Default)]
+#[serde(rename_all = "camelCase")]
 pub struct FieldOfStudy {
-    #[serde(rename = "academicField")]
+    #[serde(alias = "academic_field")]
     pub academic_field: String,
-    #[serde(rename = "justification")]
-    pub justifications: Vec<String>,
+    pub justification: Vec<String>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Default)]
+#[serde(rename_all = "camelCase")]
 pub struct ProjectScope {
-    #[serde(rename = "approvalProcess")]
+    #[serde(alias = "approval_process")]
     pub approval_process: String,
-    #[serde(rename = "boundaries")]
     pub boundaries: String,
-    #[serde(rename = "description")]
     pub description: String,
-    #[serde(rename = "objectivesAndGoals")]
-    pub objectives: Vec<String>,
-    #[serde(rename = "resourceAllocation")]
+
+    #[serde(alias = "objectives_and_goals")]
+    pub objectives_and_goals: Vec<String>,
+
+    #[serde(alias = "resource_allocation")]
     pub resource_allocation: ResourceAllocation,
-    #[serde(rename = "riskAssessment")]
+
+    #[serde(alias = "risk_assessment")]
     pub risk_assessment: String,
-    #[serde(rename = "stakeholderIdentification")]
-    pub stakeholders: Vec<String>,
-    #[serde(rename = "timeline")]
+
+    #[serde(alias = "stakeholder_identification")]
+    pub stakeholder_identification: Vec<String>,
     pub timeline: Timeline,
 }
 
 #[derive(Serialize, Deserialize, Debug, Default)]
+#[serde(rename_all = "camelCase")]
 pub struct ResourceAllocation {
-    #[serde(rename = "teamResponsibilities")]
+    #[serde(alias = "team_responsibilities")]
     pub team_responsibilities: Vec<String>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Default)]
 pub struct Timeline {
-    #[serde(rename = "start")]
     pub start: String,
-    #[serde(rename = "end")]
     pub end: String,
-    #[serde(rename = "milestones")]
     pub milestones: Vec<String>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Default)]
+#[serde(rename_all = "camelCase")]
 pub struct TargetAudience {
-    #[serde(rename = "audienceFeedback")]
-    pub feedback: Vec<String>,
-    #[serde(rename = "audiencePersonas")]
-    pub personas: Vec<String>,
-    #[serde(rename = "customerDataAnalysis")]
-    pub data_analysis: Vec<String>,
-    #[serde(rename = "demographics")]
+    #[serde(alias = "audience_feedback")]
+    pub audience_feedback: Vec<String>,
+
+    #[serde(alias = "audience_personas")]
+    pub audience_personas: Vec<String>,
+
+    #[serde(alias = "customer_data_analysis")]
+    pub customer_data_analysis: Vec<String>,
     pub demographics: Demographics,
-    #[serde(rename = "marketResearch")]
+
+    #[serde(alias = "market_research")]
     pub market_research: String,
-    #[serde(rename = "psychographics")]
     pub psychographics: Vec<String>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Default)]
 pub struct Demographics {
-    #[serde(rename = "age")]
     pub age: String,
-    #[serde(rename = "gender")]
     pub gender: String,
-    #[serde(rename = "location")]
     pub location: String,
 }

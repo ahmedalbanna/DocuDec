@@ -1,5 +1,6 @@
-use std::fmt::Display;
+use std::{borrow::Cow, collections::HashMap, fmt::Display};
 
+use serde::Serialize;
 use serde_json::Value;
 
 pub enum SchemaType {
@@ -8,37 +9,46 @@ pub enum SchemaType {
     Object,
 }
 
-impl Display for SchemaType {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+impl SchemaType {
+    pub fn as_str(&self) -> &'static str {
         match self {
-            SchemaType::Object => f.write_str("object"),
-            SchemaType::String => f.write_str("string"),
-            SchemaType::Array => f.write_str("array"),
+            SchemaType::String => "string",
+            SchemaType::Array => "array",
+            SchemaType::Object => "object",
         }
     }
 }
 
-#[derive(Default, Clone)]
+impl ToString for SchemaType {
+    fn to_string(&self) -> String {
+        self.as_str().to_string()
+    }
+}
+
+#[derive(Default, Clone, Serialize)]
 pub struct Schema {
-    schema_type: String,
-    description: Option<String>,
+    #[serde(rename = "type")]
+    schema_type: Cow<'static, str>,
+    description: Option<Cow<'static, str>>,
     items: Option<Box<Schema>>,
+
+    #[serde(rename = "required")]
     required_fields: Option<Vec<String>>,
-    properties: Option<Vec<(String, Box<Schema>)>>,
+    properties: Option<HashMap<String, Box<Schema>>>,
 }
 
 impl Schema {
     // Creates a base schema of the given type
     pub fn new(schema_type: SchemaType) -> Self {
         Schema {
-            schema_type: schema_type.to_string(),
+            schema_type: Cow::Borrowed(schema_type.as_str()),
             ..Default::default()
         }
     }
 
     // Sets a description for the schema
     pub fn description(mut self, description: &str) -> Self {
-        self.description = Some(description.to_string());
+        self.description = Some(Cow::Owned(description.to_string()));
         self
     }
 
@@ -51,8 +61,8 @@ impl Schema {
     // Adds a property to the schema, which can be another object or a basic type (string, array, etc.)
     pub fn property(mut self, name: &str, schema: Schema) -> Self {
         self.properties
-            .get_or_insert_with(Vec::new) // Initializes `properties` if it's `None`
-            .push((name.to_string(), Box::new(schema)));
+            .get_or_insert_with(HashMap::new) // Initializes `properties` if it's `None`
+            .insert(name.to_string(), Box::new(schema));
         self
     }
 
@@ -61,7 +71,11 @@ impl Schema {
         self.items = Some(Box::new(schema));
         self
     }
+    pub fn build(self) -> Value {
+        serde_json::to_value(self).unwrap()
+    }
 
+    /*
     pub fn build(self) -> Value {
         let mut schema = indexmap::IndexMap::new();
 
@@ -92,4 +106,5 @@ impl Schema {
 
         Value::Object(schema.into_iter().collect())
     }
+    */
 }

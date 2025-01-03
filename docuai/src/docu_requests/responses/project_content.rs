@@ -7,37 +7,39 @@ pub struct ProjectContentRequiredSchema {
 }
 
 #[derive(Serialize, Deserialize, Debug, Default)]
+#[serde(rename_all = "camelCase")]
 pub struct ProjectContentSchema {
-    #[serde(rename = "problemStatement")]
+    #[serde(alias = "problem_statement")]
     pub problem_statement: ProjectContentRequiredSchema,
 
-    #[serde(rename = "researchQuestions")]
+    #[serde(alias = "research_questions")]
     pub research_questions: ProjectContentRequiredSchema,
 
-    #[serde(rename = "literatureReview")]
+    #[serde(alias = "literature_review")]
     pub literature_review: ProjectContentRequiredSchema,
 
     pub methodology: ProjectContentRequiredSchema,
 
-    #[serde(rename = "systemDesign")]
+    #[serde(alias = "system_design")]
     pub system_design: ProjectContentRequiredSchema,
 
     pub implementation: ProjectContentRequiredSchema,
 
-    #[serde(rename = "testingAndValidation")]
+    #[serde(alias = "testing_and_validation")]
     pub testing_and_validation: ProjectContentRequiredSchema,
 
-    #[serde(rename = "resultsAndAnalysis")]
+    #[serde(alias = "results_and_analysis")]
     pub results_and_analysis: ProjectContentRequiredSchema,
 
-    #[serde(rename = "futureWork")]
+    #[serde(alias = "future_work")]
     pub future_work: ProjectContentRequiredSchema,
 
     pub contributions: ProjectContentRequiredSchema,
 }
 
 #[derive(Serialize, Deserialize, Debug, Default)]
+#[serde(rename_all = "camelCase")]
 pub struct ProjectContent {
-    #[serde(rename = "projectContent")]
+    #[serde(alias = "project_content")]
     pub project_content: ProjectContentSchema,
 }

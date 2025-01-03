@@ -3,7 +3,7 @@ use std::sync::Arc;
 use axum::{routing::post, Router};
 
 pub mod error;
-mod gen_additional_instructions;
+mod gen_additional_instruction;
 mod gen_project_content;
 mod gen_project_info;
 mod gen_project_structure;
@@ -28,7 +28,7 @@ pub async fn routes() -> Router {
         )
         .route(
             "/additional-instructions",
-            post(gen_additional_instructions::generate_additional_instructions),
+            post(gen_additional_instruction::generate_additional_instructions),
         )
         .with_state(model)
 }

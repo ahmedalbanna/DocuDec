@@ -25,7 +25,7 @@ pub mod tests {
             .as_str()
             .expect("Failed to get the error value");
 
-        assert!(error_json.contains("The title cannot be empty"))
+        assert!(error_json.contains("The title was not provided"))
     }
 
     #[tokio::test]
@@ -41,6 +41,8 @@ pub mod tests {
             )
             .await
             .unwrap();
+
+        println!("{:#?}", res.json_body().unwrap());
 
         assert_eq!(res.status().as_u16(), 200);
 

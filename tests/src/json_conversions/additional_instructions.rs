@@ -1,18 +1,20 @@
 
 #[test]
-fn test_additional_instructions_conversion() {
-    let json_data = r#"
-        {
-          "additionalInstructions": {
-            "constraints": "Word count should be between 2000-2500 words. The report must adhere to a standard academic format. All code snippets should be formatted properly. Diagrams should be clear and readable in both PDF and HTML formats. Tables should be clear and appropriately labeled. The report must be delivered in both PDF and HTML formats.",
-            "keywords": "PlantUML, automated report generation, software documentation, UML diagrams, PDF report, HTML report, parser, Python, Jinja2, ReportLab, software engineering, diagram rendering, modular design, system testing, iterative development, test cases, performance analysis, system architecture, software automation",
-            "toneAndStyle": "The tone of the report should be formal and academic, with a clear, concise, and objective writing style. Technical language should be precise and explained for clarity. The style should maintain a professional and informative approach, suitable for a technical audience."
-          }
-        }
-    "#;
+fn test_additional_instructions_conversion_from_camelcase() {
+    let json_data = crate::json_templates::additional_instruction::camel_case::ADDITIONAL_INSTRUCTION_TEMPLATE;
 
     let additional_instructions: 
-docuai::docu_requests::responses::additional_instructions::AdditionalInstructions = serde_json::from_str(json_data).expect("Failed to convert a JSON to AdditionalInstructions");
+docuai::docu_requests::responses::additional_instruction::AdditionalInstructions = serde_json::from_str(json_data).expect("Failed to convert a JSON to AdditionalInstructions");
+
+    assert!(!additional_instructions.additional_instructions.tone_and_style.is_empty())
+}
+
+#[test]
+fn test_additional_instructions_conversion_from_snake_case() {
+    let json_data = crate::json_templates::additional_instruction::snake_case::ADDITIONAL_INSTRUCTION_TEMPLATE;
+
+    let additional_instructions: 
+docuai::docu_requests::responses::additional_instruction::AdditionalInstructions = serde_json::from_str(json_data).expect("Failed to convert a JSON to AdditionalInstructions");
 
     assert!(!additional_instructions.additional_instructions.tone_and_style.is_empty())
 }
