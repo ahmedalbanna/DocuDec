@@ -1518,6 +1518,425 @@ def generate_appendices(
         return {}
 
 
+def generate_table_of_contents() -> str:
+    """Generates the table of contents for the report."""
+    return """
+## Table of Contents
+1.  [Project Information](#project-information)
+2.  [Project Content](#project-content)
+3.  [Project Structure](#project-structure)
+4.  [Additional Instructions](#additional-instructions)
+5.  [Abstract](#abstract)
+6.  [Project Details](#project-details)
+7.  [Conclusion](#conclusion)
+8.  [References](#references)
+9.  [Appendices](#appendices)
+"""
+
+
+def generate_project_information_section(project_info: Dict[str, Any]) -> str:
+    """Generates the project information section of the report."""
+    if not project_info or "projectInformation" not in project_info:
+        return "## 1. Project Information\n\nData not available."
+
+    pi = project_info["projectInformation"]
+    project_title = pi.get("projectTitle", "N/A")
+    scope_description = pi.get("projectScope", {}).get("description", "N/A")
+    scope_objectives = pi.get("projectScope", {}).get("objectivesAndGoals", [])
+    scope_boundaries = pi.get("projectScope", {}).get("boundaries", "N/A")
+    scope_stakeholders = pi.get("projectScope", {}).get("stakeholderIdentification", [])
+    scope_timeline_start = (
+        pi.get("projectScope", {}).get("timeline", {}).get("start", "N/A")
+    )
+    scope_timeline_end = (
+        pi.get("projectScope", {}).get("timeline", {}).get("end", "N/A")
+    )
+    scope_timeline_milestones = (
+        pi.get("projectScope", {}).get("timeline", {}).get("milestones", [])
+    )
+    scope_resource_allocation = (
+        pi.get("projectScope", {})
+        .get("resourceAllocation", {})
+        .get("teamResponsibilities", [])
+    )
+    scope_risk_assessment = pi.get("projectScope", {}).get("riskAssessment", "N/A")
+    scope_approval_process = pi.get("projectScope", {}).get("approvalProcess", "N/A")
+    field_academic = pi.get("fieldOfStudy", {}).get("academicField", "N/A")
+    field_justification = pi.get("fieldOfStudy", {}).get("justification", [])
+    target_market_research = pi.get("targetAudience", {}).get("marketResearch", "N/A")
+    target_demographics = pi.get("targetAudience", {}).get("demographics", {})
+    target_psychographics = pi.get("targetAudience", {}).get("psychographics", [])
+    target_audience_feedback = pi.get("targetAudience", {}).get("audienceFeedback", [])
+    target_customer_data = pi.get("targetAudience", {}).get(
+        "customerDataAnalysis", "N/A"
+    )
+    target_audience_personas = pi.get("targetAudience", {}).get("audiencePersonas", [])
+
+    return f"""
+## 1. Project Information
+{project_title}
+### 1.1 Project Scope
+**Description:** {scope_description}\n
+**Objectives and Goals:**
+{format_markdown_from_data(scope_objectives, indent='  ', level=0)}
+**Boundaries:** {scope_boundaries}\n
+**Stakeholder Identification:**
+{format_markdown_from_data(scope_stakeholders, indent='  ', level=0)}
+**Timeline:**
+- **Start:** {scope_timeline_start}
+- **End:** {scope_timeline_end}
+- **Milestones:** {format_markdown_from_data(scope_timeline_milestones, indent='  ', level=0)}
+**Resource Allocation:**
+{format_markdown_from_data(scope_resource_allocation, indent='  ', level=0)}
+**Risk Assessment:** {scope_risk_assessment}
+**Approval Process:** {scope_approval_process}
+### 1.2 Field of Study
+**Academic Field:** {field_academic}\n
+**Justification:**
+{format_markdown_from_data(field_justification, indent='  ', level=0)}
+### 1.3 Target Audience
+**Market Research:** {target_market_research}\n
+**Demographics:**
+{format_markdown_from_data(target_demographics, indent='  ', level=0)}
+**Psychographics:**
+{format_markdown_from_data(target_psychographics, indent='  ', level=0)}
+**Audience Feedback:**
+{format_markdown_from_data(target_audience_feedback, indent='  ', level=0)}
+**Customer Data Analysis:** {target_customer_data}\n
+**Audience Personas:**
+{format_markdown_from_data(target_audience_personas, indent='  ', level=0)}
+"""
+
+
+def generate_project_content_section(project_content: Dict[str, Any]) -> str:
+    """Generates the project content section of the report."""
+    if not project_content or "projectContent" not in project_content:
+        return "## 2. Project Content\n\nData not available."
+
+    pc = project_content["projectContent"]
+    problem_description = pc.get("problemStatement", {}).get("description", "N/A")
+    problem_steps = pc.get("problemStatement", {}).get("steps", [])
+    research_description = pc.get("researchQuestions", {}).get("description", "N/A")
+    research_steps = pc.get("researchQuestions", {}).get("steps", [])
+    literature_description = pc.get("literatureReview", {}).get("description", "N/A")
+    literature_steps = pc.get("literatureReview", {}).get("steps", [])
+    methodology_description = pc.get("methodology", {}).get("description", "N/A")
+    methodology_steps = pc.get("methodology", {}).get("steps", [])
+    system_description = pc.get("systemDesign", {}).get("description", "N/A")
+    system_steps = pc.get("systemDesign", {}).get("steps", [])
+    implementation_description = pc.get("implementation", {}).get("description", "N/A")
+    implementation_steps = pc.get("implementation", {}).get("steps", [])
+    testing_description = pc.get("testingAndValidation", {}).get("description", "N/A")
+    testing_steps = pc.get("testingAndValidation", {}).get("steps", [])
+    results_description = pc.get("resultsAndAnalysis", {}).get("description", "N/A")
+    results_steps = pc.get("resultsAndAnalysis", {}).get("steps", [])
+    future_description = pc.get("futureWork", {}).get("description", "N/A")
+    future_steps = pc.get("futureWork", {}).get("steps", [])
+    contributions_description = pc.get("contributions", {}).get("description", "N/A")
+    contributions_steps = pc.get("contributions", {}).get("steps", [])
+
+    return f"""
+## 2. Project Content
+### 2.1 Problem Statement
+**Description:** {problem_description}\n
+**Steps:**
+{format_markdown_from_data(problem_steps, indent='  ', level=0)}
+### 2.2 Research Questions
+**Description:** {research_description}\n
+**Steps:**
+{format_markdown_from_data(research_steps, indent='  ', level=0)}
+### 2.3 Literature Review
+**Description:** {literature_description}\n
+**Steps:**
+{format_markdown_from_data(literature_steps, indent='  ', level=0)}
+### 2.4 Methodology
+**Description:** {methodology_description}\n
+**Steps:**
+{format_markdown_from_data(methodology_steps, indent='  ', level=0)}
+### 2.5 System Design
+**Description:** {system_description}\n
+**Steps:**
+{format_markdown_from_data(system_steps, indent='  ', level=0)}
+### 2.6 Implementation
+**Description:** {implementation_description}\n
+**Steps:**
+{format_markdown_from_data(implementation_steps, indent='  ', level=0)}
+### 2.7 Testing and Validation
+**Description:** {testing_description}\n
+**Steps:**
+{format_markdown_from_data(testing_steps, indent='  ', level=0)}
+### 2.8 Results and Analysis
+**Description:** {results_description}\n
+**Steps:**
+{format_markdown_from_data(results_steps, indent='  ', level=0)}
+### 2.9 Future Work
+**Description:** {future_description}\n
+**Steps:**
+{format_markdown_from_data(future_steps, indent='  ', level=0)}
+### 2.10 Contributions
+**Description:** {contributions_description}\n
+**Steps:**
+{format_markdown_from_data(contributions_steps, indent='  ', level=0)}
+"""
+
+
+def generate_project_structure_section(project_structure: Dict[str, Any]) -> str:
+    """Generates the project structure section of the report."""
+    if not project_structure or "structureAndFormat" not in project_structure:
+        return "## 3. Project Structure\n\nData not available."
+
+    ps = project_structure["structureAndFormat"]
+    target_length = ps.get("targetLength", "N/A")
+    chapter_chapters = ps.get("chapterStructure", {}).get("chapters", [])
+    chapter_description = ps.get("chapterStructure", {}).get("description", "N/A")
+    visual_diagrams = ps.get("visualAids", {}).get("diagram", [])
+
+    return f"""
+## 3. Project Structure
+### 3.1 Target Length
+{target_length}
+### 3.2 Chapter Structure
+**Chapters:**
+{format_markdown_from_data(chapter_chapters, indent='  ', level=0)}
+**Description:** {chapter_description}
+### 3.3 Visual Aids
+**Diagrams:**
+{format_markdown_from_data(visual_diagrams, indent='  ', level=0)}
+"""
+
+
+def generate_additional_instructions_section(
+    project_instructions: Dict[str, Any]
+) -> str:
+    """Generates the additional instructions section of the report."""
+    if not project_instructions or "additionalInstructions" not in project_instructions:
+        return "## 4. Additional Instructions\n\nData not available."
+
+    ai = project_instructions["additionalInstructions"]
+    tone_and_style = ai.get("toneAndStyle", [])
+    keywords = ai.get("keywords", [])
+    constraints = ai.get("constraints", "N/A")
+    return f"""
+## 4. Additional Instructions
+### 4.1 Tone and Style
+{format_markdown_from_data(tone_and_style, indent='  ', level=0)}
+### 4.2 Keywords
+{format_markdown_from_data(keywords, indent='  ', level=0)}
+### 4.3 Constraints
+{constraints}
+"""
+
+
+def generate_abstract_section(project_abstract: Dict[str, Any]) -> str:
+    """Generates the abstract section of the report."""
+    if not project_abstract or "abstract" not in project_abstract:
+        return "## 5. Abstract\n\nData not available."
+    abstract = project_abstract["abstract"]
+
+    return f"""
+## 5. Abstract
+{abstract}
+"""
+
+
+def generate_project_details_section(project_details: Dict[str, Any]) -> str:
+    """Generates the project details section of the report."""
+    if not project_details or "projectDetails" not in project_details:
+        return "## 6. Project Details\n\nData not available."
+
+    pd = project_details["projectDetails"]
+    overview = pd.get("overview", "N/A")
+    planning_define = pd.get("projectPlanning", {}).get("defineScope", "N/A")
+    planning_timeline = pd.get("projectPlanning", {}).get("establishTimeline", "N/A")
+    planning_stakeholders = pd.get("projectPlanning", {}).get(
+        "identifyStakeholders", "N/A"
+    )
+    planning_resources = pd.get("projectPlanning", {}).get("allocateResources", "N/A")
+    requirements_interviews = pd.get("requirementsGathering", {}).get(
+        "conductInterviews", "N/A"
+    )
+    requirements_documentation = pd.get("requirementsGathering", {}).get(
+        "reviewDocumentation", "N/A"
+    )
+    requirements_compile = pd.get("requirementsGathering", {}).get(
+        "compileUserRequirements", "N/A"
+    )
+    hardware_cpu = (
+        pd.get("hardwareRequirements", {}).get("computingPower", {}).get("cpu", "N/A")
+    )
+    hardware_ram = (
+        pd.get("hardwareRequirements", {}).get("computingPower", {}).get("ram", "N/A")
+    )
+    hardware_storage = (
+        pd.get("hardwareRequirements", {})
+        .get("computingPower", {})
+        .get("storage", "N/A")
+    )
+    hardware_input = (
+        pd.get("hardwareRequirements", {})
+        .get("peripheralDevices", {})
+        .get("inputDevices", "N/A")
+    )
+    hardware_output = (
+        pd.get("hardwareRequirements", {})
+        .get("peripheralDevices", {})
+        .get("outputDevices", "N/A")
+    )
+    hardware_network = pd.get("hardwareRequirements", {}).get(
+        "networkConnectivity", "N/A"
+    )
+    hardware_scalability = pd.get("hardwareRequirements", {}).get("scalability", "N/A")
+    software_os = pd.get("softwareRequirements", {}).get("operatingSystem", "N/A")
+    software_applications = pd.get("softwareRequirements", {}).get(
+        "softwareApplications", {}
+    )
+    software_applications_list = software_applications.get("listApplications", "N/A")
+    software_applications_version = software_applications.get(
+        "versionCompatibility", "N/A"
+    )
+    software_database = pd.get("softwareRequirements", {}).get(
+        "databaseRequirements", "N/A"
+    )
+    software_security = pd.get("softwareRequirements", {}).get(
+        "securitySoftwareNeeds", "N/A"
+    )
+    design_diagrams = pd.get("designPhase", {}).get("systemArchitectureDiagrams", "N/A")
+    design_mockups = pd.get("designPhase", {}).get("userInterfaceMockups", "N/A")
+    design_schema = pd.get("designPhase", {}).get("databaseSchema", "N/A")
+    implementation_setup = pd.get("implementationPhase", {}).get("hardwareSetup", "N/A")
+    implementation_software = pd.get("implementationPhase", {}).get(
+        "softwareInstallation", {}
+    )
+    implementation_os = implementation_software.get("installOS", "N/A")
+    implementation_applications = implementation_software.get(
+        "installApplications", "N/A"
+    )
+    implementation_code = pd.get("implementationPhase", {}).get(
+        "codeDevelopment", "N/A"
+    )
+    testing_plan = pd.get("testingPhase", {}).get("createTestPlan", "N/A")
+    testing_unit = pd.get("testingPhase", {}).get("unitTesting", "N/A")
+    testing_integration = pd.get("testingPhase", {}).get("integrationTesting", "N/A")
+    testing_acceptance = pd.get("testingPhase", {}).get("userAcceptanceTesting", "N/A")
+    deployment_plan = pd.get("deploymentPhase", {}).get("deploymentPlan", "N/A")
+    deployment_training = pd.get("deploymentPhase", {}).get("userTraining", "N/A")
+    maintenance_plan = pd.get("maintenanceAndSupport", {}).get("maintenancePlan", "N/A")
+    maintenance_services = pd.get("maintenanceAndSupport", {}).get(
+        "supportServices", "N/A"
+    )
+    documentation_manual = pd.get("documentation", {}).get("userManual", "N/A")
+    documentation_technical = pd.get("documentation", {}).get(
+        "technicalDocumentation", "N/A"
+    )
+
+    return f"""
+## 6. Project Details
+### 6.1 Overview
+{overview}
+### 6.2 Project Planning\n
+**Define Scope:** {planning_define}\n
+**Establish Timeline:** {planning_timeline}\n
+**Identify Stakeholders:** {planning_stakeholders}\n
+**Allocate Resources:** {planning_resources}\n
+### 6.3 Requirements Gathering\n
+**Conduct Interviews:** {requirements_interviews}\n
+**Review Documentation:** {requirements_documentation}\n
+**Compile User Requirements:** {requirements_compile}\n
+### 6.4 Hardware Requirements\n
+**Computing Power:**\n
+- **CPU:** {hardware_cpu}\n
+- **RAM:** {hardware_ram}\n
+- **Storage:** {hardware_storage}\n
+**Peripheral Devices:**\n
+- **Input Devices:** {hardware_input}\n
+- **Output Devices:** {hardware_output}\n
+**Network Connectivity:** {hardware_network}\n
+**Scalability:** {hardware_scalability}\n
+### 6.5 Software Requirements\n
+**Operating System:** {software_os}\n
+**Software Applications:**\n
+- **List of Applications:** {software_applications_list}\n
+- **Version Compatibility:** {software_applications_version}\n
+**Database Requirements:** {software_database}\n
+**Security Software Needs:** {software_security}\n
+### 6.6 Design Phase\n
+**System Architecture Diagrams:** {design_diagrams}\n
+**User Interface Mockups:** {design_mockups}\n
+**Database Schema:** {design_schema}\n
+### 6.7 Implementation Phase\n
+**Hardware Setup:** {implementation_setup}\n
+**Software Installation:**\n
+- **Install OS:** {implementation_os}\n
+- **Install Applications:** {implementation_applications}\n
+**Code Development:** {implementation_code}\n
+### 6.8 Testing Phase\n
+**Create Test Plan:** {testing_plan}\n
+**Unit Testing:** {testing_unit}\n
+**Integration Testing:** {testing_integration}\n
+**User Acceptance Testing:** {testing_acceptance}\n
+### 6.9 Deployment Phase\n
+**Deployment Plan:** {deployment_plan}\n
+**User Training:** {deployment_training}\n
+### 6.10 Maintenance and Support\n
+**Maintenance Plan:** {maintenance_plan}\n
+**Support Services:** {maintenance_services}\n
+### 6.11 Documentation\n
+**User Manual:** {documentation_manual}\n
+**Technical Documentation:** {documentation_technical}\n
+"""
+
+
+def generate_conclusion_section(project_conclusion: Dict[str, Any]) -> str:
+    """Generates the conclusion section of the report."""
+    if not project_conclusion or "conclusion" not in project_conclusion:
+        return "## 7. Conclusion\n\nData not available."
+
+    pc = project_conclusion["conclusion"]
+    summary = pc.get("summaryOfFindings", "N/A")
+    achievements = pc.get("achievements", "N/A")
+    lessons = pc.get("lessonsLearned", "N/A")
+    future = pc.get("futureDirections", "N/A")
+    final = pc.get("finalThoughts", "N/A")
+
+    return f"""
+## 7. Conclusion
+### 7.1 Summary of Findings
+{summary}
+### 7.2 Achievements
+{achievements}
+### 7.3 Lessons Learned
+{lessons}
+### 7.4 Future Directions
+{future}
+### 7.5 Final Thoughts
+{final}
+"""
+
+
+def generate_references_section(project_references: Dict[str, Any]) -> str:
+    """Generates the references section of the report."""
+    if not project_references or "references" not in project_references:
+        return "## 8. References\n\nData not available."
+    references = project_references["references"]
+
+    return f"""
+## 8. References
+{format_markdown_from_data(references, indent='  ', level=0)}
+"""
+
+
+def generate_appendices_section(project_appendices: Dict[str, Any]) -> str:
+    """Generates the appendices section of the report."""
+    if not project_appendices or "appendices" not in project_appendices:
+        return "## 9. Appendices\n\nData not available."
+    appendices = project_appendices["appendices"]
+
+    return f"""
+## 9. Appendices
+{format_markdown_from_data(appendices, indent='  ', level=0)}
+"""
+
+
 def generate_full_report(
     project_info: Dict[str, Any],
     project_content: Dict[str, Any],
@@ -1529,222 +1948,36 @@ def generate_full_report(
     project_references: Dict[str, Any],
     project_appendices: Dict[str, Any],
 ) -> str:
-    """Generates the full Markdown report string from the given data dictionaries.
+    """Generates the full Markdown report string from the given data dictionaries."""
 
-    Args:
-        project_info (Dict[str, Any]): The project information dictionary.
-        project_content (Dict[str, Any]): The project content dictionary.
-        project_structure (Dict[str, Any]): The project structure dictionary.
-        project_instructions (Dict[str, Any]): The project instructions dictionary.
-        project_abstract (Dict[str, Any]): The project abstract dictionary.
-        project_details (Dict[str, Any]): The project details dictionary.
-        project_conclusion (Dict[str, Any]): The project conclusion dictionary.
-        project_references (Dict[str, Any]): The project references dictionary.
-        project_appendices (Dict[str, Any]): The project appendices dictionary.
-
-    Returns:
-        str: A string containing the generated report.
-    """
-    template = Template(
-        """
-# Comprehensive Graduation Project Report
-## Table of Contents
-1. [Project Information](#project-information)
-2. [Project Content](#project-content)
-3. [Project Structure](#project-structure)
-4. [Additional Instructions](#additional-instructions)
-5. [Abstract](#abstract)
-6. [Project Details](#project-details)
-7. [Conclusion](#conclusion)
-8. [References](#references)
-9. [Appendices](#appendices)
-
-## 1. Project Information
-{{ project_info['projectInformation']['projectTitle'] }}
-### 1.1 Project Scope
-**Description:** {{ project_info['projectInformation']['projectScope']['description'] }}
-**Objectives and Goals:**
-{{ format_markdown_from_data(project_info['projectInformation']['projectScope']['objectivesAndGoals'], indent='  ', level = 0) }}
-**Boundaries:** {{ project_info['projectInformation']['projectScope']['boundaries'] }}
-**Stakeholder Identification:**
-{{ format_markdown_from_data(project_info['projectInformation']['projectScope']['stakeholderIdentification'], indent='  ', level = 0) }}
-**Timeline:**
-- **Start:** {{ project_info['projectInformation']['projectScope']['timeline']['start'] }}
-- **End:** {{ project_info['projectInformation']['projectScope']['timeline']['end'] }}
-- **Milestones:** {{ format_markdown_from_data(project_info['projectInformation']['projectScope']['timeline']['milestones'], indent='  ', level = 0) }}
-**Resource Allocation:**
-{{ format_markdown_from_data(project_info['projectInformation']['projectScope']['resourceAllocation']['teamResponsibilities'], indent='  ', level = 0)}}
-**Risk Assessment:** {{ project_info['projectInformation']['projectScope']['riskAssessment'] }}
-**Approval Process:** {{ project_info['projectInformation']['projectScope']['approvalProcess'] }}
-### 1.2 Field of Study
-**Academic Field:** {{ project_info['projectInformation']['fieldOfStudy']['academicField'] }}
-**Justification:**
-{{ format_markdown_from_data(project_info['projectInformation']['fieldOfStudy']['justification'], indent='  ', level = 0) }}
-### 1.3 Target Audience
-**Market Research:** {{ project_info['projectInformation']['targetAudience']['marketResearch'] }}
-**Demographics:**
-{{ format_markdown_from_data(project_info['projectInformation']['targetAudience']['demographics'], indent='  ', level = 0) }}
-**Psychographics:**
-{{ format_markdown_from_data(project_info['projectInformation']['targetAudience']['psychographics'], indent='  ', level = 0) }}
-**Audience Feedback:**
-{{ format_markdown_from_data(project_info['projectInformation']['targetAudience']['audienceFeedback'], indent='  ', level = 0) }}
-**Customer Data Analysis:** {{ project_info['projectInformation']['targetAudience']['customerDataAnalysis'] }}
-**Audience Personas:**
-{{ format_markdown_from_data(project_info['projectInformation']['targetAudience']['audiencePersonas'], indent='  ', level = 0) }}
-
-## 2. Project Content
-### 2.1 Problem Statement
-**Description:** {{ project_content['projectContent']['problemStatement']['description'] }}
-**Steps:**
-{{ format_markdown_from_data(project_content['projectContent']['problemStatement']['steps'], indent='  ', level = 0) }}
-### 2.2 Research Questions
-**Description:** {{ project_content['projectContent']['researchQuestions']['description'] }}
-**Steps:**
-{{ format_markdown_from_data(project_content['projectContent']['researchQuestions']['steps'], indent='  ', level = 0) }}
-### 2.3 Literature Review
-**Description:** {{ project_content['projectContent']['literatureReview']['description'] }}
-**Steps:**
-{{ format_markdown_from_data(project_content['projectContent']['literatureReview']['steps'], indent='  ', level = 0) }}
-### 2.4 Methodology
-**Description:** {{ project_content['projectContent']['methodology']['description'] }}
-**Steps:**
-{{ format_markdown_from_data(project_content['projectContent']['methodology']['steps'], indent='  ', level = 0) }}
-### 2.5 System Design
-**Description:** {{ project_content['projectContent']['systemDesign']['description'] }}
-**Steps:**
-{{ format_markdown_from_data(project_content['projectContent']['systemDesign']['steps'], indent='  ', level = 0) }}
-### 2.6 Implementation
-**Description:** {{ project_content['projectContent']['implementation']['description'] }}
-**Steps:**
-{{ format_markdown_from_data(project_content['projectContent']['implementation']['steps'], indent='  ', level = 0) }}
-### 2.7 Testing and Validation
-**Description:** {{ project_content['projectContent']['testingAndValidation']['description'] }}
-**Steps:**
-{{ format_markdown_from_data(project_content['projectContent']['testingAndValidation']['steps'], indent='  ', level = 0) }}
-### 2.8 Results and Analysis
-**Description:** {{ project_content['projectContent']['resultsAndAnalysis']['description'] }}
-**Steps:**
-{{ format_markdown_from_data(project_content['projectContent']['resultsAndAnalysis']['steps'], indent='  ', level = 0) }}
-### 2.9 Future Work
-**Description:** {{ project_content['projectContent']['futureWork']['description'] }}
-**Steps:**
-{{ format_markdown_from_data(project_content['projectContent']['futureWork']['steps'], indent='  ', level = 0) }}
-### 2.10 Contributions
-**Description:** {{ project_content['projectContent']['contributions']['description'] }}
-**Steps:**
-{{ format_markdown_from_data(project_content['projectContent']['contributions']['steps'], indent='  ', level = 0) }}
-
-## 3. Project Structure
-### 3.1 Target Length
-{{ project_structure['structureAndFormat']['targetLength'] }}
-### 3.2 Chapter Structure
-**Chapters:**
-{{ format_markdown_from_data(project_structure['structureAndFormat']['chapterStructure']['chapters'], indent='  ', level = 0) }}
-**Description:** {{ project_structure['structureAndFormat']['chapterStructure']['description'] }}
-### 3.3 Visual Aids
-**Diagrams:**
-{{ format_markdown_from_data(project_structure['structureAndFormat']['visualAids']['diagram'], indent='  ', level = 0) }}
-
-## 4. Additional Instructions
-### 4.1 Tone and Style
-{{ format_markdown_from_data(project_instructions['additionalInstructions']['toneAndStyle'], indent='  ', level = 0) }}
-### 4.2 Keywords
-{{ format_markdown_from_data(project_instructions['additionalInstructions']['keywords'], indent='  ', level = 0) }}
-### 4.3 Constraints
-{{ project_instructions['additionalInstructions']['constraints'] }}
-
-## 5. Abstract
-{{ project_abstract['abstract'] }}
-
-## 6. Project Details
-### 6.1 Overview
-{{ project_details['projectDetails']['overview'] }}
-### 6.2 Project Planning
-**Define Scope:** {{ project_details['projectDetails']['projectPlanning']['defineScope'] }}
-**Establish Timeline:** {{ project_details['projectDetails']['projectPlanning']['establishTimeline'] }}
-**Identify Stakeholders:** {{ project_details['projectDetails']['projectPlanning']['identifyStakeholders'] }}
-**Allocate Resources:** {{ project_details['projectDetails']['projectPlanning']['allocateResources'] }}
-### 6.3 Requirements Gathering
-**Conduct Interviews:** {{ project_details['projectDetails']['requirementsGathering']['conductInterviews'] }}
-**Review Documentation:** {{ project_details['projectDetails']['requirementsGathering']['reviewDocumentation'] }}
-**Compile User Requirements:** {{ project_details['projectDetails']['requirementsGathering']['compileUserRequirements'] }}
-### 6.4 Hardware Requirements
-**Computing Power:**
-- **CPU:** {{ project_details['projectDetails']['hardwareRequirements']['computingPower']['cpu'] }}
-- **RAM:** {{ project_details['projectDetails']['hardwareRequirements']['computingPower']['ram'] }}
-- **Storage:** {{ project_details['projectDetails']['hardwareRequirements']['computingPower']['storage'] }}
-**Peripheral Devices:**
-- **Input Devices:** {{ project_details['projectDetails']['hardwareRequirements']['peripheralDevices']['inputDevices'] }}
-- **Output Devices:** {{ project_details['projectDetails']['hardwareRequirements']['peripheralDevices']['outputDevices'] }}
-**Network Connectivity:** {{ project_details['projectDetails']['hardwareRequirements']['networkConnectivity'] }}
-**Scalability:** {{ project_details['projectDetails']['hardwareRequirements']['scalability'] }}
-### 6.5 Software Requirements
-**Operating System:** {{ project_details['projectDetails']['softwareRequirements']['operatingSystem'] }}
-**Software Applications:**
-- **List of Applications:** {{ project_details['projectDetails']['softwareRequirements']['softwareApplications']['listApplications'] }}
-- **Version Compatibility:** {{ project_details['projectDetails']['softwareRequirements']['softwareApplications']['versionCompatibility'] }}
-**Database Requirements:** {{ project_details['projectDetails']['softwareRequirements']['databaseRequirements'] }}
-**Security Software Needs:** {{ project_details['projectDetails']['softwareRequirements']['securitySoftwareNeeds'] }}
-### 6.6 Design Phase
-**System Architecture Diagrams:** {{ project_details['projectDetails']['designPhase']['systemArchitectureDiagrams'] }}
-**User Interface Mockups:** {{ project_details['projectDetails']['designPhase']['userInterfaceMockups'] }}
-**Database Schema:** {{ project_details['projectDetails']['designPhase']['databaseSchema'] }}
-### 6.7 Implementation Phase
-**Hardware Setup:** {{ project_details['projectDetails']['implementationPhase']['hardwareSetup'] }}
-**Software Installation:**
-- **Install OS:** {{ project_details['projectDetails']['implementationPhase']['softwareInstallation']['installOS'] }}
-- **Install Applications:** {{ project_details['projectDetails']['implementationPhase']['softwareInstallation']['installApplications'] }}
-**Code Development:** {{ project_details['projectDetails']['implementationPhase']['codeDevelopment'] }}
-### 6.8 Testing Phase
-**Create Test Plan:** {{ project_details['projectDetails']['testingPhase']['createTestPlan'] }}
-**Unit Testing:** {{ project_details['projectDetails']['testingPhase']['unitTesting'] }}
-**Integration Testing:** {{ project_details['projectDetails']['testingPhase']['integrationTesting'] }}
-**User Acceptance Testing:** {{ project_details['projectDetails']['testingPhase']['userAcceptanceTesting'] }}
-### 6.9 Deployment Phase
-**Deployment Plan:** {{ project_details['projectDetails']['deploymentPhase']['deploymentPlan'] }}
-**User Training:** {{ project_details['projectDetails']['deploymentPhase']['userTraining'] }}
-### 6.10 Maintenance and Support
-**Maintenance Plan:** {{ project_details['projectDetails']['maintenanceAndSupport']['maintenancePlan'] }}
-**Support Services:** {{ project_details['projectDetails']['maintenanceAndSupport']['supportServices'] }}
-### 6.11 Documentation
-**User Manual:** {{ project_details['projectDetails']['documentation']['userManual'] }}
-**Technical Documentation:** {{ project_details['projectDetails']['documentation']['technicalDocumentation'] }}
-
-## 7. Conclusion
-### 7.1 Summary of Findings
-{{ project_conclusion['conclusion']['summaryOfFindings'] }}
-### 7.2 Achievements
-{{ project_conclusion['conclusion']['achievements'] }}
-### 7.3 Lessons Learned
-{{ project_conclusion['conclusion']['lessonsLearned'] }}
-### 7.4 Future Directions
-{{ project_conclusion['conclusion']['futureDirections'] }}
-### 7.5 Final Thoughts
-{{ project_conclusion['conclusion']['finalThoughts'] }}
+    report_parts = [
+        "# Comprehensive Graduation Project Report",
+        generate_table_of_contents(),
+        generate_project_information_section(project_info),
+        generate_project_content_section(project_content),
+        generate_project_structure_section(project_structure),
+        generate_additional_instructions_section(project_instructions),
+        generate_abstract_section(project_abstract),
+        generate_project_details_section(project_details),
+        generate_conclusion_section(project_conclusion),
+        generate_references_section(project_references),
+        generate_appendices_section(project_appendices),
+    ]
+    return "\n".join(report_parts)
 
 
+# save the markdown report to a file
+def save_markdown_report(report: str, filename: str = "report.md") -> None:
+    """Saves the generated Markdown report to a file."""
+    with open(filename, "w") as file:
+        file.write(report)
+    return filename
 
-## 8. References
-{{ format_markdown_from_data(project_references['references'], indent='  ', level = 0) }}
 
-
-## 9. Appendices
-{{ format_markdown_from_data(project_appendices['appendices'], indent='  ', level = 0) }}
-"""
-    )
-
-    return template.render(
-        project_info=project_info,
-        project_content=project_content,
-        project_structure=project_structure,
-        project_instructions=project_instructions,
-        project_abstract=project_abstract,
-        project_details=project_details,
-        project_conclusion=project_conclusion,
-        project_references=project_references,
-        project_appendices=project_appendices,
-        format_markdown_from_data=format_markdown_from_data,
-    )
+# Display the markdown report
+def display_markdown_report(report: str) -> None:
+    """Displays the generated Markdown report."""
+    display(Markdown(report))
 
 
 def main():
