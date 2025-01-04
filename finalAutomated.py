@@ -10,12 +10,30 @@ from diskcache import Cache
 import logging
 import shutil
 
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
-)
 cache_dir = ".cache"  # Path to your cache directory
+TEMPERATURE_HIGH = 1.5
+TEMPERATURE_NORMAL = 1
+TOP_P = 0.95
+TOP_K = 40
+MAX_OUTPUT_TOKENS_TITLES = 500
+MAX_OUTPUT_TOKENS_PROJECT_INFO = 1500
+MAX_OUTPUT_TOKENS_PROJECT_CONTENT = 2500
+MAX_OUTPUT_TOKENS_STRUCTURE = 1500
+MAX_OUTPUT_TOKENS_INSTRUCTIONS = 2891
+MAX_OUTPUT_TOKENS_ABSTRACT = 8192
+MAX_OUTPUT_TOKENS_PROJECT_DETAILS = 8192
+MAX_OUTPUT_TOKENS_CONCLUSION = 8192
+MAX_OUTPUT_TOKENS_REFERENCES = 8192
+MAX_OUTPUT_TOKENS_APPENDICES = 8192
+CACHE_EXPIRY_SECONDS = 3600  # 1 hour
 
+# --- Logging setup ---
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
+ch = logging.StreamHandler()
+ch.setFormatter(formatter)
+logger.addHandler(ch)
 # Check if the cache directory exists
 # if os.path.exists(cache_dir):
 #     try:
@@ -152,10 +170,10 @@ def generate_project_titles(
     """
     configure_google_ai()
     generation_config_title = {
-        "temperature": 1.5,
-        "top_p": 0.95,
-        "top_k": 40,
-        "max_output_tokens": 500,
+        "temperature": TEMPERATURE_HIGH,
+        "top_p": TOP_P,
+        "top_k": TOP_K,
+        "max_output_tokens": MAX_OUTPUT_TOKENS_TITLES,
         "response_schema": content.Schema(
             type=content.Type.OBJECT,
             description="Schema for analyzing and suggesting alternative titles for a project.",
@@ -279,10 +297,10 @@ def generate_project_info(
     """
     configure_google_ai()
     generation_config_projectInfo = {
-        "temperature": 1,
-        "top_p": 0.95,
-        "top_k": 40,
-        "max_output_tokens": 1500,
+        "temperature": TEMPERATURE_NORMAL,
+        "top_p": TOP_P,
+        "top_k": TOP_K,
+        "max_output_tokens": MAX_OUTPUT_TOKENS_PROJECT_INFO,
         "response_schema": content.Schema(
             type=content.Type.OBJECT,
             enum=[],
@@ -481,10 +499,10 @@ def generate_project_content(
     """
     configure_google_ai()
     generation_config_projectContent = {
-        "temperature": 1,
-        "top_p": 0.95,
-        "top_k": 40,
-        "max_output_tokens": 2500,
+        "temperature": TEMPERATURE_NORMAL,
+        "top_p": TOP_P,
+        "top_k": TOP_K,
+        "max_output_tokens": MAX_OUTPUT_TOKENS_PROJECT_CONTENT,
         "response_schema": content.Schema(
             type=content.Type.OBJECT,
             enum=[],
@@ -704,10 +722,10 @@ def generate_project_structure(
     """
     configure_google_ai()
     generation_config_structure = {
-        "temperature": 0.95,
-        "top_p": 0.95,
-        "top_k": 40,
-        "max_output_tokens": 1500,
+        "temperature": TEMPERATURE_NORMAL,
+        "top_p": TOP_P,
+        "top_k": TOP_K,
+        "max_output_tokens": MAX_OUTPUT_TOKENS_STRUCTURE,
         "response_schema": content.Schema(
             type=content.Type.OBJECT,
             enum=[],
@@ -795,10 +813,10 @@ def generate_additional_instructions(
     """
     configure_google_ai()
     generation_config_instructions = {
-        "temperature": 0.95,
-        "top_p": 0.95,
-        "top_k": 40,
-        "max_output_tokens": 2891,
+        "temperature": TEMPERATURE_NORMAL,
+        "top_p": TOP_P,
+        "top_k": TOP_K,
+        "max_output_tokens": MAX_OUTPUT_TOKENS_INSTRUCTIONS,
         "response_schema": content.Schema(
             type=content.Type.OBJECT,
             enum=[],
@@ -872,10 +890,10 @@ def generate_abstract(
     """
     configure_google_ai()
     generation_config_abstract = {
-        "temperature": 1.5,
-        "top_p": 0.95,
-        "top_k": 40,
-        "max_output_tokens": 8192,
+        "temperature": TEMPERATURE_HIGH,
+        "top_p": TOP_P,
+        "top_k": TOP_K,
+        "max_output_tokens": MAX_OUTPUT_TOKENS_ABSTRACT,
         "response_schema": content.Schema(
             type=content.Type.OBJECT,
             enum=[],
@@ -933,10 +951,10 @@ def generate_project_details(
     """
     configure_google_ai()
     generation_config_projectDetails = {
-        "temperature": 1,
-        "top_p": 0.95,
-        "top_k": 40,
-        "max_output_tokens": 8192,
+        "temperature": TEMPERATURE_NORMAL,
+        "top_p": TOP_P,
+        "top_k": TOP_K,
+        "max_output_tokens": MAX_OUTPUT_TOKENS_PROJECT_DETAILS,
         "response_schema": content.Schema(
             type=content.Type.OBJECT,
             enum=[],
@@ -1258,10 +1276,10 @@ def generate_conclusion(
     """
     configure_google_ai()
     generation_config_conclusion = {
-        "temperature": 1,
-        "top_p": 0.95,
-        "top_k": 40,
-        "max_output_tokens": 8192,
+        "temperature": TEMPERATURE_NORMAL,
+        "top_p": TOP_P,
+        "top_k": TOP_K,
+        "max_output_tokens": MAX_OUTPUT_TOKENS_CONCLUSION,
         "response_schema": content.Schema(
             type=content.Type.OBJECT,
             properties={
@@ -1347,10 +1365,10 @@ def generate_references(
     """
     configure_google_ai()
     generation_config_references = {
-        "temperature": 1,
-        "top_p": 0.95,
-        "top_k": 40,
-        "max_output_tokens": 8192,
+        "temperature": TEMPERATURE_NORMAL,
+        "top_p": TOP_P,
+        "top_k": TOP_K,
+        "max_output_tokens": MAX_OUTPUT_TOKENS_REFERENCES,
         "response_schema": content.Schema(
             type=content.Type.OBJECT,
             enum=[],
@@ -1441,10 +1459,10 @@ def generate_appendices(
     """
     configure_google_ai()
     generation_config_appendices = {
-        "temperature": 1,
-        "top_p": 0.95,
-        "top_k": 40,
-        "max_output_tokens": 8192,
+        "temperature": TEMPERATURE_NORMAL,
+        "top_p": TOP_P,
+        "top_k": TOP_K,
+        "max_output_tokens": MAX_OUTPUT_TOKENS_APPENDICES,
         "response_schema": content.Schema(
             type=content.Type.OBJECT,
             enum=[],
