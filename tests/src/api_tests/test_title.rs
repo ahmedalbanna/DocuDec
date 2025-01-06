@@ -25,7 +25,7 @@ pub mod tests {
             .as_str()
             .expect("Failed to get the error value");
 
-        assert!(error_json.contains("The title was not provided"))
+        assert!(error_json.contains("Title must be between 3 and 150 characters"))
     }
 
     #[tokio::test]

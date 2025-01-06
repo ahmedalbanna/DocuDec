@@ -11,7 +11,8 @@ use google_generative_ai_rs::v1::{
     gemini::request::{GenerationConfig, Request},
 };
 use responses::{
-    project_content::ProjectContent, project_info::ProjectInfo, project_structure::ProjectStructure,
+    additional_instruction::AdditionalInstruction, project_content::ProjectContent,
+    project_info::ProjectInfo, project_structure::ProjectStructure,
 };
 use serde::de::DeserializeOwned;
 
@@ -22,7 +23,13 @@ pub enum DocuRequest<'a> {
     ProjectInfo(String),
     ProjectContent(&'a ProjectInfo),
     ProjectStructure(&'a ProjectInfo, &'a ProjectContent),
-    AdditionalInstructoins(&'a ProjectInfo, &'a ProjectContent, &'a ProjectStructure),
+    AdditionalInstructoin(&'a ProjectInfo, &'a ProjectContent, &'a ProjectStructure),
+    ProjectAbstract(
+        &'a ProjectInfo,
+        &'a ProjectContent,
+        &'a ProjectStructure,
+        &'a AdditionalInstruction,
+    ),
 }
 
 impl DocuRequest<'_> {
@@ -44,9 +51,13 @@ impl DocuRequest<'_> {
                 schema::get_gen_config(schemas::project_structure::create_project_structure_schema())
             }
 
-            Self::AdditionalInstructoins(_, _, _) => schema::get_gen_config(
-                schemas::additoinal_instruction::create_additional_instructions_schema(),
+            Self::AdditionalInstructoin(_, _, _) => schema::get_gen_config(
+                schemas::additoinal_instruction::create_additional_instruction_schema(),
             ),
+
+            Self::ProjectAbstract(_, _, _, _) => {
+                schema::get_gen_config(schemas::project_abstract::create_project_abstract_schema())
+            }
         }
     }
 
@@ -68,9 +79,13 @@ impl DocuRequest<'_> {
                 sysinsts::project_structure::PROJECT_STRUCTURE_SYSTEM_INSTRUCTION.to_string()
             }
 
-            Self::AdditionalInstructoins(_, _, _) => {
+            Self::AdditionalInstructoin(_, _, _) => {
                 sysinsts::additional_instruction::ADDITIONAL_INSTRUCTION_SYSTEM_INSTRUCTION
                     .to_string()
+            }
+
+            Self::ProjectAbstract(_, _, _, _) => {
+                sysinsts::project_abstract::PROJECT_ABSTRACT_SYSTEM_INSTRUCTION.to_string()
             }
         }
     }
@@ -127,7 +142,7 @@ impl DocuRequest<'_> {
                 ))
             }
 
-            Self::AdditionalInstructoins(project_info, project_content, project_structure) => {
+            Self::AdditionalInstructoin(project_info, project_content, project_structure) => {
                 let project_info = serde_json::to_string(*project_info)?;
                 let project_content = serde_json::to_string(*project_content)?;
                 let project_structure = serde_json::to_string(*project_structure)?;
@@ -135,6 +150,29 @@ impl DocuRequest<'_> {
                 let message = format!(
                     "projectInformation: {:#?}\nprojectContent: {:#?}\nstructureAndFormat: {:#?}",
                     project_info, project_content, project_structure
+                );
+
+                Ok(requests::get_request(
+                    message,
+                    self.to_config(),
+                    self.to_system_instruction(),
+                ))
+            }
+
+            Self::ProjectAbstract(
+                project_info,
+                project_content,
+                project_structure,
+                additional_instruction,
+            ) => {
+                let project_info = serde_json::to_string(*project_info)?;
+                let project_content = serde_json::to_string(*project_content)?;
+                let project_structure = serde_json::to_string(*project_structure)?;
+                let additional_instruction = serde_json::to_string(*additional_instruction)?;
+
+                let message = format!(
+                    "projectInformation: {:#?}\nprojectContent: {:#?}\nstructureAndFormat: {:#?}\nadditionalInstructions: {:#?}",
+                    project_info, project_content, project_structure, additional_instruction
                 );
 
                 Ok(requests::get_request(

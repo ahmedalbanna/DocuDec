@@ -9,7 +9,7 @@ pub mod tests {
 
         let res = client
             .do_post(
-                "/gen/additional-instructions",
+                "/gen/additional-instruction",
                 json!({
                     "project_info": "",
                     "project_content": "",
@@ -24,7 +24,7 @@ pub mod tests {
         let json_body = res.json_body().expect("Failed to get the json value");
         let json_body = json_body["error"].to_string();
 
-        assert!(&json_body.contains("Failed to deserialize the JSON body into the target type"));
+        assert!(&json_body.contains("JSON Deserialization Error"));
     }
 
     #[tokio::test]
@@ -33,7 +33,7 @@ pub mod tests {
 
         let res = client
             .do_post(
-                "/gen/additional-instructions",
+                "/gen/additional-instruction",
                 json!({
                     "project_structure": {
 
@@ -56,7 +56,7 @@ pub mod tests {
         let json_body = res.json_body().expect("Failed to get the json value");
         let json_body = json_body["error"].to_string();
 
-        assert!(&json_body.contains("Failed to deserialize the JSON body into the target type"));
+        assert!(&json_body.contains("JSON Deserialization Error"));
     }
 
     #[tokio::test]
@@ -83,7 +83,7 @@ pub mod tests {
 
         let res = client
             .do_post(
-                "/gen/additional-instructions",
+                "/gen/additional-instruction",
                 json!({
                     "project_info": project_info,
                     "project_content": project_content,

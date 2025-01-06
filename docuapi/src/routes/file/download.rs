@@ -1,6 +1,8 @@
-use axum::response::IntoResponse;
+use actix_web::Responder;
+use tracing::instrument;
 
-pub async fn download() -> impl IntoResponse {
-    // Your code here
+#[instrument]
+#[actix_web::get("/download")]
+pub async fn download() -> impl Responder {
     "Hello, World!"
 }

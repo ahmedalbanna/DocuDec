@@ -5,7 +5,7 @@ use crate::{
 
 use serde_json::Value;
 
-pub(crate) fn create_additional_instructions_schema() -> Value {
+pub(crate) fn create_additional_instruction_schema() -> Value {
     let additional_instructions = Schema::new(SchemaType::Object)
         .required(&["toneAndStyle", "keywords", "constraints"])
         .property("toneAndStyle", string!())

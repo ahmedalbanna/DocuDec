@@ -1,6 +1,8 @@
-use axum::response::IntoResponse;
+use actix_web::Responder;
+use tracing::instrument;
 
-pub async fn signup() -> impl IntoResponse {
-    // Your code here
-    "Hello, World!"
+#[instrument]
+#[actix_web::post("/signup")]
+pub async fn signup() -> impl Responder {
+    "hello"
 }

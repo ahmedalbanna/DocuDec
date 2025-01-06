@@ -22,7 +22,7 @@ pub mod tests {
         let json_body = res.json_body().expect("Failed to get the json value");
         let json_body = json_body["error"].to_string();
 
-        assert!(&json_body.contains("Failed to deserialize the JSON body into the target type"));
+        assert!(&json_body.contains("JSON Deserialization Error"));
     }
 
     #[tokio::test]
@@ -48,7 +48,7 @@ pub mod tests {
         let json_body = res.json_body().expect("Failed to get the json value");
         let json_body = json_body["error"].to_string();
 
-        assert!(&json_body.contains("Failed to deserialize the JSON body into the target type"));
+        assert!(&json_body.contains("JSON Deserialization Error"));
     }
 
     #[tokio::test]

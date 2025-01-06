@@ -5,4 +5,9 @@ edition = "2021"
 
 [dependencies]
 dotenv = {workspace = true}
-sqlx = { version = "0.8", features = [ "macros", "runtime-tokio", "uuid", "mysql" ] }
+serde = {workspace = true}
+thiserror = {workspace = true}
+jsonwebtoken = "9"
+uuid = {workspace = true}
+chrono = {workspace = true}
+rust-argon2 = "2.1"

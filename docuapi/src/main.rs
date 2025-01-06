@@ -1,12 +1,20 @@
-use axum::Router;
+mod routes;
+mod utils;
+
+use actix_web::{web, App, HttpServer};
+use routes::{auth, file, gen};
 use tracing::info;
 
 use tracing_subscriber::{fmt, layer::SubscriberExt, util::SubscriberInitExt, EnvFilter};
-
-mod routes;
+use utils::json_error_handler;
 
 #[tokio::main]
 async fn main() {
+    dotenv::dotenv().expect("Failed to find a .env file, make sure it's in the root directory");
+
+    let port = *utils::constants::PORT;
+    let address = utils::constants::ADDRESS.to_owned();
+
     let filter = EnvFilter::try_from_default_env().unwrap_or_else(|_| EnvFilter::new("info"));
 
     tracing_subscriber::registry()
@@ -16,30 +24,19 @@ async fn main() {
 
     info!("Starting the application...");
 
-    let routes = Router::new()
-        .nest("/auth", routes::auth::routes().await)
-        .nest("/gen", routes::gen::routes().await)
-        .nest("/file", routes::file::route().await);
-
-    dotenv::dotenv().expect("Failed to find a .env file, make sure it's in the root directory");
-
-    let port = std::env::var("PORT")
-        .expect("Failed to get the PORT env, make sure to set it")
-        .parse::<u16>()
-        .expect("Failed to parse the PORT as a number");
-
-    let tcp = tokio::net::TcpListener::bind(("127.0.0.1", port))
-        .await
-        .expect("Port 3000 is not avaliabel");
-
-    match tcp.local_addr() {
-        Ok(addr) => tracing::info!("Started server on: {}", addr),
-        Err(error) => {
-            tracing::error!("Failed to look up the tcp address for logging, error: {error}")
-        }
-    }
-
-    if let Err(error) = axum::serve(tcp, routes.into_make_service()).await {
-        tracing::error!("Failed to serve the API error: {error}")
-    }
+    HttpServer::new(move || {
+        App::new()
+            .app_data(
+                web::JsonConfig::default().error_handler(json_error_handler::json_error_handler),
+            )
+            .configure(gen::config)
+            .configure(file::config)
+            .configure(auth::config)
+    })
+    .bind((address, port))
+    .expect("Failed to start out the server")
+    .workers(4)
+    .run()
+    .await
+    .unwrap();
 }

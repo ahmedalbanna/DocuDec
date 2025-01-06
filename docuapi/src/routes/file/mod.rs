@@ -1,7 +1,7 @@
-use axum::{routing::get, Router};
+use actix_web::web::{self, ServiceConfig};
 
 pub mod download;
 
-pub async fn route() -> Router {
-    Router::new().route("/download", get(download::download))
+pub fn config(config: &mut ServiceConfig) {
+    config.service(web::scope("/file").service(download::download));
 }

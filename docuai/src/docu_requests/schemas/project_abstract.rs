@@ -1,11 +1,13 @@
 use crate::{
-    array,
     docu_requests::schema_builder::{Schema, SchemaType},
     string,
 };
 
 use serde_json::Value;
 
-pub(crate) fn create_alternative_titles_schema() -> Value {
-    Schema::new(SchemaType::Object).build()
+pub(crate) fn create_project_abstract_schema() -> Value {
+    Schema::new(SchemaType::Object)
+        .required(&["abstract"])
+        .property("abstract", string!())
+        .build()
 }

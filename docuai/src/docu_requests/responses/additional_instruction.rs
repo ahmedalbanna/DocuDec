@@ -11,7 +11,7 @@ pub struct AdditionalInstructionsSchema {
 
 #[derive(Serialize, Deserialize, Debug, Default)]
 #[serde(rename_all = "camelCase")]
-pub struct AdditionalInstructions {
+pub struct AdditionalInstruction {
     #[serde(alias = "additional_instructions")]
     pub additional_instructions: AdditionalInstructionsSchema,
 }
