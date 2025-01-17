@@ -4,7 +4,94 @@ use crate::{
     string,
 };
 
+use jsonschema::jsonschema;
 use serde_json::Value;
+
+jsonschema! {
+    type: object,
+    struct: ProjectContent,
+    required: ["projectContent"],
+    properties: {
+        "projectContent": {
+            type: object,
+            struct: InnerProjectContent,
+            required: [
+                "problemStatement",
+                "researchQuestions",
+                "literatureReview",
+                "methodology",
+                "systemDesign",
+                "implementation",
+                "testingAndValidation",
+                "resultsAndAnalysis",
+                "futureWork",
+                "contributions",
+            ],
+            properties: {
+                "problemStatement": {
+                    type: object,
+                    struct: key,
+                    required: ["description", "steps"],
+                    properties: { "description": { type: string }, "steps": { type: array, items: string } }
+                },
+                "researchQuestions": {
+                    type: object,
+                    struct: key,
+                    required: ["description", "steps"],
+                    properties: { "description": { type: string }, "steps": { type: array, items: string } }
+                },
+                "literatureReview": {
+                    type: object,
+                    struct: key,
+                    required: ["description", "steps"],
+                    properties: { "description": { type: string }, "steps": { type: array, items: string } }
+                },
+                "methodology": {
+                    type: object,
+                    struct: key,
+                    required: ["description", "steps"],
+                    properties: { "description": { type: string }, "steps": { type: array, items: string } }
+                },
+                "systemDesign": {
+                    type: object,
+                    struct: key,
+                    required: ["description", "steps"],
+                    properties: { "description": { type: string }, "steps": { type: array, items: string } }
+                },
+                "implementation": {
+                    type: object,
+                    struct: key,
+                    required: ["description", "steps"],
+                    properties: { "description": { type: string }, "steps": { type: array, items: string } }
+                },
+                "testingAndValidation": {
+                    type: object,
+                    struct: key,
+                    required: ["description", "steps"],
+                    properties: { "description": { type: string }, "steps": { type: array, items: string } }
+                },
+                "resultsAndAnalysis": {
+                    type: object,
+                    struct: key,
+                    required: ["description", "steps"],
+                    properties: { "description": { type: string }, "steps": { type: array, items: string } }
+                },
+                "futureWork": {
+                    type: object,
+                    struct: key,
+                    required: ["description", "steps"],
+                    properties: { "description": { type: string }, "steps": { type: array, items: string } }
+                },
+                "contributions": {
+                    type: object,
+                    struct: key,
+                    required: ["description", "steps"],
+                    properties: { "description": { type: string }, "steps": { type: array, items: string } }
+                }
+            }
+        }
+    }
+}
 
 pub(crate) fn create_alternative_titles_schema() -> Value {
     let project_content_required_schema = Schema::new(SchemaType::Object)

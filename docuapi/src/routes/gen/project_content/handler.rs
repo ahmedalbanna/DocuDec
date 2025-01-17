@@ -6,7 +6,7 @@ use actix_web::{
 };
 use docuai::{
     docu_requests::{
-        responses::{project_content::ProjectContent, project_info::ProjectInfo},
+        schemas::{project_content::ProjectContent, project_info::ProjectInfo},
         DocuRequest,
     },
     DocuError,

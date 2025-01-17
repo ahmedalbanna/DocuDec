@@ -1,4 +1,4 @@
-pub mod additoinal_instruction;
+pub mod additional_instruction;
 pub mod alter_titles;
 pub mod project_abstract;
 pub mod project_content;

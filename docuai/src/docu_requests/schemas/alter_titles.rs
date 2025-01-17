@@ -3,10 +3,42 @@ use crate::{
     docu_requests::schema_builder::{Schema, SchemaType},
     string,
 };
+use jsonschema::jsonschema;
 
 use serde_json::Value;
 
-pub(crate) fn create_alternative_titles_schema() -> Value {
+jsonschema! {
+    type: object,
+    struct: AlternativeTitles,
+    description: "Schema for analyzing and suggesting alternative titles for a project.",
+    required: ["originalTitle", "recommendation", "alternativeTitles"],
+    properties: {
+        "originalTitle": { type: string },
+        "recommendation": { type: string },
+        "alternativeTitles": {
+            type: object,
+            struct: InnerAlternativeTitles,
+            description: "Suggested alternative titles categorized by focus areas.",
+            required: [
+                "focusingOnAutomation",
+                "focusingOnInnovationOrProblemSolving",
+                "focusingOnReports",
+                "moreConciseTitles",
+                "moreSpecificAndTechnicalTitles",
+            ],
+            properties: {
+                "focusingOnAutomation": { type: array, items: string },
+                "focusingOnInnovationOrProblemSolving": { type: array, items: string },
+                "focusingOnReports": { type: array, items: string },
+                "moreConciseTitles": { type: array, items: string },
+                "moreSpecificAndTechnicalTitles": { type: array, items: string }
+            }
+
+        }
+    }
+}
+
+pub fn create_alternative_titles_schema() -> Value {
     let alter_titles = Schema::new(SchemaType::Object)
         .description("Suggested alternative titles categorized by focus areas.")
         .required(&[

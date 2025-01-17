@@ -6,7 +6,7 @@ use actix_web::{
 };
 use docuai::{
     docu_requests::{
-        responses::{
+        schemas::{
             additional_instruction::AdditionalInstruction, project_abstract::ProjectAbstract,
             project_content::ProjectContent, project_info::ProjectInfo,
             project_structure::ProjectStructure,

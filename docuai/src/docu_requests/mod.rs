@@ -10,10 +10,11 @@ use google_generative_ai_rs::v1::{
     api::PostResult,
     gemini::request::{GenerationConfig, Request},
 };
-use responses::{
+use schemas::{
     additional_instruction::AdditionalInstruction, project_content::ProjectContent,
     project_info::ProjectInfo, project_structure::ProjectStructure,
 };
+
 use serde::de::DeserializeOwned;
 
 use crate::error::DocuError;
@@ -23,7 +24,7 @@ pub enum DocuRequest<'a> {
     ProjectInfo(String),
     ProjectContent(&'a ProjectInfo),
     ProjectStructure(&'a ProjectInfo, &'a ProjectContent),
-    AdditionalInstructoin(&'a ProjectInfo, &'a ProjectContent, &'a ProjectStructure),
+    AdditionalInstruction(&'a ProjectInfo, &'a ProjectContent, &'a ProjectStructure),
     ProjectAbstract(
         &'a ProjectInfo,
         &'a ProjectContent,
@@ -36,27 +37,35 @@ impl DocuRequest<'_> {
     pub fn to_config(&self) -> GenerationConfig {
         match self {
             Self::AlterTitles(_) => {
-                schema::get_gen_config(schemas::alter_titles::create_alternative_titles_schema())
+                let json = &*schemas::alter_titles::ALTERNATIVETITLES_JSON_VALUE;
+
+                schema::get_gen_config(json.clone())
             }
 
             Self::ProjectInfo(_) => {
-                schema::get_gen_config(schemas::project_info::create_project_info_schema())
+                let json = &*schemas::project_info::PROJECTINFO_JSON_VALUE;
+                schema::get_gen_config(json.clone())
             }
 
             Self::ProjectContent(_) => {
-                schema::get_gen_config(schemas::project_content::create_alternative_titles_schema())
+                let json = &*schemas::project_content::PROJECTCONTENT_JSON_VALUE;
+                schema::get_gen_config(json.clone())
             }
 
             Self::ProjectStructure(_, _) => {
-                schema::get_gen_config(schemas::project_structure::create_project_structure_schema())
+                let json = &*schemas::project_structure::PROJECTSTRUCTURE_JSON_VALUE;
+                schema::get_gen_config(json.clone())
             }
 
-            Self::AdditionalInstructoin(_, _, _) => schema::get_gen_config(
-                schemas::additoinal_instruction::create_additional_instruction_schema(),
-            ),
+            Self::AdditionalInstruction(_, _, _) => {
+                let json = &*schemas::additional_instruction::ADDITIONALINSTRUCTION_JSON_VALUE;
+
+                schema::get_gen_config(json.clone())
+            }
 
             Self::ProjectAbstract(_, _, _, _) => {
-                schema::get_gen_config(schemas::project_abstract::create_project_abstract_schema())
+                let json = &*schemas::project_abstract::PROJECTABSTRACT_JSON_VALUE;
+                schema::get_gen_config(json.clone())
             }
         }
     }
@@ -79,7 +88,7 @@ impl DocuRequest<'_> {
                 sysinsts::project_structure::PROJECT_STRUCTURE_SYSTEM_INSTRUCTION.to_string()
             }
 
-            Self::AdditionalInstructoin(_, _, _) => {
+            Self::AdditionalInstruction(_, _, _) => {
                 sysinsts::additional_instruction::ADDITIONAL_INSTRUCTION_SYSTEM_INSTRUCTION
                     .to_string()
             }
@@ -142,7 +151,7 @@ impl DocuRequest<'_> {
                 ))
             }
 
-            Self::AdditionalInstructoin(project_info, project_content, project_structure) => {
+            Self::AdditionalInstruction(project_info, project_content, project_structure) => {
                 let project_info = serde_json::to_string(*project_info)?;
                 let project_content = serde_json::to_string(*project_content)?;
                 let project_structure = serde_json::to_string(*project_structure)?;

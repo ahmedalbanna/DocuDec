@@ -2,7 +2,7 @@ use std::sync::Arc;
 
 use actix_web::web::{self, Json};
 use actix_web::HttpResponse;
-use docuai::docu_requests::responses::project_info::ProjectInfo;
+use docuai::docu_requests::schemas::project_info::ProjectInfo;
 use docuai::{DocuError, DocuRequest};
 use google_generative_ai_rs::v1::api::Client;
 use tracing::{debug, error, instrument};

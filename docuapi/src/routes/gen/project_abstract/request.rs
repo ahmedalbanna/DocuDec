@@ -1,4 +1,4 @@
-use docuai::docu_requests::responses::{
+use docuai::docu_requests::schemas::{
     additional_instruction::AdditionalInstruction, project_content::ProjectContent,
     project_info::ProjectInfo, project_structure::ProjectStructure,
 };

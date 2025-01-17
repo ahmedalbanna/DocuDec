@@ -5,7 +5,7 @@ use actix_web::{
     HttpResponse,
 };
 use docuai::{
-    docu_requests::{responses::alter_titles::Titles, DocuRequest},
+    docu_requests::{schemas::alter_titles::AlternativeTitles, DocuRequest},
     DocuError,
 };
 use google_generative_ai_rs::v1::api::Client;
@@ -37,8 +37,14 @@ pub async fn generate_titles(
 }
 
 /// Generate titles with error handling
-async fn generate_titles_(model: &Client, title: &str) -> Result<Titles, GenError> {
-    match docuai::request::<Titles>(model, DocuRequest::AlterTitles(title.to_string()), 100).await {
+async fn generate_titles_(model: &Client, title: &str) -> Result<AlternativeTitles, GenError> {
+    match docuai::request::<AlternativeTitles>(
+        model,
+        DocuRequest::AlterTitles(title.to_string()),
+        100,
+    )
+    .await
+    {
         Ok(titles) => Ok(titles),
         Err(error) => {
             error!("Title generation failed: {:?}", error);

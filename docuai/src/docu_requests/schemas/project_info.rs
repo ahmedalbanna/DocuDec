@@ -4,10 +4,105 @@ use crate::{
     string,
 };
 
+use jsonschema::jsonschema;
 use serde_json::Value;
+
+jsonschema! {
+    type: object,
+    struct: ProjectInfo,
+    required: [
+        "projectTitle",
+        "projectScope",
+        "fieldOfStudy",
+        "targetAudience",
+    ],
+    properties: {
+        "projectTitle": { type: string },
+        "projectScope": {
+            type: object,
+            struct: key,
+            required: [
+                "description",
+                "objectivesAndGoals",
+                "boundaries",
+                "stakeholderIdentification",
+                "timeline",
+                "resourceAllocation",
+                "riskAssessment",
+                "approvalProcess",
+            ],
+            properties: {
+                "description": { type: string },
+                "objectivesAndGoals": { type: array, items: string },
+                "boundaries": { type: string },
+                "stakeholderIdentification": { type: array, items: string },
+                "riskAssessment": { type: string },
+                "approvalProcess": { type: string },
+                "timeline": {
+                    type: object,
+                    required: ["start", "end", "milestones"],
+                    struct: key,
+                    properties: {
+                        "start": { type: string },
+                        "end": { type: string },
+                        "milestones": { type: array, items: string }
+                    }
+                },
+                "resourceAllocation": {
+                    type: object,
+                    struct: key,
+                    required: ["teamResponsibilities"],
+                    properties: {
+                        "teamResponsibilities": { type: array, items: string }
+                    }
+                }
+            }
+        },
+        "fieldOfStudy": {
+            type: object,
+            struct: key,
+            required: ["academicField", "justification"],
+            properties: {
+                "academicField": { type: string },
+                "justification": { type: array, items: string }
+            }
+        },
+        "targetAudience": {
+            type: object,
+            struct: key,
+            required: [
+                "marketResearch",
+                "demographics",
+                "psychographics",
+                "audienceFeedback",
+                "customerDataAnalysis",
+                "audiencePersonas",
+            ],
+            properties: {
+                "marketResearch": { type: string },
+                "demographics": {
+                    type: object,
+                    struct: key,
+                    required: ["age", "gender", "location"],
+                    properties: {
+                        "age": { type: string },
+                        "gender": { type: string },
+                        "location": { type: string }
+                    }
+                },
+                "psychographics": { type: array, items: string },
+                "audienceFeedback": { type: array, items: string },
+                "customerDataAnalysis": { type: array, items: string },
+                "audiencePersonas": { type: array, items: string }
+
+            }
+        },
+    }
+}
 
 pub(crate) fn create_project_info_schema() -> Value {
     // --- ProjectScope
+
     let resource_alloc = Schema::new(SchemaType::Object)
         .required(&["teamResponsibilities"])
         .property("teamResponsibilities", array!(string!()));
@@ -46,7 +141,6 @@ pub(crate) fn create_project_info_schema() -> Value {
         .property("academicField", string!())
         .property("justification", array!(string!()));
     // ----
-
     // --- targetAudience
 
     let demographics = Schema::new(SchemaType::Object)

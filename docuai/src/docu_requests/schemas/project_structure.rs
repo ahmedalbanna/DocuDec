@@ -4,7 +4,39 @@ use crate::{
     string,
 };
 
+use jsonschema::jsonschema;
 use serde_json::Value;
+
+jsonschema! {
+    type: object,
+    struct: ProjectStructure,
+    required: ["structureAndFormat"],
+    properties: {
+        "structureAndFormat": {
+            type: object,
+            struct: key,
+            required: ["targetLength", "chapterStructure", "visualAids"],
+            properties: {
+                "targetLength": { type: string },
+                "chapterStructure": {
+                    type: object,
+                    struct: key,
+                    required: ["description", "chapters"],
+                    properties: {
+                        "description": { type: string },
+                        "chapters": { type: array, items: string }
+                    }
+                },
+                "visualAids": {
+                    type: object,
+                    struct: key,
+                    required: ["description"],
+                    properties: { "description": { type: string } }
+                }
+            }
+        }
+    }
+}
 
 pub(crate) fn create_project_structure_schema() -> Value {
     let chapter_structure = Schema::new(SchemaType::Object)

@@ -1,4 +1,4 @@
-use docuai::docu_requests::responses::{
+use docuai::docu_requests::schemas::{
     project_content::ProjectContent, project_info::ProjectInfo, project_structure::ProjectStructure,
 };
 use serde::{Deserialize, Serialize};
