@@ -3,6 +3,7 @@ mod error;
 pub mod models;
 pub mod utils;
 
+use error::DocuBaseError;
 use models::{CreateResponse, DeleteResponse};
 use serde_json::Value;
 use sqlx::{postgres::PgPool, Error as SqlxError, Pool, Postgres};
@@ -22,13 +23,43 @@ impl DocuBase {
         Ok(Self { pool })
     }
 
+    pub async fn user_exists_from_username(&self, username: &String) -> Result<bool, SqlxError> {
+        let user = sqlx::query!(
+            r#"
+            SELECT * FROM users WHERE username = $1
+           "#,
+            username
+        )
+        .fetch_optional(&self.pool)
+        .await?;
+
+        Ok(user.is_some())
+    }
+
+    pub async fn user_exists_from_email(&self, email: &String) -> Result<bool, SqlxError> {
+        let user = sqlx::query!(
+            r#"
+            SELECT * FROM users WHERE email = $1
+           "#,
+            email
+        )
+        .fetch_optional(&self.pool)
+        .await?;
+
+        Ok(user.is_some())
+    }
+
     pub async fn create_user(
         &self,
         username: String,
         email: String,
         password: String,
-    ) -> Result<CreateResponse, SqlxError> {
+    ) -> Result<CreateResponse, DocuBaseError> {
         let hashed_password = utils::hash_password(&password).unwrap();
+
+        if self.user_exists_from_username(&username).await? {
+            return Err(DocuBaseError::UserExists);
+        }
 
         let user = sqlx::query!(
             r#"
@@ -53,8 +84,12 @@ impl DocuBase {
         &self,
         email: String,
         password: String,
-    ) -> Result<DeleteResponse, SqlxError> {
+    ) -> Result<DeleteResponse, DocuBaseError> {
         let hashed_password = utils::hash_password(&password).unwrap();
+
+        if !self.user_exists_from_email(&email).await? {
+            return Err(DocuBaseError::UserDoesNotExists);
+        }
 
         let user = sqlx::query!(
             r#"

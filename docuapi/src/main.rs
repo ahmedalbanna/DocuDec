@@ -4,7 +4,6 @@ mod utils;
 use std::sync::Arc;
 
 use actix_web::{web, App, HttpServer};
-use docuai::docu_requests::schemas;
 use docubase::DocuBase;
 use routes::{auth, file, gen};
 use tracing::info;
@@ -30,17 +29,17 @@ async fn main() {
 
     let database = Arc::new(DocuBase::new().await.unwrap());
 
-    //    let user = database
-    //        .create_user(
-    //            "abdullah".into(),
-    //            "abdu.albanna@proton.me".into(),
-    //            "12345".into(),
-    //        )
-    //        .await
-    //        .unwrap();
-    //
-    //    println!("id: {:#?}, created_at: {:#?}", user.id, user.created_at);
-    //
+    let user = database
+        .create_user(
+            "abdullah".into(),
+            "abdu.albanna@proton.me".into(),
+            "12345".into(),
+        )
+        .await
+        .unwrap();
+
+    println!("id: {:#?}, created_at: {:#?}", user.id, user.created_at);
+
     HttpServer::new(move || {
         App::new()
             .app_data(
