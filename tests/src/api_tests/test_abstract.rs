@@ -4,12 +4,12 @@ pub mod tests {
     use serde_json::{json, Value};
 
     #[tokio::test]
-    async fn test_empty_project_abstract() {
+    async fn test_empty_abstract() {
         let client = get_client();
 
         let res = client
             .do_post(
-                "/gen/project-abstract",
+                "/gen/abstract",
                 json!({
                     "project_info": "",
                     "project_content": "",
@@ -29,12 +29,12 @@ pub mod tests {
     }
 
     #[tokio::test]
-    async fn test_partial_project_abstract() {
+    async fn test_partial_abstract() {
         let client = get_client();
 
         let res = client
             .do_post(
-                "/gen/project-abstract",
+                "/gen/abstract",
                 json!({
                     "project_structure": {
 
@@ -64,7 +64,7 @@ pub mod tests {
     }
 
     #[tokio::test]
-    async fn test_valid_project_abstract() {
+    async fn test_valid_abstract() {
         let client = get_client();
 
         let project_content_json =
@@ -94,7 +94,7 @@ pub mod tests {
 
         let res = client
             .do_post(
-                "/gen/project-abstract",
+                "/gen/abstract",
                 json!({
                     "project_info": project_info,
                     "project_content": project_content,

@@ -20,7 +20,7 @@ use super::super::validators::validate_abstract::validate_abstract_request;
 use super::request::AbstractRequest;
 
 #[instrument(skip(model))]
-#[actix_web::post("/project-abstract")]
+#[actix_web::post("/abstract")]
 pub async fn generate_abstraction(
     model: web::Data<Arc<Client>>,
     payload: Json<AbstractRequest>,
@@ -31,7 +31,7 @@ pub async fn generate_abstraction(
     debug!(">> Generating project abstraction");
 
     // Generate additional instruction
-    let result = generate_project_abstraction_(
+    let result = generate_abstraction_(
         model.as_ref(),
         &payload.project_info,
         &payload.project_content,
@@ -46,7 +46,7 @@ pub async fn generate_abstraction(
 }
 
 /// Secure additional instruction generation with error mapping
-async fn generate_project_abstraction_(
+async fn generate_abstraction_(
     model: &Client,
     project_info: &ProjectInfo,
     project_content: &ProjectContent,

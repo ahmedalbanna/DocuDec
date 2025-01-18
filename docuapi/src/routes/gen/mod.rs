@@ -1,12 +1,13 @@
 use std::sync::Arc;
 
-use actix_web::web;
+use actix_web::web::{self, service};
 
 pub mod error;
 
 mod r#abstract;
 mod additional_instruction;
 mod project_content;
+mod project_details;
 mod project_info;
 mod project_structure;
 mod titles;
@@ -23,6 +24,7 @@ pub fn config(config: &mut web::ServiceConfig) {
             .service(project_content::generate_project_content)
             .service(project_structure::generate_project_structure)
             .service(additional_instruction::generate_additional_instruction)
-            .service(r#abstract::generate_abstraction),
+            .service(r#abstract::generate_abstraction)
+            .service(project_details::generate_project_details),
     );
 }

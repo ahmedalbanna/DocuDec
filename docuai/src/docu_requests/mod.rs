@@ -12,9 +12,10 @@ use google_generative_ai_rs::v1::{
 };
 
 use schemas::{
-    AdditionalInstruction, ProjectContent, ProjectInfo, ProjectStructure, ABSTRACT_JSON_VALUE,
-    ADDITIONALINSTRUCTION_JSON_VALUE, ALTERNATIVETITLES_JSON_VALUE, PROJECTCONTENT_JSON_VALUE,
-    PROJECTINFO_JSON_VALUE, PROJECTSTRUCTURE_JSON_VALUE,
+    Abstract, AdditionalInstruction, ProjectContent, ProjectInfo, ProjectStructure,
+    ABSTRACT_JSON_VALUE, ADDITIONALINSTRUCTION_JSON_VALUE, ALTERNATIVETITLES_JSON_VALUE,
+    PROJECTCONTENT_JSON_VALUE, PROJECTDETAILS_JSON_VALUE, PROJECTINFO_JSON_VALUE,
+    PROJECTSTRUCTURE_JSON_VALUE,
 };
 
 use serde::de::DeserializeOwned;
@@ -32,6 +33,13 @@ pub enum DocuRequest<'a> {
         &'a ProjectContent,
         &'a ProjectStructure,
         &'a AdditionalInstruction,
+    ),
+    ProjectDetails(
+        &'a ProjectInfo,
+        &'a ProjectContent,
+        &'a ProjectStructure,
+        &'a AdditionalInstruction,
+        &'a Abstract,
     ),
 }
 
@@ -69,6 +77,11 @@ impl DocuRequest<'_> {
                 let json = &*ABSTRACT_JSON_VALUE;
                 schema::get_gen_config(json.clone())
             }
+
+            Self::ProjectDetails(_, _, _, _, _) => {
+                let json = &*PROJECTDETAILS_JSON_VALUE;
+                schema::get_gen_config(json.clone())
+            }
         }
     }
 
@@ -89,6 +102,10 @@ impl DocuRequest<'_> {
             }
 
             Self::Abstract(_, _, _, _) => sysinsts::ABSTRACT_SYSTEM_INSTRUCTION.to_string(),
+
+            Self::ProjectDetails(_, _, _, _, _) => {
+                sysinsts::PROJECT_DETAILS_SYSTEM_INSTRUCTION.to_string()
+            }
         }
     }
 
@@ -175,6 +192,31 @@ impl DocuRequest<'_> {
                 let message = format!(
                     "projectInformation: {:#?}\nprojectContent: {:#?}\nstructureAndFormat: {:#?}\nadditionalInstructions: {:#?}",
                     project_info, project_content, project_structure, additional_instruction
+                );
+
+                Ok(requests::get_request(
+                    message,
+                    self.to_config(),
+                    self.to_system_instruction(),
+                ))
+            }
+
+            Self::ProjectDetails(
+                project_info,
+                project_content,
+                project_structure,
+                additional_instruction,
+                r#abstract,
+            ) => {
+                let project_info = serde_json::to_string(*project_info)?;
+                let project_content = serde_json::to_string(*project_content)?;
+                let project_structure = serde_json::to_string(*project_structure)?;
+                let additional_instruction = serde_json::to_string(*additional_instruction)?;
+                let r#abstract = serde_json::to_string(*r#abstract)?;
+
+                let message = format!(
+                    "projectInformation: {:#?}\nprojectContent: {:#?}\nstructureAndFormat: {:#?}\nadditionalInstructions: {:#?} \nAbstract: {:#?}",
+                    project_info, project_content, project_structure, additional_instruction, r#abstract
                 );
 
                 Ok(requests::get_request(
