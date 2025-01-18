@@ -113,7 +113,7 @@ pub mod tests {
             .await
             .unwrap();
 
-        println!("{:#?}", res.json_body().unwrap());
+        println!("{:#?}", res.json_body());
 
         assert_eq!(res.status().as_u16(), 200);
 

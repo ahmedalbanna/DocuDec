@@ -1,0 +1,1 @@
+pub const PROJECT_APPENDICES_SYSTEM_INSTRUCTION: &str = "## **8. Appendices**\n\n- Include any additional information, data, or supplementary materials that support the project.\n- Label each appendix with a title or description for easy reference.\n- Number the appendices sequentially (Appendix A, Appendix B, etc.) for organization.\n";

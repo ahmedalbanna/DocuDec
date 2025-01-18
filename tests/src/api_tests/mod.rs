@@ -1,8 +1,11 @@
 mod test_abstract;
 mod test_additional_instruction;
+mod test_project_appendices;
+mod test_project_conclusion;
 mod test_project_content;
 mod test_project_details;
 mod test_project_info;
+mod test_project_references;
 mod test_project_structure;
 mod test_title;
 

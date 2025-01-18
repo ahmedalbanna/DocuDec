@@ -6,9 +6,12 @@ pub mod error;
 
 mod r#abstract;
 mod additional_instruction;
+mod project_appendices;
+mod project_conclusion;
 mod project_content;
 mod project_details;
 mod project_info;
+mod project_references;
 mod project_structure;
 mod titles;
 mod validators;
@@ -25,6 +28,9 @@ pub fn config(config: &mut web::ServiceConfig) {
             .service(project_structure::generate_project_structure)
             .service(additional_instruction::generate_additional_instruction)
             .service(r#abstract::generate_abstraction)
-            .service(project_details::generate_project_details),
+            .service(project_details::generate_project_details)
+            .service(project_conclusion::generate_project_conclusion)
+            .service(project_references::generate_project_references)
+            .service(project_appendices::generate_project_appendices),
     );
 }

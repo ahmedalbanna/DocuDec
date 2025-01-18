@@ -1,0 +1,11 @@
+pub const PROJECT_CONCLUSION_TEMPLATE: &str = r#"
+{
+        "conclusion": {
+            "achievements": "The successful development and deployment of a fully functional automated graduation project system that significantly reduced manual effort and enhanced transparency. This included implementing all core functionalities and meeting key project goals.",
+            "final_thoughts": "The project has demonstrated the potential of automation in streamlining academic processes, with clear positive impacts for students and faculty. The iterative development approach has been highly beneficial for incorporating user feedback and for driving the system toward the specified goals. The focus on user experience and functionality has been essential in delivering the completed project.",
+            "future_directions": "Future development should explore integrating AI-powered features like project matching and plagiarism detection. The user interface should continue to be refined based on ongoing user feedback. Expanding system capabilities to include progress tracking and better communication features is also a key priority. The project would also benefit from additional reporting and data analysis tools. Performance optimization and scalability should also be a focus.",
+            "lessons_learned": "Key lessons include the importance of clear project planning and communication with stakeholders. The iterative development and testing approach was essential in ensuring the final product met user needs. Also having clear, documented user requirements was essential to minimize ambiguity and ensure user needs were met. The project demonstrated the importance of agile project management practices in software development.",
+            "summary_of_findings": "The automated system has significantly reduced the time and effort required to manage graduation project proposals and also has improved transparency and efficiency in the review process. User feedback has been very positive with only minor issues identified regarding the usability of some specific screens. The system has met its primary goals and successfully replaces the manual system that existed before this implementation."
+        }
+}
+"#;

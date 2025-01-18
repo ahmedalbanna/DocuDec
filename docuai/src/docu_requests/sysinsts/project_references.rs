@@ -1,0 +1,1 @@
+pub const PROJECT_REFERENCES_SYSTEM_INSTRUCTION: &str =  "## **7. References**\n\n- List all the references used in the project, including academic papers, books, articles, and online resources.\n- Follow the appropriate citation style (APA, MLA, Chicago, etc.) for consistency and accuracy.\n";
