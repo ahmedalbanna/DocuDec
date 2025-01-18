@@ -1,4 +1,4 @@
-use docuai::docu_requests::schemas::project_info::ProjectInfo;
+use docuai::docu_requests::schemas::ProjectInfo;
 use serde::{Deserialize, Serialize};
 
 #[derive(Deserialize, Serialize, Debug, Default)]

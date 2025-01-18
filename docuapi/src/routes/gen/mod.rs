@@ -4,8 +4,8 @@ use actix_web::web;
 
 pub mod error;
 
+mod r#abstract;
 mod additional_instruction;
-mod project_abstract;
 mod project_content;
 mod project_info;
 mod project_structure;
@@ -23,6 +23,6 @@ pub fn config(config: &mut web::ServiceConfig) {
             .service(project_content::generate_project_content)
             .service(project_structure::generate_project_structure)
             .service(additional_instruction::generate_additional_instruction)
-            .service(project_abstract::generate_project_abstraction),
+            .service(r#abstract::generate_abstraction),
     );
 }

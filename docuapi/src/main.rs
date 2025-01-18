@@ -29,16 +29,16 @@ async fn main() {
 
     let database = Arc::new(DocuBase::new().await.unwrap());
 
-    let user = database
-        .create_user(
-            "abdullah".into(),
-            "abdu.albanna@proton.me".into(),
-            "12345".into(),
-        )
-        .await
-        .unwrap();
+    //let user = database
+    //    .create_user(
+    //        "abdullah".into(),
+    //        "abdu.albanna@proton.me".into(),
+    //        "12345".into(),
+    //    )
+    //    .await
+    //    .unwrap();
 
-    println!("id: {:#?}, created_at: {:#?}", user.id, user.created_at);
+    //println!("id: {:#?}, created_at: {:#?}", user.id, user.created_at);
 
     HttpServer::new(move || {
         App::new()

@@ -1,7 +1,7 @@
 pub mod schema_builder;
 
 pub mod requests;
-pub mod responses;
+//pub mod responses;
 pub mod schema;
 pub mod schemas;
 pub mod sysinsts;
@@ -10,9 +10,11 @@ use google_generative_ai_rs::v1::{
     api::PostResult,
     gemini::request::{GenerationConfig, Request},
 };
+
 use schemas::{
-    additional_instruction::AdditionalInstruction, project_content::ProjectContent,
-    project_info::ProjectInfo, project_structure::ProjectStructure,
+    AdditionalInstruction, ProjectContent, ProjectInfo, ProjectStructure, ABSTRACT_JSON_VALUE,
+    ADDITIONALINSTRUCTION_JSON_VALUE, ALTERNATIVETITLES_JSON_VALUE, PROJECTCONTENT_JSON_VALUE,
+    PROJECTINFO_JSON_VALUE, PROJECTSTRUCTURE_JSON_VALUE,
 };
 
 use serde::de::DeserializeOwned;
@@ -25,7 +27,7 @@ pub enum DocuRequest<'a> {
     ProjectContent(&'a ProjectInfo),
     ProjectStructure(&'a ProjectInfo, &'a ProjectContent),
     AdditionalInstruction(&'a ProjectInfo, &'a ProjectContent, &'a ProjectStructure),
-    ProjectAbstract(
+    Abstract(
         &'a ProjectInfo,
         &'a ProjectContent,
         &'a ProjectStructure,
@@ -37,34 +39,34 @@ impl DocuRequest<'_> {
     pub fn to_config(&self) -> GenerationConfig {
         match self {
             Self::AlterTitles(_) => {
-                let json = &*schemas::alter_titles::ALTERNATIVETITLES_JSON_VALUE;
+                let json = &*ALTERNATIVETITLES_JSON_VALUE;
 
                 schema::get_gen_config(json.clone())
             }
 
             Self::ProjectInfo(_) => {
-                let json = &*schemas::project_info::PROJECTINFO_JSON_VALUE;
+                let json = &*PROJECTINFO_JSON_VALUE;
                 schema::get_gen_config(json.clone())
             }
 
             Self::ProjectContent(_) => {
-                let json = &*schemas::project_content::PROJECTCONTENT_JSON_VALUE;
+                let json = &*PROJECTCONTENT_JSON_VALUE;
                 schema::get_gen_config(json.clone())
             }
 
             Self::ProjectStructure(_, _) => {
-                let json = &*schemas::project_structure::PROJECTSTRUCTURE_JSON_VALUE;
+                let json = &*PROJECTSTRUCTURE_JSON_VALUE;
                 schema::get_gen_config(json.clone())
             }
 
             Self::AdditionalInstruction(_, _, _) => {
-                let json = &*schemas::additional_instruction::ADDITIONALINSTRUCTION_JSON_VALUE;
+                let json = &*ADDITIONALINSTRUCTION_JSON_VALUE;
 
                 schema::get_gen_config(json.clone())
             }
 
-            Self::ProjectAbstract(_, _, _, _) => {
-                let json = &*schemas::project_abstract::PROJECTABSTRACT_JSON_VALUE;
+            Self::Abstract(_, _, _, _) => {
+                let json = &*ABSTRACT_JSON_VALUE;
                 schema::get_gen_config(json.clone())
             }
         }
@@ -72,30 +74,21 @@ impl DocuRequest<'_> {
 
     pub fn to_system_instruction(&self) -> String {
         match self {
-            Self::AlterTitles(_) => {
-                sysinsts::alter_titles::ALTER_TITLES_SYSTEM_INSTRUCTION.to_string()
-            }
+            Self::AlterTitles(_) => sysinsts::ALTER_TITLES_SYSTEM_INSTRUCTION.to_string(),
 
-            Self::ProjectInfo(_) => {
-                sysinsts::project_info::PROJECT_INFO_SYSTEM_INSTRUCTION.to_string()
-            }
+            Self::ProjectInfo(_) => sysinsts::PROJECT_INFO_SYSTEM_INSTRUCTION.to_string(),
 
-            Self::ProjectContent(_) => {
-                sysinsts::project_content::PROJECT_CONTENT_SYSTEM_INSTRUCTION.to_string()
-            }
+            Self::ProjectContent(_) => sysinsts::PROJECT_CONTENT_SYSTEM_INSTRUCTION.to_string(),
 
             Self::ProjectStructure(_, _) => {
-                sysinsts::project_structure::PROJECT_STRUCTURE_SYSTEM_INSTRUCTION.to_string()
+                sysinsts::PROJECT_STRUCTURE_SYSTEM_INSTRUCTION.to_string()
             }
 
             Self::AdditionalInstruction(_, _, _) => {
-                sysinsts::additional_instruction::ADDITIONAL_INSTRUCTION_SYSTEM_INSTRUCTION
-                    .to_string()
+                sysinsts::ADDITIONAL_INSTRUCTION_SYSTEM_INSTRUCTION.to_string()
             }
 
-            Self::ProjectAbstract(_, _, _, _) => {
-                sysinsts::project_abstract::PROJECT_ABSTRACT_SYSTEM_INSTRUCTION.to_string()
-            }
+            Self::Abstract(_, _, _, _) => sysinsts::ABSTRACT_SYSTEM_INSTRUCTION.to_string(),
         }
     }
 
@@ -168,7 +161,7 @@ impl DocuRequest<'_> {
                 ))
             }
 
-            Self::ProjectAbstract(
+            Self::Abstract(
                 project_info,
                 project_content,
                 project_structure,

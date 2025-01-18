@@ -84,11 +84,11 @@ pub mod tests {
         let project_structure: Value = serde_json::from_str(project_structure_json)
             .expect("Failed to parse json to ProjectStructure");
 
-        let project_content: docuai::docu_requests::responses::project_content::ProjectContent =
+        let project_content: docuai::docu_requests::schemas::ProjectContent =
             serde_json::from_str(project_content_json)
                 .expect("Failed to parse JSON to ProjectContent");
 
-        let additional_instruction: docuai::docu_requests::responses::additional_instruction::AdditionalInstruction =
+        let additional_instruction: docuai::docu_requests::schemas::AdditionalInstruction =
             serde_json::from_str(additional_instruction_json)
                 .expect("Failed to parse JSON to AdditionalInstruction");
 

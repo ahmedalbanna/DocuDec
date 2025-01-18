@@ -1,7 +1,7 @@
 #[cfg(test)]
 pub mod tests {
     use super::super::get_client;
-    use docuai::docu_requests::responses::alter_titles::Titles;
+    use docuai::docu_requests::schemas::AlternativeTitles;
     use serde_json::json;
 
     #[tokio::test]
@@ -47,7 +47,7 @@ pub mod tests {
         assert_eq!(res.status().as_u16(), 200);
 
         let json_body = res
-            .json_body_as::<Titles>()
+            .json_body_as::<AlternativeTitles>()
             .expect("Failed convert the return JSON back to a Title struct");
 
         assert!(!json_body.recommendation.is_empty());

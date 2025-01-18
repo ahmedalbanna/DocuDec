@@ -2,11 +2,9 @@ use actix_web::web::Json;
 use tracing::error;
 
 use super::super::error::GenError;
-use super::super::project_abstract::request::ProjectAbstractRequest;
+use super::super::r#abstract::request::AbstractRequest;
 
-pub fn validate_project_abstract_request(
-    payload: &Json<ProjectAbstractRequest>,
-) -> Result<(), GenError> {
+pub fn validate_abstract_request(payload: &Json<AbstractRequest>) -> Result<(), GenError> {
     // Validate project_info
     if payload.project_info.project_title.is_empty() {
         error!("Project info title cannot be empty");

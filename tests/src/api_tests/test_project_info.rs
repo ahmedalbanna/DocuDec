@@ -1,7 +1,7 @@
 #[cfg(test)]
 pub mod tests {
     use super::super::get_client;
-    use docuai::docu_requests::responses::project_info::ProjectInfo;
+    use docuai::docu_requests::schemas::ProjectInfo;
     use serde_json::json;
 
     #[tokio::test]

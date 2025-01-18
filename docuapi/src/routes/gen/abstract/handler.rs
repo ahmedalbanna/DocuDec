@@ -6,11 +6,7 @@ use actix_web::{
 };
 use docuai::{
     docu_requests::{
-        schemas::{
-            additional_instruction::AdditionalInstruction, project_abstract::ProjectAbstract,
-            project_content::ProjectContent, project_info::ProjectInfo,
-            project_structure::ProjectStructure,
-        },
+        schemas::{Abstract, AdditionalInstruction, ProjectContent, ProjectInfo, ProjectStructure},
         DocuRequest,
     },
     DocuError,
@@ -20,17 +16,17 @@ use tracing::{debug, error, instrument};
 
 use super::super::error::{map_ai_error, GenError};
 
-use super::super::validators::validate_project_abstract::validate_project_abstract_request;
-use super::request::ProjectAbstractRequest;
+use super::super::validators::validate_abstract::validate_abstract_request;
+use super::request::AbstractRequest;
 
 #[instrument(skip(model))]
 #[actix_web::post("/project-abstract")]
-pub async fn generate_project_abstraction(
+pub async fn generate_abstraction(
     model: web::Data<Arc<Client>>,
-    payload: Json<ProjectAbstractRequest>,
+    payload: Json<AbstractRequest>,
 ) -> Result<HttpResponse, GenError> {
     // Validate payload
-    validate_project_abstract_request(&payload)?;
+    validate_abstract_request(&payload)?;
 
     debug!(">> Generating project abstraction");
 
@@ -56,10 +52,10 @@ async fn generate_project_abstraction_(
     project_content: &ProjectContent,
     project_structure: &ProjectStructure,
     additional_instruction: &AdditionalInstruction,
-) -> Result<ProjectAbstract, GenError> {
-    match docuai::request::<ProjectAbstract>(
+) -> Result<Abstract, GenError> {
+    match docuai::request(
         model,
-        DocuRequest::ProjectAbstract(
+        DocuRequest::Abstract(
             project_info,
             project_content,
             project_structure,

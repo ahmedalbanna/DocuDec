@@ -5,7 +5,7 @@ use actix_web::{
     HttpResponse,
 };
 use docuai::{
-    docu_requests::{schemas::alter_titles::AlternativeTitles, DocuRequest},
+    docu_requests::{schemas::AlternativeTitles, DocuRequest},
     DocuError,
 };
 use google_generative_ai_rs::v1::api::Client;

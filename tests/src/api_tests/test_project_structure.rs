@@ -67,7 +67,7 @@ pub mod tests {
         let project_info: Value =
             serde_json::from_str(project_info_json).expect("Failed to parse json to ProjectInfo");
 
-        let project_content: docuai::docu_requests::responses::project_content::ProjectContent =
+        let project_content: docuai::docu_requests::schemas::ProjectContent =
             serde_json::from_str(project_content_json)
                 .expect("Failed to parse JSON to ProjectContent");
 
