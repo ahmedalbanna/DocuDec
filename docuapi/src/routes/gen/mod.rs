@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use actix_web::web::{self, service};
+use actix_web::web;
 
 pub mod error;
 

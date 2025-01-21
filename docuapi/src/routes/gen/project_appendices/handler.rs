@@ -51,6 +51,8 @@ pub async fn generate_project_appendices(
     Ok(HttpResponse::Ok().json(result))
 }
 
+// FIXME maybe create a struct that holds the data
+#[allow(clippy::too_many_arguments)]
 /// Secure additional instruction generation with error mapping
 async fn generate_project_appendices_(
     model: &Client,

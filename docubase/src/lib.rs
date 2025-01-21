@@ -1,4 +1,4 @@
-pub mod auth;
+//pub mod auth;
 mod constants;
 mod error;
 pub mod models;

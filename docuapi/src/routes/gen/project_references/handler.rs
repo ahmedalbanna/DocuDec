@@ -52,6 +52,8 @@ pub async fn generate_project_references(
     Ok(HttpResponse::Ok().json(result))
 }
 
+// FIXME maybe create a struct that holds the data
+#[allow(clippy::too_many_arguments)]
 /// Secure additional instruction generation with error mapping
 async fn generate_project_references_(
     model: &Client,
