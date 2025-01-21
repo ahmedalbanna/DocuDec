@@ -1,6 +1,7 @@
-use jsonschema::jsonschema;
+use docubase::models::ReportMetadata;
+use schema2struct::schema2struct;
 
-jsonschema! {
+schema2struct! {
     type: object,
     struct: ProjectReferences,
     required: ["references"],
@@ -22,4 +23,14 @@ jsonschema! {
         }
     }
 
+}
+
+impl ReportMetadata for ProjectReferences {
+    fn content(&self) -> serde_json::Value {
+        serde_json::to_value(self).unwrap()
+    }
+
+    fn report_type(&self) -> docubase::models::ReportType {
+        docubase::models::ReportType::ProjectReferences
+    }
 }

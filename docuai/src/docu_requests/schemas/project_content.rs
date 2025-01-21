@@ -1,13 +1,7 @@
-use crate::{
-    array,
-    docu_requests::schema_builder::{Schema, SchemaType},
-    string,
-};
+use docubase::models::ReportMetadata;
+use schema2struct::schema2struct;
 
-use jsonschema::jsonschema;
-use serde_json::Value;
-
-jsonschema! {
+schema2struct! {
     type: object,
     struct: ProjectContent,
     required: ["projectContent"],
@@ -90,6 +84,16 @@ jsonschema! {
                 }
             }
         }
+    }
+}
+
+impl ReportMetadata for ProjectContent {
+    fn content(&self) -> serde_json::Value {
+        serde_json::to_value(self).unwrap()
+    }
+
+    fn report_type(&self) -> docubase::models::ReportType {
+        docubase::models::ReportType::ProjectContent
     }
 }
 

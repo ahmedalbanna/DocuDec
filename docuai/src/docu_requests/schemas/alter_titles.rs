@@ -1,13 +1,6 @@
-use crate::{
-    array,
-    docu_requests::schema_builder::{Schema, SchemaType},
-    string,
-};
-use jsonschema::jsonschema;
+use schema2struct::schema2struct;
 
-use serde_json::Value;
-
-jsonschema! {
+schema2struct! {
     type: object,
     struct: AlternativeTitles,
     description: "Schema for analyzing and suggesting alternative titles for a project.",

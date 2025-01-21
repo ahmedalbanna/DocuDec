@@ -1,11 +1,7 @@
-use crate::{
-    docu_requests::schema_builder::{Schema, SchemaType},
-    string,
-};
+use docubase::models::ReportMetadata;
+use schema2struct::schema2struct;
 
-use jsonschema::jsonschema;
-
-jsonschema! {
+schema2struct! {
     type: object,
     struct: AdditionalInstruction,
     required: ["additionalInstructions"],
@@ -22,6 +18,15 @@ jsonschema! {
         }
     }
 
+}
+
+impl ReportMetadata for AdditionalInstruction {
+    fn content(&self) -> serde_json::Value {
+        serde_json::to_value(self).unwrap()
+    }
+    fn report_type(&self) -> docubase::models::ReportType {
+        docubase::models::ReportType::AdditionalInstruction
+    }
 }
 
 //use serde_json::Value;

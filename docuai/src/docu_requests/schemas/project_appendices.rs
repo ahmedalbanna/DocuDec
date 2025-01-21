@@ -1,6 +1,7 @@
-use jsonschema::jsonschema;
+use docubase::models::ReportMetadata;
+use schema2struct::schema2struct;
 
-jsonschema! {
+schema2struct! {
     type: object,
     struct: ProjectAppendices,
     required: ["appendices"],
@@ -18,5 +19,15 @@ jsonschema! {
                 }
             }
         }
+    }
+}
+
+impl ReportMetadata for ProjectAppendices {
+    fn content(&self) -> serde_json::Value {
+        serde_json::to_value(self).unwrap()
+    }
+
+    fn report_type(&self) -> docubase::models::ReportType {
+        docubase::models::ReportType::ProjectAppendices
     }
 }

@@ -645,16 +645,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "create_json_schema_struct_macro"
-version = "0.1.0"
-source = "git+https://github.com/abdullah-albanna/jsonschema?rev=b3a0f9d#b3a0f9d86c04a172916a181b18919932003129c1"
-dependencies = [
- "proc-macro2",
- "quote",
- "syn 2.0.92",
-]
-
-[[package]]
 name = "crossbeam-queue"
 version = "0.3.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -774,11 +764,12 @@ dependencies = [
 name = "docuai"
 version = "0.1.0"
 dependencies = [
+ "docubase",
  "dotenv",
  "google-generative-ai-rs",
  "indexmap",
- "jsonschema",
  "once_cell",
+ "schema2struct",
  "serde",
  "serde_json",
  "thiserror 2.0.9",
@@ -813,6 +804,7 @@ dependencies = [
  "chrono",
  "dotenv",
  "jsonwebtoken",
+ "once_cell",
  "rust-argon2",
  "serde",
  "serde_json",
@@ -1634,28 +1626,6 @@ dependencies = [
  "once_cell",
  "wasm-bindgen",
 ]
-
-[[package]]
-name = "jsonschema"
-version = "0.1.0"
-source = "git+https://github.com/abdullah-albanna/jsonschema?rev=b3a0f9d#b3a0f9d86c04a172916a181b18919932003129c1"
-dependencies = [
- "create_json_schema_struct_macro",
- "inflections",
- "jsonschema_macros",
- "paste",
- "proc-macro-error",
- "proc-macro2",
- "quote",
- "serde",
- "serde_json",
- "syn 2.0.92",
-]
-
-[[package]]
-name = "jsonschema_macros"
-version = "0.1.0"
-source = "git+https://github.com/abdullah-albanna/jsonschema?rev=b3a0f9d#b3a0f9d86c04a172916a181b18919932003129c1"
 
 [[package]]
 name = "jsonwebtoken"
@@ -2552,6 +2522,22 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1f29ebaa345f945cec9fbbc532eb307f0fdad8161f281b6369539c8d84876b3d"
 dependencies = [
  "windows-sys 0.59.0",
+]
+
+[[package]]
+name = "schema2struct"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7df6d4c9e65f3844361851247a8a47d7cf14d1262b560939b6a61df367cf88e4"
+dependencies = [
+ "inflections",
+ "paste",
+ "proc-macro-error",
+ "proc-macro2",
+ "quote",
+ "serde",
+ "serde_json",
+ "syn 2.0.92",
 ]
 
 [[package]]

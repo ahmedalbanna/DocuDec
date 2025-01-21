@@ -1,11 +1,14 @@
-use crate::models::Claims;
+use crate::{
+    constants::{JWTSALT, JWTSECRECT},
+    error::DocuBaseError,
+    models::Claims,
+};
 use argon2::{self, Config, Variant, Version};
 use jsonwebtoken::{encode, EncodingKey, Header};
-use std::error::Error;
 
-pub fn hash_password(password: &str) -> Result<String, argon2::Error> {
+pub fn hash_password(password: &str) -> Result<String, DocuBaseError> {
     let password = password.as_bytes();
-    let salt = "docudec-ahmed-abdullah".as_bytes();
+    let salt = JWTSALT.as_bytes();
     let config = Config {
         variant: Variant::Argon2d,
         version: Version::Version13,
@@ -16,17 +19,17 @@ pub fn hash_password(password: &str) -> Result<String, argon2::Error> {
         ad: &[],
         hash_length: 32,
     };
-    let hash = argon2::hash_encoded(password, salt, &config).unwrap();
+    let hash = argon2::hash_encoded(password, salt, &config)?;
 
     Ok(hash)
 }
 
-pub fn verify_password(password: String, hash: String) -> bool {
-    argon2::verify_encoded(&hash, password.as_bytes()).unwrap()
+pub fn verify_password(password: String, hash: String) -> Result<bool, DocuBaseError> {
+    Ok(argon2::verify_encoded(&hash, password.as_bytes())?)
 }
 
-pub fn generate_jwt(user_id: &str) -> Result<String, Box<dyn Error>> {
-    let secret = "super-secret";
+pub fn generate_jwt(user_id: &str) -> Result<String, DocuBaseError> {
+    let secret = &*JWTSECRECT;
 
     let expiration = (chrono::Utc::now().timestamp() + 3600) as usize; // Token expires in 1 hour
 
@@ -40,8 +43,8 @@ pub fn generate_jwt(user_id: &str) -> Result<String, Box<dyn Error>> {
     Ok(token)
 }
 
-pub fn validate_jwt(token: &str) -> Result<String, Box<dyn Error>> {
-    let secret = "super-secret";
+pub fn validate_jwt(token: &str) -> Result<String, DocuBaseError> {
+    let secret = &*JWTSECRECT;
 
     use jsonwebtoken::{decode, DecodingKey, Validation};
 
@@ -50,7 +53,7 @@ pub fn validate_jwt(token: &str) -> Result<String, Box<dyn Error>> {
 
     // Check if the token is expired
     if token_data.claims.exp < chrono::Utc::now().timestamp() as usize {
-        return Err("Token has expired.".into());
+        return Err(DocuBaseError::ExpiredToken);
     }
 
     Ok(token_data.claims.sub)

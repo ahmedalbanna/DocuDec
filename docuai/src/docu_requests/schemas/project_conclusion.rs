@@ -1,6 +1,7 @@
-use jsonschema::jsonschema;
+use docubase::models::ReportMetadata;
+use schema2struct::schema2struct;
 
-jsonschema! {
+schema2struct! {
     type: object,
     struct: ProjectConclusion,
     properties: {
@@ -22,5 +23,15 @@ jsonschema! {
                 "finalThoughts": { type: string },
             }
         }
+    }
+}
+
+impl ReportMetadata for ProjectConclusion {
+    fn content(&self) -> serde_json::Value {
+        serde_json::to_value(self).unwrap()
+    }
+
+    fn report_type(&self) -> docubase::models::ReportType {
+        docubase::models::ReportType::ProjectConclusion
     }
 }

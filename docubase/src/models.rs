@@ -1,8 +1,15 @@
+mod project;
+mod report;
+mod user;
+
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
-use serde_json::Value;
 use sqlx::prelude::FromRow;
 use uuid::Uuid;
+
+pub use project::Project;
+pub use report::{Report, ReportMetadata, ReportType};
+pub use user::User;
 
 #[derive(Serialize, Deserialize, FromRow)]
 pub struct CreateResponse {
@@ -16,29 +23,7 @@ pub struct DeleteResponse {
 }
 
 #[derive(Serialize, Deserialize, FromRow)]
-pub struct User {
-    pub username: String,
-    pub email: String,
-    pub password_hash: String,
-}
-
-#[derive(Serialize, Deserialize, FromRow)]
 pub struct Claims {
     pub sub: String, // User ID
     pub exp: usize,  // Expiration timestamp
-}
-
-#[derive(Debug, Serialize, Deserialize, FromRow)]
-struct Project {
-    id: Uuid,
-    user_id: Uuid,
-    title: String,
-    information: Value,
-}
-
-#[derive(Debug, Serialize, Deserialize, FromRow)]
-struct Report {
-    id: Uuid,
-    project_id: Uuid,
-    content: Value,
 }
