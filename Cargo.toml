@@ -16,5 +16,9 @@ tracing-subscriber = {version = "0.3", features = ["env-filter"]}
 google-generative-ai-rs = {version = "0.3.4", features = ["beta"]}
 thiserror = "2"
 uuid = { version = "1.11.0", features = ["v4", "serde"] }
-chrono = "0.4.39"
+chrono = {version = "0.4", features = ["serde"]}
 once_cell = "1.20"
+
+
+[workspace.lints.clippy]
+pedantic = "warn"

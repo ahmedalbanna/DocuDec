@@ -16,3 +16,6 @@ indexmap = "2.7.0"
 schema2struct = "0.1"
 
 docubase = { path = "../docubase" }
+
+[lints]
+workspace = true

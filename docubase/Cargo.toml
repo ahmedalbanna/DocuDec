@@ -11,7 +11,8 @@ thiserror = {workspace = true}
 jsonwebtoken = "9"
 uuid = {workspace = true}
 chrono = {workspace = true}
-rust-argon2 = "2.1"
+#rust-argon2 = "2.1"
+argon2 = "0.5"
 serde_json = {workspace = true}
 sqlx = { version = "0.8", features = [
     "runtime-tokio",
@@ -35,3 +36,6 @@ sqlx = { version = "0.8", features = [
     ]}
 
 tokio = { workspace = true }
+
+[lints]
+workspace = true

@@ -8,6 +8,7 @@ use constants::DATABASE_URL;
 use error::DocuBaseError;
 use models::{CreateResponse, DeleteResponse, Project, Report, ReportMetadata, ReportType};
 use sqlx::{postgres::PgPool, Pool, Postgres};
+use utils::{generate_jwt, hash_password, validate_jwt, verify_password};
 use uuid::Uuid;
 
 pub struct DocuBase {
@@ -25,6 +26,26 @@ impl DocuBase {
         let db_url = &*DATABASE_URL;
 
         let pool = PgPool::connect(db_url).await?;
+
+        let password = "abdullah-albanna".to_string();
+
+        let hashed_password = hash_password(&password).unwrap();
+
+        println!("password: {}", password);
+        println!("hashed password: {}", hashed_password);
+
+        println!(
+            "verification result: {}",
+            verify_password(&password, &hashed_password).unwrap()
+        );
+
+        let jwt = generate_jwt("13").unwrap();
+        println!("jwt for the 13 as the user_id: {}", jwt);
+
+        println!(
+            "extracted user_id from the jwt: {}",
+            validate_jwt(&jwt).unwrap()
+        );
 
         Ok(Self { pool })
     }

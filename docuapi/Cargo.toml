@@ -20,3 +20,6 @@ validator = { version = "0.19", features = ["derive"] }
 
 docuai = {path = "../docuai"}
 docubase = {path = "../docubase"}
+
+[lints]
+workspace = true

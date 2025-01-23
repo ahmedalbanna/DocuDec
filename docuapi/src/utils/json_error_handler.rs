@@ -35,7 +35,7 @@ pub fn json_error_handler(err: JsonPayloadError, _req: &HttpRequest) -> actix_we
                 .split("missing field `")
                 .nth(1)
                 .and_then(|s| s.split('`').next())
-                .map(|s| s.to_string());
+                .map(ToString::to_string);
 
             (
                 StatusCode::BAD_REQUEST,

@@ -28,5 +28,5 @@ pub enum DocuBaseError {
     JwtError(#[from] jsonwebtoken::errors::Error),
 
     #[error("couldn't hash the password: {0}")]
-    PasswordHashingError(#[from] argon2::Error),
+    PasswordHashingError(String),
 }
