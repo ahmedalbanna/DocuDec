@@ -69,7 +69,7 @@ async fn generate_project_structure_with_validation(
                         "AI request failed. Error: {}, Status: {:?}",
                         ge.message, ge.code
                     );
-                    Err(map_ai_error(ge))
+                    Err(map_ai_error(&ge))
                 }
                 _ => {
                     error!("Unrecoverable error in project structure generation");

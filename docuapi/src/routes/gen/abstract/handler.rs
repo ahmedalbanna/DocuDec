@@ -11,6 +11,7 @@ use docuai::{
     },
     DocuError,
 };
+use docubase::error::DocuBaseError;
 use google_generative_ai_rs::v1::api::Client;
 use tracing::{debug, error, instrument};
 
@@ -69,18 +70,15 @@ async fn generate_abstraction_(
         Err(error) => {
             error!("Project abstraction generation failed: {:?}", error);
 
-            match error {
-                DocuError::ApiRequest(ge) => {
-                    error!(
-                        "AI request failed. Error: {}, Status: {:?}",
-                        ge.message, ge.code
-                    );
-                    Err(map_ai_error(ge))
-                }
-                _ => {
-                    error!("Unrecoverable error in project abstraction generation");
-                    Err(GenError::UnknownError)
-                }
+            if let DocuError::ApiRequest(ge) = error {
+                error!(
+                    "AI request failed. Error: {}, Status: {:?}",
+                    ge.message, ge.code
+                );
+                Err(map_ai_error(&ge))
+            } else {
+                error!("Unrecoverable error in project abstraction generation");
+                Err(GenError::UnknownError)
             }
         }
     }

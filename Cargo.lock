@@ -774,9 +774,11 @@ version = "0.1.0"
 dependencies = [
  "actix-web",
  "async-trait",
+ "chrono",
  "docuai",
  "docubase",
  "dotenv",
+ "futures",
  "google-generative-ai-rs",
  "once_cell",
  "serde",

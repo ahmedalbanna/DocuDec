@@ -7,7 +7,7 @@ use super::super::error::GenError;
 
 pub fn validate_title_content(title: &str) -> Result<(), ValidationError> {
     // Prevent purely numeric titles
-    if title.chars().all(|c| c.is_numeric()) {
+    if title.chars().all(char::is_numeric) {
         return Err(ValidationError::new("Title cannot be purely numeric"));
     }
 
@@ -39,7 +39,7 @@ pub fn validate_title_content(title: &str) -> Result<(), ValidationError> {
 
 pub fn validate_title_request<T>(payload: &'_ Json<T>) -> Result<(), GenError>
 where
-    T: for<'a> Deserialize<'a> + Validate,
+    T: for<'de> Deserialize<'de> + Validate,
 {
     payload.validate().map_err(|validation_errors| {
         let error_details = validation_errors
@@ -52,7 +52,7 @@ where
                     .collect::<Vec<_>>()
                     .join(", ");
 
-                format!("{}: {}", field, error_messages)
+                format!("{field}: {error_messages}")
             })
             .collect::<Vec<_>>()
             .join("; ");

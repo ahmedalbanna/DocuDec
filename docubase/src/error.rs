@@ -12,8 +12,14 @@ pub enum DocuBaseError {
     #[error("project does ot exists")]
     ProjectDoesNotExists,
 
+    #[error("project alredy exists")]
+    ProjectExists,
+
     #[error("report does ot exists")]
     ReportDoesNotExists,
+
+    #[error("report (type) alredy exists")]
+    ReportExists,
 
     #[error("project state is not found, perhabs it's a new project")]
     ProjectStateNotFound,
@@ -27,6 +33,7 @@ pub enum DocuBaseError {
     #[error("jwt error: {0}")]
     JwtError(#[from] jsonwebtoken::errors::Error),
 
+    // couldn't put the argon2 directly to here, because of the as_dyn_mut or something
     #[error("couldn't hash the password: {0}")]
     PasswordHashingError(String),
 }

@@ -1,6 +1,8 @@
 use docubase::models::ReportMetadata;
 use schema2struct::schema2struct;
 
+use crate::DocuError;
+
 schema2struct! {
     type: object,
     struct: AdditionalInstruction,
@@ -29,6 +31,24 @@ impl ReportMetadata for AdditionalInstruction {
     }
 }
 
+impl AdditionalInstruction {
+    #[must_use]
+    pub fn to_json() -> serde_json::Value {
+        (*ADDITIONALINSTRUCTION_JSON_VALUE).clone()
+    }
+
+    /// # Errors
+    /// ```rust
+    /// DocuError::JsonConversion(serde_json::Error)
+    /// ```
+    ///
+    /// it returns an error if serde_json failed to convert the
+    /// provided instance to json
+    pub fn message(content: &Self) -> Result<String, DocuError> {
+        let string = serde_json::to_string(content)?;
+        Ok(format!("additionalInstructions: {string:#?}\n"))
+    }
+}
 //use serde_json::Value;
 //
 //pub fn create_additional_instruction_schema() -> Value {

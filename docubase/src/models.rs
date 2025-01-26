@@ -24,6 +24,9 @@ pub struct DeleteResponse {
 
 #[derive(Serialize, Deserialize, FromRow)]
 pub struct Claims {
-    pub sub: String, // User ID
-    pub exp: u64,    // Expiration timestamp
+    /// User ID
+    pub sub: String,
+
+    /// Expiration timestamp
+    pub exp: u64,
 }

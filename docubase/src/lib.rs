@@ -1,6 +1,6 @@
 //pub mod auth;
 mod constants;
-mod error;
+pub mod error;
 pub mod models;
 pub mod utils;
 
@@ -8,7 +8,6 @@ use constants::DATABASE_URL;
 use error::DocuBaseError;
 use models::{CreateResponse, DeleteResponse, Project, Report, ReportMetadata, ReportType};
 use sqlx::{postgres::PgPool, Pool, Postgres};
-use utils::{generate_jwt, hash_password, validate_jwt, verify_password};
 use uuid::Uuid;
 
 pub struct DocuBase {
@@ -21,31 +20,19 @@ enum LookupField<'a> {
 }
 
 impl DocuBase {
+    /// # Errors
+    /// it will return
+    /// ```rust
+    /// DocuBaseError::SqlxError(...)
+    /// ```
+    ///  if the ``PgPool`` (Postgres database) failed
+    ///
+    ///  could be because of the url, or the database is not avaliable
     pub async fn new() -> Result<Self, DocuBaseError> {
         dotenv::dotenv().ok();
         let db_url = &*DATABASE_URL;
 
         let pool = PgPool::connect(db_url).await?;
-
-        let password = "abdullah-albanna".to_string();
-
-        let hashed_password = hash_password(&password).unwrap();
-
-        println!("password: {}", password);
-        println!("hashed password: {}", hashed_password);
-
-        println!(
-            "verification result: {}",
-            verify_password(&password, &hashed_password).unwrap()
-        );
-
-        let jwt = generate_jwt("13").unwrap();
-        println!("jwt for the 13 as the user_id: {}", jwt);
-
-        println!(
-            "extracted user_id from the jwt: {}",
-            validate_jwt(&jwt).unwrap()
-        );
 
         Ok(Self { pool })
     }
@@ -53,6 +40,12 @@ impl DocuBase {
 
 // user
 impl DocuBase {
+    /// # Errors
+    /// ```rust
+    /// DocuBaseError::SqlxError(sqlx::Error)
+    /// ```
+    ///
+    /// it will return a query error if the query failed
     async fn user_exists(&self, field: LookupField<'_>) -> Result<bool, DocuBaseError> {
         let user = match field {
             LookupField::Username(username) => {
@@ -75,17 +68,50 @@ impl DocuBase {
         Ok(user.unwrap_or(false))
     }
 
+    /// # Errors
+    /// ```rust
+    /// DocuBaseError::UserDoesNotExists | DocuBaseError::SqlxError
+    /// ```
+    ///
+    /// it will reutrn an error if the user doesn't exists
+    /// or a database query error
+    pub async fn get_user_id(&self, username: impl Into<String>) -> Result<Uuid, DocuBaseError> {
+        let username = username.into();
+        if !self.user_exists(LookupField::Username(&username)).await? {
+            return Err(DocuBaseError::UserDoesNotExists);
+        }
+
+        let user = sqlx::query!(
+            r#"
+            SELECT id FROM users WHERE username = $1
+        "#,
+            username
+        )
+        .fetch_one(&self.pool)
+        .await?;
+
+        Ok(user.id)
+    }
+
+    /// # Errors
+    /// ```rust
+    /// DocuBaseError::UserExists | DocuBaseError::PasswordHashingError | DocuBaseError::SqlxError
+    /// ```
+    ///
+    /// it will reutrn an error if the user already exists, or couldn't hash the provided
+    /// passsword, or a database query error
     pub async fn create_user(
         &self,
-        username: String,
-        email: String,
-        password: String,
+        username: impl Into<String>,
+        email: impl Into<String>,
+        password: &str,
     ) -> Result<CreateResponse, DocuBaseError> {
+        let username = username.into();
         if self.user_exists(LookupField::Username(&username)).await? {
             return Err(DocuBaseError::UserExists);
         }
 
-        let hashed_password = utils::hash_password(&password)?;
+        let hashed_password = utils::hash_password(password)?;
 
         let user = sqlx::query!(
             r#"
@@ -94,7 +120,7 @@ impl DocuBase {
             RETURNING id, created_at
             "#,
             username,
-            email,
+            email.into(),
             hashed_password
         )
         .fetch_one(&self.pool)
@@ -106,16 +132,24 @@ impl DocuBase {
         })
     }
 
+    /// # Errors
+    /// ```rust
+    /// DocuBaseError::UserDoesNotExists | DocuBaseError::PasswordHashingError | DocuBaseError::SqlxError
+    /// ```
+    ///
+    /// it will reutrn an error if the user doesn't exists, or couldn't hash the provided
+    /// passsword, or a database query error
     pub async fn delete_user(
         &self,
-        username: String,
-        password: String,
+        username: impl Into<String>,
+        password: &str,
     ) -> Result<DeleteResponse, DocuBaseError> {
+        let username = username.into();
         if !self.user_exists(LookupField::Username(&username)).await? {
             return Err(DocuBaseError::UserDoesNotExists);
         }
 
-        let hashed_password = utils::hash_password(&password)?;
+        let hashed_password = utils::hash_password(password)?;
 
         let user = sqlx::query!(
             r#"
@@ -134,7 +168,13 @@ impl DocuBase {
 
 // project
 impl DocuBase {
-    pub async fn project_exists(&self, id: &Uuid) -> Result<bool, DocuBaseError> {
+    /// # Errors
+    /// ```rust
+    /// DocuBaseError::SqlxError(sqlx::Error)
+    /// ```
+    ///
+    /// it will return a query error if the query failed
+    async fn project_exists(&self, id: &Uuid) -> Result<bool, DocuBaseError> {
         let project = sqlx::query!(
             r#"
             SELECT EXISTS(SELECT 1 FROM projects WHERE id = $1)
@@ -147,6 +187,33 @@ impl DocuBase {
         Ok(project.exists.unwrap_or(false))
     }
 
+    /// # Errors
+    /// ```rust
+    /// DocuBaseError::SqlxError(sqlx::Error)
+    /// ```
+    ///
+    /// it will return a query error if the query failed
+    async fn project_title_exists(&self, title: &str, id: &Uuid) -> Result<bool, DocuBaseError> {
+        let project = sqlx::query!(
+            r#"
+            SELECT EXISTS(SELECT 1 FROM projects WHERE id = $1 AND title = $2)
+           "#,
+            id,
+            title
+        )
+        .fetch_one(&self.pool)
+        .await?;
+
+        Ok(project.exists.unwrap_or(false))
+    }
+
+    /// # Errors
+    /// ```rust
+    /// DocuBaseError::UserDoesNotExists | DocuBaseError::SqlxError
+    /// ```
+    ///
+    /// it will reutrn an error if the user doesn't exists,
+    /// or a database query error
     pub async fn get_user_projects(&self, user_id: Uuid) -> Result<Vec<Project>, DocuBaseError> {
         if !self.user_exists(LookupField::Id(&user_id)).await? {
             return Err(DocuBaseError::UserDoesNotExists);
@@ -171,6 +238,13 @@ impl DocuBase {
             .collect::<Vec<_>>())
     }
 
+    /// # Errors
+    /// ```rust
+    /// DocuBaseError::ProjectDoesNotExists | DocuBaseError::SqlxError
+    /// ```
+    ///
+    /// it will return an error if there is not project with the provided ``project_id``,
+    /// or a database query error
     pub async fn get_project(&self, project_id: Uuid) -> Result<Project, DocuBaseError> {
         if !self.project_exists(&project_id).await? {
             return Err(DocuBaseError::ProjectDoesNotExists);
@@ -192,6 +266,13 @@ impl DocuBase {
         })
     }
 
+    /// # Errors
+    /// ```rust
+    /// DocuBaseError::ProjectDoesNotExists | DocuBaseError::SqlxError
+    /// ```
+    ///
+    /// it will return an error if there is not project with the provided ``project_id``,
+    /// or a database query error
     pub async fn get_project_state(&self, project_id: Uuid) -> Result<ReportType, DocuBaseError> {
         if !self.project_exists(&project_id).await? {
             return Err(DocuBaseError::ProjectDoesNotExists);
@@ -211,13 +292,27 @@ impl DocuBase {
         ReportType::try_from(state)
     }
 
+    /// # Errors
+    /// ```rust
+    /// DocuBaseError::UserDoesNotExists | DocuBaseError::ProjectExists |DocuBaseError::SqlxError
+    /// ```
+    ///
+    /// it will reutrn an error if the user doesn't exists, or if the project title for the user
+    /// already exists
+    /// or a database query error
     pub async fn create_project(
         &self,
         user_id: Uuid,
-        title: String,
+        title: impl Into<String>,
     ) -> Result<CreateResponse, DocuBaseError> {
         if !self.user_exists(LookupField::Id(&user_id)).await? {
             return Err(DocuBaseError::UserDoesNotExists);
+        }
+
+        let title = title.into();
+
+        if self.project_title_exists(&title, &user_id).await? {
+            return Err(DocuBaseError::ProjectExists);
         }
 
         let project = sqlx::query!(
@@ -238,6 +333,15 @@ impl DocuBase {
         })
     }
 
+    // TODO: make it so it will take the ``user_id``, and matches if the project belongs to the
+    // user
+    /// # Errors
+    /// ```rust
+    /// DocuBaseError::ProjectDoesNotExists | DocuBaseError::SqlxError
+    /// ```
+    ///
+    /// it will return an error if there is not project with the provided ``project_id``,
+    /// or a database query error
     pub async fn delete_project(&self, project_id: Uuid) -> Result<DeleteResponse, DocuBaseError> {
         if !self.project_exists(&project_id).await? {
             return Err(DocuBaseError::ProjectDoesNotExists);
@@ -259,7 +363,13 @@ impl DocuBase {
 
 // report
 impl DocuBase {
-    pub async fn report_exists(&self, id: &Uuid) -> Result<bool, DocuBaseError> {
+    /// # Errors
+    /// ```rust
+    /// DocuBaseError::SqlxError(sqlx::Error)
+    /// ```
+    ///
+    /// it will return a query error if the query failed
+    async fn report_exists(&self, id: &Uuid) -> Result<bool, DocuBaseError> {
         let report = sqlx::query!(
             r#"
             SELECT EXISTS(SELECT 1 FROM reports WHERE id = $1)
@@ -272,13 +382,50 @@ impl DocuBase {
         Ok(report.exists.unwrap_or(false))
     }
 
+    /// # Errors
+    /// ```rust
+    /// DocuBaseError::SqlxError(sqlx::Error)
+    /// ```
+    ///
+    /// it will return a query error if the query failed
+    async fn report_type_exists(
+        &self,
+        project_id: &Uuid,
+        report_type: &str,
+    ) -> Result<bool, DocuBaseError> {
+        let report = sqlx::query!(
+            r#"
+            SELECT EXISTS(SELECT 1 FROM reports WHERE project_id = $1 AND type = $2)
+           "#,
+            project_id,
+            report_type
+        )
+        .fetch_one(&self.pool)
+        .await?;
+
+        Ok(report.exists.unwrap_or(false))
+    }
+
+    /// # Errors
+    /// ```rust
+    /// DocuBaseError::ProjectDoesNotExists | DocuBaseError::ReportExists | DocuBaseError::SqlxError
+    /// ```
+    ///
+    /// it will reutrn an error if the project doesn't exists, or the report (type) already exists
+    /// or a database query error
     pub async fn create_report<R: ReportMetadata>(
         &self,
         project_id: Uuid,
-        report: R,
+        report: &R,
     ) -> Result<CreateResponse, DocuBaseError> {
         if !self.project_exists(&project_id).await? {
             return Err(DocuBaseError::ProjectDoesNotExists);
+        }
+
+        let report_type = report.report_type().to_string();
+
+        if self.report_type_exists(&project_id, &report_type).await? {
+            return Err(DocuBaseError::ReportExists);
         }
 
         let report = sqlx::query!(
@@ -288,7 +435,7 @@ impl DocuBase {
             RETURNING id, created_at
             "#,
             project_id,
-            report.report_type().to_string(),
+            report_type,
             report.content(),
         )
         .fetch_one(&self.pool)
@@ -300,6 +447,15 @@ impl DocuBase {
         })
     }
 
+    // TODO: make it so it will take the ``user_id`` and ``project_id``, and matches if they belong to the
+    // user
+    /// # Errors
+    /// ```rust
+    /// DocuBaseError::ReportDoesNotExists | DocuBaseError::SqlxError
+    /// ```
+    ///
+    /// it will return an error if there is not report with the provided ``report_id``,
+    /// or a database query error
     pub async fn delete_report(&self, report_id: Uuid) -> Result<DeleteResponse, DocuBaseError> {
         if !self.report_exists(&report_id).await? {
             return Err(DocuBaseError::ReportDoesNotExists);
@@ -318,6 +474,14 @@ impl DocuBase {
         Ok(DeleteResponse { id: report.id })
     }
 
+    /// # Errors
+    /// ```rust
+    /// DocuBaseError::ReportDoesNotExists | DocuBaseError::InvalidReportType | DocuBaseError::SqlxError
+    /// ```
+    ///
+    /// it will return an error if there is no report with the provided ``report_id``,
+    /// or couldn't convert a String to a ``ReportType``, this should almost always work,
+    /// or a database query error
     pub async fn get_report(&self, report_id: Uuid) -> Result<Report, DocuBaseError> {
         if !self.report_exists(&report_id).await? {
             return Err(DocuBaseError::ReportDoesNotExists);
@@ -335,11 +499,19 @@ impl DocuBase {
         Ok(Report {
             project_id: report.project_id,
             report_id,
-            r#type: report.r#type.try_into().unwrap(),
+            r#type: report.r#type.try_into()?,
             content: report.content,
         })
     }
 
+    /// # Errors
+    /// ```rust
+    /// DocuBaseError::ProjectDoesNotExists | DocuBaseError::InvalidReportType | DocuBaseError::SqlxError
+    /// ```
+    ///
+    /// it will return an error if there is no project with the provided ``project_id``,
+    /// or couldn't convert a String to a ``ReportType``, this should almost always work,
+    /// or a database query error
     pub async fn get_project_reports(
         &self,
         project_id: Uuid,
@@ -357,19 +529,16 @@ impl DocuBase {
         .fetch_all(&self.pool)
         .await?;
 
-        // TODO: get rid of the clone, and do better at error handling
-        Ok(reports
+        reports
             .into_iter()
-            .map(|record| Report {
-                project_id,
-                report_id: record.id,
-                r#type: record
-                    .r#type
-                    .clone()
-                    .try_into()
-                    .unwrap_or_else(|_| panic!("invalid report type, got: {}", record.r#type)),
-                content: record.content,
+            .map(|record| {
+                Ok(Report {
+                    project_id,
+                    report_id: record.id,
+                    r#type: record.r#type.try_into()?,
+                    content: record.content,
+                })
             })
-            .collect::<Vec<_>>())
+            .collect::<Result<Vec<_>, DocuBaseError>>()
     }
 }

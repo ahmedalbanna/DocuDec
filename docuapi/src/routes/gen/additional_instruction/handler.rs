@@ -11,6 +11,7 @@ use docuai::{
     },
     DocuError,
 };
+use futures::task::waker;
 use google_generative_ai_rs::v1::api::Client;
 use tracing::{debug, error, instrument};
 
@@ -62,18 +63,15 @@ async fn generate_additional_instruction_(
         Err(error) => {
             error!("Additional instruction generation failed: {:?}", error);
 
-            match error {
-                DocuError::ApiRequest(ge) => {
-                    error!(
-                        "AI request failed. Error: {}, Status: {:?}",
-                        ge.message, ge.code
-                    );
-                    Err(map_ai_error(ge))
-                }
-                _ => {
-                    error!("Unrecoverable error in additional instruction generation");
-                    Err(GenError::UnknownError)
-                }
+            if let DocuError::ApiRequest(ge) = error {
+                error!(
+                    "AI request failed. Error: {}, Status: {:?}",
+                    ge.message, ge.code
+                );
+                Err(map_ai_error(&ge))
+            } else {
+                error!("Unrecoverable error in additional instruction generation");
+                Err(GenError::UnknownError)
             }
         }
     }

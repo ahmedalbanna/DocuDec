@@ -3,6 +3,7 @@ use google_generative_ai_rs::v1::gemini::{
     Content, Part, Role,
 };
 
+#[must_use]
 pub fn get_request(message: String, config: GenerationConfig, sysinst: String) -> Request {
     Request {
         contents: get_contents(message),

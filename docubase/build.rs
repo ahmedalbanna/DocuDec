@@ -33,7 +33,7 @@ async fn create_tables(pool: &PgPool) -> Result<(), SqlxError> {
             CREATE TABLE IF NOT EXISTS projects (
                 id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
                 user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE, -- each project is linked to a user
-                title VARCHAR(150) NOT NULL, 
+                title VARCHAR(150) UNIQUE NOT NULL, 
                 state VARCHAR(50) DEFAULT null CHECK (state IN ('project_info', 'project_content', 'project_structure', 'additional_instruction', 'project_abstract', 'project_references', 'project_conclusion', 'project_appendices', 'chapter_1', 'chapter_2', 'chapter_3', 'chapter_4', 'chapter_5', 'chapter_6', 'chapter_7', 'chapter_8', 'chapter_9', 'chapter_10', 'chapter_11')),  -- tracks what's the latest report is
                 created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
             )

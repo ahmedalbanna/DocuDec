@@ -1,12 +1,13 @@
 use actix_web::{
     body::BoxBody, http::StatusCode, HttpRequest, HttpResponse, Responder, ResponseError,
 };
+use docubase::error::DocuBaseError;
 use google_generative_ai_rs::v1::errors::GoogleAPIError;
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
-/// A helper function to map Google API errors to GenError
-pub fn map_ai_error(error: GoogleAPIError) -> GenError {
+/// A helper function to map Google API errors to ``GenError``
+pub fn map_ai_error(error: &GoogleAPIError) -> GenError {
     GenError::AiRequestError(format!(
         "Couldn't complete the AI request, error: {:#?}",
         error.message
@@ -18,6 +19,7 @@ pub enum GenError {
     #[error("Internal AI error: {0}")]
     AiRequestError(String),
 
+    // TODO: remove this
     #[error("Unknown error")]
     UnknownError,
 
@@ -32,70 +34,60 @@ pub enum GenError {
 
     #[error("Validation error: {0}")]
     ValidationError(String),
+
+    #[error("project alredy exists")]
+    ProjectExists,
+
+    #[error("project doesn't exists")]
+    ProjectDoesNotExists,
+
+    #[error("report alredy exists")]
+    ReportExists,
+
+    #[error("internal database error")]
+    InternalDBError,
+
+    #[error("jwt error")]
+    JwtError,
+
+    #[error("the user doesn't exists")]
+    UserDoesNotExists,
+}
+
+impl GenError {
+    fn to_status_code(&self) -> StatusCode {
+        match self {
+            GenError::ProjectExists | GenError::ReportExists => StatusCode::CONFLICT,
+            GenError::InternalDBError | GenError::UnknownError | GenError::AiRequestError(_) => {
+                StatusCode::INTERNAL_SERVER_ERROR
+            }
+            GenError::UserDoesNotExists => StatusCode::NOT_FOUND,
+            GenError::SyntaxError(_)
+            | GenError::InvalidTitle(_)
+            | GenError::MissingContent(_)
+            | GenError::ValidationError(_)
+            | GenError::JwtError
+            | GenError::ProjectDoesNotExists => StatusCode::BAD_REQUEST,
+        }
+    }
+
+    fn to_response(&self) -> GenErrorResponse {
+        GenErrorResponse {
+            error: self.to_string(),
+        }
+    }
 }
 
 #[derive(Serialize, Deserialize, Default)]
 pub struct GenErrorResponse {
     pub error: String,
-
-    #[serde(default)]
-    pub expected: String,
 }
 
-// Implementing Responder for GenError
-impl Responder for GenError {
-    type Body = actix_web::body::BoxBody;
+impl actix_web::Responder for GenError {
+    type Body = BoxBody;
 
-    fn respond_to(self, _req: &HttpRequest) -> HttpResponse<Self::Body> {
-        let (status, body) = match self {
-            Self::AiRequestError(message) => (
-                StatusCode::INTERNAL_SERVER_ERROR,
-                GenErrorResponse {
-                    error: message,
-                    ..Default::default()
-                },
-            ),
-
-            Self::InvalidTitle(message) => (
-                StatusCode::BAD_REQUEST,
-                GenErrorResponse {
-                    error: message,
-                    ..Default::default()
-                },
-            ),
-
-            Self::ValidationError(message) => (
-                StatusCode::BAD_REQUEST,
-                GenErrorResponse {
-                    error: message,
-                    ..Default::default()
-                },
-            ),
-
-            Self::UnknownError => (
-                StatusCode::INTERNAL_SERVER_ERROR,
-                GenErrorResponse {
-                    error: self.to_string(),
-                    ..Default::default()
-                },
-            ),
-
-            Self::SyntaxError(message) => (
-                StatusCode::BAD_REQUEST,
-                GenErrorResponse {
-                    error: message,
-                    ..Default::default()
-                },
-            ),
-
-            Self::MissingContent(message) => (
-                StatusCode::BAD_REQUEST,
-                GenErrorResponse {
-                    error: message,
-                    ..Default::default()
-                },
-            ),
-        };
+    fn respond_to(self, _req: &actix_web::HttpRequest) -> actix_web::HttpResponse<Self::Body> {
+        let (status, body) = (self.to_status_code(), self.to_response());
 
         HttpResponse::build(status)
             .content_type("application/json")
@@ -103,70 +95,17 @@ impl Responder for GenError {
     }
 }
 
-// Implementing ResponseError for GenError
-impl ResponseError for GenError {
-    fn error_response(&self) -> HttpResponse<BoxBody> {
-        match self {
-            GenError::AiRequestError(message) => HttpResponse::InternalServerError()
-                .content_type("application/json")
-                .json(GenErrorResponse {
-                    error: message.clone(),
-                    ..Default::default()
-                }),
-
-            GenError::InvalidTitle(message) => HttpResponse::BadRequest()
-                .content_type("application/json")
-                .json(GenErrorResponse {
-                    error: message.clone(),
-                    ..Default::default()
-                }),
-
-            GenError::ValidationError(message) => HttpResponse::BadRequest()
-                .content_type("application/json")
-                .json(GenErrorResponse {
-                    error: message.clone(),
-                    ..Default::default()
-                }),
-
-            GenError::UnknownError => HttpResponse::InternalServerError()
-                .content_type("application/json")
-                .json(GenErrorResponse {
-                    error: self.to_string(),
-                    ..Default::default()
-                }),
-
-            GenError::SyntaxError(message) => HttpResponse::BadRequest()
-                .content_type("application/json")
-                .json(GenErrorResponse {
-                    error: message.clone(),
-                    ..Default::default()
-                }),
-
-            GenError::MissingContent(message) => HttpResponse::BadRequest()
-                .content_type("application/json")
-                .json(GenErrorResponse {
-                    error: message.clone(),
-                    ..Default::default()
-                }),
-        }
-    }
+impl actix_web::ResponseError for GenError {
     fn status_code(&self) -> StatusCode {
-        match self {
-            GenError::AiRequestError(_) | GenError::UnknownError => {
-                StatusCode::INTERNAL_SERVER_ERROR
-            }
-            GenError::InvalidTitle(_) | GenError::SyntaxError(_) | GenError::MissingContent(_) => {
-                StatusCode::BAD_REQUEST
-            }
-            GenError::ValidationError(_) => StatusCode::NON_AUTHORITATIVE_INFORMATION,
-        }
+        self.to_status_code()
     }
-}
 
-// Conversion implementations
-impl From<std::io::Error> for GenError {
-    fn from(err: std::io::Error) -> Self {
-        GenError::AiRequestError(err.to_string())
+    fn error_response(&self) -> HttpResponse<BoxBody> {
+        let status = self.status_code();
+
+        HttpResponse::build(status)
+            .content_type("application/json")
+            .json(self.to_response())
     }
 }
 
@@ -176,16 +115,24 @@ impl From<serde_json::Error> for GenError {
     }
 }
 
-// Optional: Additional error conversions
-impl From<std::string::FromUtf8Error> for GenError {
-    fn from(err: std::string::FromUtf8Error) -> Self {
-        GenError::SyntaxError(err.to_string())
+// Optional: Conversion from GoogleAPIError
+impl From<&GoogleAPIError> for GenError {
+    fn from(err: &GoogleAPIError) -> Self {
+        map_ai_error(err)
     }
 }
 
-// Optional: Conversion from GoogleAPIError
-impl From<GoogleAPIError> for GenError {
-    fn from(err: GoogleAPIError) -> Self {
-        map_ai_error(err)
+impl From<DocuBaseError> for GenError {
+    fn from(value: DocuBaseError) -> Self {
+        use DocuBaseError as DE;
+        match value {
+            DE::ProjectExists => Self::ProjectExists,
+            DE::ReportExists => Self::ReportExists,
+            DE::SqlxError(_) => Self::InternalDBError,
+            DE::JwtError(_) => Self::JwtError,
+            DE::UserDoesNotExists => Self::UserDoesNotExists,
+            DE::ProjectDoesNotExists => Self::ProjectDoesNotExists,
+            _ => Self::UnknownError,
+        }
     }
 }

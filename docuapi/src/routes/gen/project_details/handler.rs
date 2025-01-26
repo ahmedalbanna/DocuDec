@@ -81,7 +81,7 @@ async fn generate_project_details_(
                         "AI request failed. Error: {}, Status: {:?}",
                         ge.message, ge.code
                     );
-                    Err(map_ai_error(ge))
+                    Err(map_ai_error(&ge))
                 }
                 DocuError::JsonConversion(error) => {
                     error!("JsonConversion error: {}", error);

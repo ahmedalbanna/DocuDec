@@ -1,6 +1,7 @@
 use google_generative_ai_rs::v1::gemini::request::GenerationConfig;
 use serde_json::Value;
 
+#[must_use]
 pub(crate) fn get_gen_config(schema: Value) -> GenerationConfig {
     GenerationConfig {
         temperature: Some(1.0),

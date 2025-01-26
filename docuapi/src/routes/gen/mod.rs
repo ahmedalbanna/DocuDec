@@ -1,6 +1,7 @@
 use std::sync::Arc;
 
-use actix_web::web;
+use crate::mw::my_middleware;
+use actix_web::{middleware::from_fn, web};
 
 pub mod error;
 
@@ -22,6 +23,7 @@ pub fn config(config: &mut web::ServiceConfig) {
     config.service(
         web::scope("/gen")
             .app_data(web::Data::new(Arc::clone(&model)))
+            .wrap(from_fn(my_middleware))
             .service(titles::generate_titles)
             .service(project_info::generate_project_info)
             .service(project_content::generate_project_content)
