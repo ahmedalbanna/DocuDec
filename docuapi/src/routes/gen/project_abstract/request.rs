@@ -1,13 +1,14 @@
 use docuai::docu_requests::schemas::{
-    Abstract, AdditionalInstruction, ProjectContent, ProjectInfo, ProjectStructure,
+    AdditionalInstruction, ProjectContent, ProjectInfo, ProjectStructure,
 };
 use serde::{Deserialize, Serialize};
+use uuid::Uuid;
 
 #[derive(Deserialize, Serialize, Debug, Default)]
-pub struct ProjectDetailsRequest {
+pub struct ProjectAbstractRequest {
+    pub project_id: Uuid,
     pub project_info: ProjectInfo,
     pub project_content: ProjectContent,
     pub project_structure: ProjectStructure,
     pub additional_instruction: AdditionalInstruction,
-    pub r#abstract: Abstract,
 }

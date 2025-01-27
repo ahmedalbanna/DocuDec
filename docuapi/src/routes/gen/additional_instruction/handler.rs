@@ -1,78 +1,109 @@
-use std::sync::Arc;
+use std::{str::FromStr as _, sync::Arc};
 
 use actix_web::{
     web::{self, Json},
-    HttpResponse,
+    HttpRequest, HttpResponse,
 };
-use docuai::{
-    docu_requests::{
-        schemas::{AdditionalInstruction, ProjectContent, ProjectInfo, ProjectStructure},
-        DocuRequest,
-    },
-    DocuError,
-};
-use futures::task::waker;
+use docuai::docu_requests::{schemas::AdditionalInstruction, DocuRequest};
+use docubase::DocuBase;
 use google_generative_ai_rs::v1::api::Client;
-use tracing::{debug, error, instrument};
+use tracing::{instrument, trace};
+use uuid::Uuid;
 
-use super::super::error::{map_ai_error, GenError};
+use crate::routes::gen::generate_report;
 
-use super::super::validators::validate_additional_instruction::validate_additional_instructions_request;
+use super::super::error::GenError;
+
 use super::request::AdditionalInstructionRequest;
 
-#[instrument(skip(model))]
+/// # Request
+/// ```json
+/// {
+///     "project_id": "...",
+///     "project_info": { ... },
+///     "project_content": { ... },
+///     "project_structure": { ... }
+/// }
+/// ```
+///
+/// # Success
+/// {
+///     [`AdditionalInstruction`](../../../../../docuai/docu_requests/schemas/additional_instruction/struct.AdditionalInstruction.html)
+/// }
+/// # Errors
+///
+/// ```rust
+///
+/// // if there is something wrong with the ai api
+/// GenError::ApiRequestError => (500 , "Internal AI error: { String }"),
+///
+/// // if there is something wrong with the provided json
+/// GenError::SyntaxError => (400, "Syntax error: { String }")
+///
+/// GenError::DBError => {
+///
+///        // internal database error
+///        DocuBaseError::SqlxError => (500, "sqlx error: { sqlx::Error }")
+///
+///        // something wrong with validating the user jwt
+///        DocuBaseError::JwtError(...) => (500, "jwt error: { jsonwebtoken::errors::Error }"),
+///
+///        // if for some reason the user have a valid jwt, but the user got deleted
+///        DocuBaseError::UserDoesNotExist => (404, "user does not exist"),
+///
+///        // if the provided `project_id` does not exist
+///        DocuBaseError::ProjectDoesNotExist => (404, "project does ot exist"),
+///
+///        // if the user provided a `project_id` that does not belong to him
+///        DocuBaseError::UserDoesNotOwnProject => (403, "user does not own the project"),
+///
+///        // this might happen if the user provided a report that he already did before
+///        DocuBaseError::ReportExist => (409, "report (type) alredy exist"),
+///
+///     }
+/// ```
+///
+/// # Panics
+///
+/// it will panic if it couldn't get the cookie, which is impossible
+///
+/// or the user_id is not convertable to a Uuid
+#[instrument(skip(model, db))]
 #[actix_web::post("/additional-instruction")]
 pub async fn generate_additional_instruction(
     model: web::Data<Arc<Client>>,
+    db: web::Data<Arc<DocuBase>>,
+    req: HttpRequest,
     payload: Json<AdditionalInstructionRequest>,
 ) -> Result<HttpResponse, GenError> {
-    // Validate payload
-    validate_additional_instructions_request(&payload)?;
+    let jwt_token = req
+        .cookie(crate::utils::constants::JWT_COOKIE)
+        .expect("the endpoint is not accessable without the cookie, so we're fine");
 
-    debug!(">> Generating additional instruction");
+    let user_id = docubase::utils::validate_jwt(jwt_token.value()).map(|s| {
+        Uuid::from_str(&s).unwrap_or_else(|e| {
+            panic!("can't convert the id to a Uuid, original is: {s}, error: {e}")
+        })
+    })?;
 
-    // Generate additional instruction
-    let result = generate_additional_instruction_(
-        model.as_ref(),
+    trace!(">> Generating additional instruction");
+
+    let request = DocuRequest::AdditionalInstruction(
         &payload.project_info,
         &payload.project_content,
         &payload.project_structure,
-    )
-    .await?;
+    );
 
-    debug!("\n>> Generated additional instruction: \n\n{:#?}\n", result);
+    let additional_instruction =
+        generate_report::<AdditionalInstruction>(model.as_ref(), request).await?;
 
-    Ok(HttpResponse::Ok().json(result))
-}
+    db.create_report(&payload.project_id, &user_id, &additional_instruction)
+        .await?;
 
-/// Secure additional instruction generation with error mapping
-async fn generate_additional_instruction_(
-    model: &Client,
-    project_info: &ProjectInfo,
-    project_content: &ProjectContent,
-    project_structure: &ProjectStructure,
-) -> Result<AdditionalInstruction, GenError> {
-    match docuai::request::<AdditionalInstruction>(
-        model,
-        DocuRequest::AdditionalInstruction(project_info, project_content, project_structure),
-        100,
-    )
-    .await
-    {
-        Ok(additional_instruction) => Ok(additional_instruction),
-        Err(error) => {
-            error!("Additional instruction generation failed: {:?}", error);
+    trace!(
+        "\n>> Generated additional instruction: \n\n{:#?}\n",
+        additional_instruction
+    );
 
-            if let DocuError::ApiRequest(ge) = error {
-                error!(
-                    "AI request failed. Error: {}, Status: {:?}",
-                    ge.message, ge.code
-                );
-                Err(map_ai_error(&ge))
-            } else {
-                error!("Unrecoverable error in additional instruction generation");
-                Err(GenError::UnknownError)
-            }
-        }
-    }
+    Ok(HttpResponse::Ok().json(additional_instruction))
 }

@@ -1,17 +1,18 @@
 use docuai::docu_requests::schemas::{
-    Abstract, AdditionalInstruction, ProjectConclusion, ProjectContent, ProjectDetails,
-    ProjectInfo, ProjectReferences, ProjectStructure,
+    AdditionalInstruction, ProjectAbstract, ProjectConclusion, ProjectContent, ProjectInfo,
+    ProjectReferences, ProjectStructure,
 };
 use serde::{Deserialize, Serialize};
+use uuid::Uuid;
 
 #[derive(Deserialize, Serialize, Debug, Default)]
 pub struct ProjectAppendicesRequest {
+    pub project_id: Uuid,
     pub project_info: ProjectInfo,
     pub project_content: ProjectContent,
     pub project_structure: ProjectStructure,
     pub additional_instruction: AdditionalInstruction,
-    pub r#abstract: Abstract,
-    pub project_details: ProjectDetails,
+    pub project_abstract: ProjectAbstract,
     pub project_conclusion: ProjectConclusion,
     pub project_references: ProjectReferences,
 }

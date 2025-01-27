@@ -2,80 +2,90 @@ use std::sync::Arc;
 
 use actix_web::{
     web::{self, Json},
-    HttpResponse,
+    HttpRequest, HttpResponse,
 };
-use docuai::{
-    docu_requests::{schemas::AlternativeTitles, DocuRequest},
-    DocuError,
-};
+use docuai::docu_requests::{schemas::AlternativeTitles, DocuRequest};
 use google_generative_ai_rs::v1::api::Client;
-use tracing::{error, instrument, trace};
+use tracing::{instrument, trace};
 
 use super::super::error::GenError;
-use crate::routes::gen::error::map_ai_error;
+use crate::routes::gen::generate_report;
 
 use super::super::validators::validate_title::validate_title_request;
 use super::request::TitleRequest;
 
+/// # Request
+/// ```json
+/// {
+///     "title": "..."
+/// }
+/// ```
+///
+/// # Success
+///
+/// {
+///     [`AlternativeTitles`](../../../../../docuai/docu_requests/schemas/alter_titles/struct.AlternativeTitles.html)
+/// }
+///
 /// # Errors
 ///
-/// possible returnd errors are
-///
 /// ```rust
-/// GenError::AiRequestError(...) => (500, "Internal AI error: Couldn't complete the AI request, error: {...}")
-/// GenError::UnknownError => (500, "Unrecoverable error generating titles: {...}"),
+/// // if there is something wrong with the ai api
+/// GenError::ApiRequestError => (500 , "Internal AI error: { String }"),
 ///
-/// GenError::ValidationError(...) =>
-/// // possible validation error are
+/// // if there is something wrong with the provided json
+/// GenError::SyntaxError => (400, "Syntax error: { String }")
 ///
-/// [
-///     // TODO: we should properly increase the maximum characters from 150
-///     "Title must be between 3 and 150 characters", // titles are bleow 3 and over 150
-///     "Title cannot be purely numeric", // title is all numbers "1234"
-///     "Excessive special characters in title", // title have alot of symbols (e.g "!!!!title!!!!")
-///     "Invalid title pattern", // title have common testing words, ["test", "placeholder", "example", "untitled", "new project"]
-///     "Incorrect Content-Type",
-/// ]
+/// // if the validation failed, it will return what field is wrong, and what's the error
+/// // it might return like this {
+///          "title": "Title must be between 3 and 150 characters"
+///     }
+/// // the rules are min = 3, max = 150
+///
+/// GenError::ValidationError(...) => (400, "{field}: {error}")
+///
+/// GenError::DBError => {
+///        // something wrong with validating the user jwt
+///        DocuBaseError::JwtError(...) => (500, "jwt error: { jsonwebtoken::errors::Error }"),
+///
+///        // internal database error
+///        DocuBaseError::SqlxError => (500, "sqlx error: { sqlx::Error }")
+///
+///
+///        // if for some reason the user have a valid jwt, but the user got deleted
+///        DocuBaseError::UserDoesNotExist => (404, "user does not exist"),
+///
+///
+///     }
 /// ```
+///
+/// # Panics
+///
+/// it will panic if it couldn't get the cookie, which is impossible
+///
+/// or the user_id is not convertable to a Uuid
 #[instrument(skip(model), fields(title = payload.title))]
 #[actix_web::post("/titles")]
 pub async fn generate_titles(
     model: web::Data<Arc<Client>>,
+    req: HttpRequest,
     payload: Json<TitleRequest>,
 ) -> Result<HttpResponse, GenError> {
+    let jwt_token = req
+        .cookie(crate::utils::constants::JWT_COOKIE)
+        .expect("the endpoint is not accessable without the cookie, so we're fine");
+
+    docubase::utils::validate_jwt(jwt_token.value())?;
+
     validate_title_request(&payload)?;
 
     trace!("Generating titles | Input: '{}' ", payload.title);
 
-    let result = generate_titles_(model.as_ref(), &payload.title).await?;
+    let alternative_titles =
+        generate_report::<AlternativeTitles>(&model, DocuRequest::AlterTitles(&payload.title))
+            .await?;
 
-    trace!("Generated titles: {:#?}", result);
+    trace!("Generated titles: {:#?}", alternative_titles);
 
-    Ok(HttpResponse::Ok().json(result))
-}
-
-async fn generate_titles_(model: &Client, title: &str) -> Result<AlternativeTitles, GenError> {
-    match docuai::request::<AlternativeTitles>(
-        model,
-        DocuRequest::AlterTitles(title.to_string()),
-        100,
-    )
-    .await
-    {
-        Ok(titles) => Ok(titles),
-        Err(error) => {
-            error!("Title generation failed: {:?}", error);
-
-            if let DocuError::ApiRequest(ge) = error {
-                error!(
-                    "Failed to generate titles. Error: {}, Status: {:?}",
-                    ge.message, ge.code
-                );
-                Err(map_ai_error(&ge))
-            } else {
-                error!("Unrecoverable error generating titles: {}", error);
-                Err(GenError::UnknownError)
-            }
-        }
-    }
+    Ok(HttpResponse::Ok().json(alternative_titles))
 }

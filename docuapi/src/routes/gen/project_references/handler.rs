@@ -1,109 +1,115 @@
-use std::sync::Arc;
+use std::{str::FromStr as _, sync::Arc};
 
 use actix_web::{
     web::{self, Json},
-    HttpResponse,
+    HttpRequest, HttpResponse,
 };
-use docuai::{
-    docu_requests::{
-        schemas::{
-            Abstract, AdditionalInstruction, ProjectConclusion, ProjectContent, ProjectDetails,
-            ProjectInfo, ProjectReferences, ProjectStructure,
-        },
-        DocuRequest,
-    },
-    DocuError,
-};
+use docuai::docu_requests::{schemas::ProjectReferences, DocuRequest};
+use docubase::DocuBase;
 use google_generative_ai_rs::v1::api::Client;
-use tracing::{debug, error, instrument};
+use tracing::{debug, instrument};
+use uuid::Uuid;
 
-use super::super::error::{map_ai_error, GenError};
+use crate::routes::gen::generate_report;
 
-use super::super::validators::validate_project_references::validate_project_references_request;
+use super::super::error::GenError;
+
 use super::request::ProjectReferencesRequest;
 
-#[instrument(skip(model))]
+/// # Request
+/// ```json
+/// {
+///     "project_id": "...",
+///     "project_info": { ... }
+///     "project_content": { ... },
+///     "project_structure": { .. },
+///     "additional_instruction": { ... }
+///     "project_abstract": { ... }
+///     "project_conclusion": { ... }
+/// }
+/// ```
+///
+/// # Success
+///
+/// {
+///     [`ProjectReferences`](../../../../../docuai/docu_requests/schemas/project_references/struct.ProjectReferences.html)
+/// }
+///
+/// # Errors
+/// ```rust
+///
+/// // if there is something wrong with the ai api
+/// GenError::ApiRequestError => (500 , "Internal AI error: { String }"),
+///
+/// // if there is something wrong with the provided json
+/// GenError::SyntaxError => (400, "Syntax error: { String }")
+///
+/// GenError::DBError => {
+///
+///        // internal database error
+///        DocuBaseError::SqlxError => (500, "sqlx error: { sqlx::Error }")
+///
+///        // something wrong with validating the user jwt
+///        DocuBaseError::JwtError(...) => (500, "jwt error: { jsonwebtoken::errors::Error }"),
+///
+///        // if for some reason the user have a valid jwt, but the user got deleted
+///        DocuBaseError::UserDoesNotExist => (404, "user does not exist"),
+///
+///        // if the provided `project_id` does not exist
+///        DocuBaseError::ProjectDoesNotExist => (404, "project does ot exist"),
+///
+///        // if the user provided a `project_id` that does not belong to him
+///        DocuBaseError::UserDoesNotOwnProject => (403, "user does not own the project"),
+///
+///        // this might happen if the user provided a report that he already did before
+///        DocuBaseError::ReportExist => (409, "report (type) alredy exist"),
+///
+///     }
+/// ```
+///
+/// # Panics
+///
+/// it will panic if it couldn't get the cookie, which is impossible
+///
+/// or the user_id is not convertable to a Uuid
+#[instrument(skip(model, db))]
 #[actix_web::post("/project-references")]
 pub async fn generate_project_references(
     model: web::Data<Arc<Client>>,
+    db: web::Data<Arc<DocuBase>>,
+    req: HttpRequest,
     payload: Json<ProjectReferencesRequest>,
 ) -> Result<HttpResponse, GenError> {
-    // Validate payload
-    validate_project_references_request(&payload)?;
+    let jwt_token = req
+        .cookie(crate::utils::constants::JWT_COOKIE)
+        .expect("the endpoint is not accessable without the cookie, so we're fine");
+
+    let user_id = docubase::utils::validate_jwt(jwt_token.value()).map(|s| {
+        Uuid::from_str(&s).unwrap_or_else(|e| {
+            panic!("can't convert the id to a Uuid, original is: {s}, error: {e}")
+        })
+    })?;
 
     debug!(">> Generating project references");
 
-    println!("{:#?}", payload);
-
-    let result = generate_project_references_(
-        model.as_ref(),
+    let request = DocuRequest::ProjectReferences(
         &payload.project_info,
         &payload.project_content,
         &payload.project_structure,
         &payload.additional_instruction,
-        &payload.r#abstract,
-        &payload.project_details,
+        &payload.project_abstract,
         &payload.project_conclusion,
-    )
-    .await?;
+    );
 
-    debug!("\n>> Generated project references: \n\n{:#?}\n", result);
+    let project_references = generate_report::<ProjectReferences>(&model, request).await?;
 
-    Ok(HttpResponse::Ok().json(result))
-}
+    db.create_report(&payload.project_id, &user_id, &project_references)
+        .await?;
 
-// FIXME maybe create a struct that holds the data
-#[allow(clippy::too_many_arguments)]
-/// Secure additional instruction generation with error mapping
-async fn generate_project_references_(
-    model: &Client,
-    project_info: &ProjectInfo,
-    project_content: &ProjectContent,
-    project_structure: &ProjectStructure,
-    additional_instruction: &AdditionalInstruction,
-    r#abstract: &Abstract,
-    project_details: &ProjectDetails,
-    project_conclusion: &ProjectConclusion,
-) -> Result<ProjectReferences, GenError> {
-    match docuai::request(
-        model,
-        DocuRequest::ProjectReferences(
-            project_info,
-            project_content,
-            project_structure,
-            additional_instruction,
-            r#abstract,
-            project_details,
-            project_conclusion,
-        ),
-        100,
-    )
-    .await
-    {
-        Ok(project_references) => Ok(project_references),
-        Err(error) => {
-            error!("Project references generation failed: {:?}", error);
+    debug!(
+        "\n>> Generated project references: \n\n{:#?}\n",
+        project_references
+    );
 
-            match error {
-                DocuError::ApiRequest(ge) => {
-                    error!(
-                        "AI request failed. Error: {}, Status: {:?}",
-                        ge.message, ge.code
-                    );
-                    Err(map_ai_error(&ge))
-                }
-                DocuError::JsonConversion(error) => {
-                    error!("JsonConversion error: {}", error);
-                    Err(GenError::SyntaxError(error.to_string()))
-                }
-                error => {
-                    error!(
-                        "Unrecoverable error in project details generation: {}",
-                        error
-                    );
-                    Err(GenError::UnknownError)
-                }
-            }
-        }
-    }
+    Ok(HttpResponse::Ok().json(project_references))
 }

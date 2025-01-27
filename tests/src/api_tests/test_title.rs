@@ -1,12 +1,14 @@
 #[cfg(test)]
 pub mod tests {
-    use super::super::get_client;
+    use super::super::{wait_until_logged_in, CLIENT};
     use docuai::docu_requests::schemas::AlternativeTitles;
     use serde_json::json;
 
     #[tokio::test]
     async fn test_empty_title() {
-        let client = get_client();
+        wait_until_logged_in();
+
+        let client = &*CLIENT;
 
         let res = client
             .do_post(
@@ -30,7 +32,9 @@ pub mod tests {
 
     #[tokio::test]
     async fn test_valid_title() {
-        let client = get_client();
+        wait_until_logged_in();
+
+        let client = &*CLIENT;
 
         let res = client
             .do_post(

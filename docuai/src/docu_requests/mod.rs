@@ -12,8 +12,8 @@ use google_generative_ai_rs::v1::{
 };
 
 use schemas::{
-    Abstract, AdditionalInstruction, AlternativeTitles, ProjectAppendices, ProjectConclusion,
-    ProjectContent, ProjectDetails, ProjectInfo, ProjectReferences, ProjectStructure,
+    AdditionalInstruction, AlternativeTitles, ProjectAbstract, ProjectAppendices,
+    ProjectConclusion, ProjectContent, ProjectInfo, ProjectReferences, ProjectStructure,
 };
 
 use serde::de::DeserializeOwned;
@@ -21,31 +21,23 @@ use serde::de::DeserializeOwned;
 use crate::error::DocuError;
 
 pub enum DocuRequest<'a> {
-    AlterTitles(String),
-    ProjectInfo(String),
+    AlterTitles(&'a str),
+    ProjectInfo(&'a str),
     ProjectContent(&'a ProjectInfo),
     ProjectStructure(&'a ProjectInfo, &'a ProjectContent),
     AdditionalInstruction(&'a ProjectInfo, &'a ProjectContent, &'a ProjectStructure),
-    Abstract(
+    ProjectAbstract(
         &'a ProjectInfo,
         &'a ProjectContent,
         &'a ProjectStructure,
         &'a AdditionalInstruction,
-    ),
-    ProjectDetails(
-        &'a ProjectInfo,
-        &'a ProjectContent,
-        &'a ProjectStructure,
-        &'a AdditionalInstruction,
-        &'a Abstract,
     ),
     ProjectConclusion(
         &'a ProjectInfo,
         &'a ProjectContent,
         &'a ProjectStructure,
         &'a AdditionalInstruction,
-        &'a Abstract,
-        &'a ProjectDetails,
+        &'a ProjectAbstract,
     ),
 
     ProjectReferences(
@@ -53,8 +45,7 @@ pub enum DocuRequest<'a> {
         &'a ProjectContent,
         &'a ProjectStructure,
         &'a AdditionalInstruction,
-        &'a Abstract,
-        &'a ProjectDetails,
+        &'a ProjectAbstract,
         &'a ProjectConclusion,
     ),
 
@@ -63,8 +54,7 @@ pub enum DocuRequest<'a> {
         &'a ProjectContent,
         &'a ProjectStructure,
         &'a AdditionalInstruction,
-        &'a Abstract,
-        &'a ProjectDetails,
+        &'a ProjectAbstract,
         &'a ProjectConclusion,
         &'a ProjectReferences,
     ),
@@ -86,9 +76,7 @@ impl DocuRequest<'_> {
                 schema::get_gen_config(AdditionalInstruction::to_json())
             }
 
-            Self::Abstract(..) => schema::get_gen_config(Abstract::to_json()),
-
-            Self::ProjectDetails(..) => schema::get_gen_config(ProjectDetails::to_json()),
+            Self::ProjectAbstract(..) => schema::get_gen_config(ProjectAbstract::to_json()),
 
             Self::ProjectConclusion(..) => schema::get_gen_config(ProjectConclusion::to_json()),
 
@@ -115,9 +103,7 @@ impl DocuRequest<'_> {
                 sysinsts::ADDITIONAL_INSTRUCTION_SYSTEM_INSTRUCTION.to_string()
             }
 
-            Self::Abstract(..) => sysinsts::ABSTRACT_SYSTEM_INSTRUCTION.to_string(),
-
-            Self::ProjectDetails(..) => sysinsts::PROJECT_DETAILS_SYSTEM_INSTRUCTION.to_string(),
+            Self::ProjectAbstract(..) => sysinsts::PROJECT_ABSTRACT_SYSTEM_INSTRUCTION.to_string(),
 
             Self::ProjectConclusion(..) => {
                 sysinsts::PROJECT_CONCLUSION_SYSTEM_INSTRUCTION.to_string()
@@ -140,13 +126,11 @@ impl DocuRequest<'_> {
     ///
     /// it will return an error if it couldn't get the text from inside of the Gemini response,
     /// or couldn't convert the response to what's specifed at the ``R`` generic
-    pub async fn to_response<R>(&self, post_result: PostResult) -> Result<R, DocuError>
+    pub fn to_response<R>(&self, post_result: PostResult) -> Result<R, DocuError>
     where
         R: DeserializeOwned,
     {
-        let text = crate::get_text(post_result)
-            .await
-            .ok_or(DocuError::NoTextFoundInResponse)?;
+        let text = crate::get_text(post_result).ok_or(DocuError::NoTextFoundInResponse)?;
 
         let parsed_json = serde_json::from_str(&text)?;
         Ok(parsed_json)
@@ -164,7 +148,7 @@ impl DocuRequest<'_> {
     pub fn to_request(&self) -> Result<Request, DocuError> {
         match self {
             Self::AlterTitles(orig_title) => Ok(requests::get_request(
-                orig_title.to_owned(),
+                (*orig_title).to_string(),
                 self.to_config(),
                 self.to_system_instruction(),
             )),
@@ -179,7 +163,7 @@ impl DocuRequest<'_> {
             }
 
             Self::ProjectContent(project_info) => {
-                let message = ProjectInfo::message(project_info)?;
+                let message = project_info.message()?;
 
                 Ok(requests::get_request(
                     message,
@@ -189,8 +173,9 @@ impl DocuRequest<'_> {
             }
 
             Self::ProjectStructure(project_info, project_content) => {
-                let message = ProjectInfo::message(project_info)?
-                    + &ProjectContent::message(project_content)?;
+                let mut message = project_info.message()?;
+
+                message.push_str(&project_content.message()?);
 
                 Ok(requests::get_request(
                     message,
@@ -200,9 +185,10 @@ impl DocuRequest<'_> {
             }
 
             Self::AdditionalInstruction(project_info, project_content, project_structure) => {
-                let message = ProjectInfo::message(project_info)?
-                    + &ProjectContent::message(project_content)?
-                    + &ProjectStructure::message(project_structure)?;
+                let mut message = project_info.message()?;
+
+                message.push_str(&project_content.message()?);
+                message.push_str(&project_structure.message()?);
 
                 Ok(requests::get_request(
                     message,
@@ -211,36 +197,17 @@ impl DocuRequest<'_> {
                 ))
             }
 
-            Self::Abstract(
+            Self::ProjectAbstract(
                 project_info,
                 project_content,
                 project_structure,
                 additional_instruction,
             ) => {
-                let message = ProjectInfo::message(project_info)?
-                    + &ProjectContent::message(project_content)?
-                    + &ProjectStructure::message(project_structure)?
-                    + &AdditionalInstruction::message(additional_instruction)?;
+                let mut message = project_info.message()?;
 
-                Ok(requests::get_request(
-                    message,
-                    self.to_config(),
-                    self.to_system_instruction(),
-                ))
-            }
-
-            Self::ProjectDetails(
-                project_info,
-                project_content,
-                project_structure,
-                additional_instruction,
-                r#abstract,
-            ) => {
-                let message = ProjectInfo::message(project_info)?
-                    + &ProjectContent::message(project_content)?
-                    + &ProjectStructure::message(project_structure)?
-                    + &AdditionalInstruction::message(additional_instruction)?
-                    + &Abstract::message(r#abstract)?;
+                message.push_str(&project_content.message()?);
+                message.push_str(&project_structure.message()?);
+                message.push_str(&additional_instruction.message()?);
 
                 Ok(requests::get_request(
                     message,
@@ -254,15 +221,14 @@ impl DocuRequest<'_> {
                 project_content,
                 project_structure,
                 additional_instruction,
-                r#abstract,
-                project_details,
+                project_abstract,
             ) => {
-                let message = ProjectInfo::message(project_info)?
-                    + &ProjectContent::message(project_content)?
-                    + &ProjectStructure::message(project_structure)?
-                    + &AdditionalInstruction::message(additional_instruction)?
-                    + &Abstract::message(r#abstract)?
-                    + &ProjectDetails::message(project_details)?;
+                let mut message = project_info.message()?;
+
+                message.push_str(&project_content.message()?);
+                message.push_str(&project_structure.message()?);
+                message.push_str(&additional_instruction.message()?);
+                message.push_str(&project_abstract.message()?);
 
                 Ok(requests::get_request(
                     message,
@@ -276,17 +242,16 @@ impl DocuRequest<'_> {
                 project_content,
                 project_structure,
                 additional_instruction,
-                r#abstract,
-                project_details,
+                project_abstract,
                 project_conclusion,
             ) => {
-                let message = ProjectInfo::message(project_info)?
-                    + &ProjectContent::message(project_content)?
-                    + &ProjectStructure::message(project_structure)?
-                    + &AdditionalInstruction::message(additional_instruction)?
-                    + &Abstract::message(r#abstract)?
-                    + &ProjectDetails::message(project_details)?
-                    + &ProjectConclusion::message(project_conclusion)?;
+                let mut message = project_info.message()?;
+
+                message.push_str(&project_content.message()?);
+                message.push_str(&project_structure.message()?);
+                message.push_str(&additional_instruction.message()?);
+                message.push_str(&project_abstract.message()?);
+                message.push_str(&project_conclusion.message()?);
 
                 Ok(requests::get_request(
                     message,
@@ -300,19 +265,18 @@ impl DocuRequest<'_> {
                 project_content,
                 project_structure,
                 additional_instruction,
-                r#abstract,
-                project_details,
+                project_abstract,
                 project_conclusion,
                 project_references,
             ) => {
-                let message = ProjectInfo::message(project_info)?
-                    + &ProjectContent::message(project_content)?
-                    + &ProjectStructure::message(project_structure)?
-                    + &AdditionalInstruction::message(additional_instruction)?
-                    + &Abstract::message(r#abstract)?
-                    + &ProjectDetails::message(project_details)?
-                    + &ProjectConclusion::message(project_conclusion)?
-                    + &ProjectReferences::message(project_references)?;
+                let mut message = project_info.message()?;
+
+                message.push_str(&project_content.message()?);
+                message.push_str(&project_structure.message()?);
+                message.push_str(&additional_instruction.message()?);
+                message.push_str(&project_abstract.message()?);
+                message.push_str(&project_conclusion.message()?);
+                message.push_str(&project_references.message()?);
 
                 Ok(requests::get_request(
                     message,

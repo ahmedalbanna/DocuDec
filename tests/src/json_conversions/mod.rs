@@ -3,7 +3,6 @@ mod additional_instruction;
 mod project_appendices;
 mod project_conclusion;
 mod project_content_conversion;
-mod project_details;
 mod project_info_conversion;
 mod project_references;
 mod project_structure;

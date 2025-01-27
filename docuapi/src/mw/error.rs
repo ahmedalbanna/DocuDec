@@ -1,5 +1,4 @@
 use actix_web::{body::BoxBody, http::StatusCode, HttpResponse};
-use docubase::error::DocuBaseError;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, thiserror::Error)]
@@ -9,19 +8,14 @@ pub enum MiddlewareError {
 
     #[error("the jwt token is invalid")]
     InvalidJwt,
-
-    /// TODO: remove this
-    #[error("unknown error")]
-    Unknown,
 }
 
 impl MiddlewareError {
-    pub fn to_status_code(&self) -> StatusCode {
+    pub const fn to_status_code(&self) -> StatusCode {
         use MiddlewareError as E;
         match self {
             E::NoJwtTokenProvided => StatusCode::FORBIDDEN,
             E::InvalidJwt => StatusCode::BAD_REQUEST,
-            E::Unknown => StatusCode::NO_CONTENT,
         }
     }
 
@@ -60,16 +54,5 @@ impl actix_web::ResponseError for MiddlewareError {
         HttpResponse::build(status)
             .content_type("application/json")
             .json(self.to_response())
-    }
-}
-
-impl From<DocuBaseError> for MiddlewareError {
-    fn from(value: DocuBaseError) -> Self {
-        use DocuBaseError as DE;
-        use MiddlewareError as ME;
-        match value {
-            DE::JwtError(_) => ME::InvalidJwt,
-            _ => ME::Unknown,
-        }
     }
 }

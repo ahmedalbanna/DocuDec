@@ -30,7 +30,9 @@ schema2struct! {
 
 impl ReportMetadata for ProjectConclusion {
     fn content(&self) -> serde_json::Value {
-        serde_json::to_value(self).unwrap()
+        serde_json::to_value(self).unwrap_or_else(|err| {
+            panic!("couldn't serialize AdditionalInstruction into json, error: {err}",)
+        })
     }
 
     fn report_type(&self) -> docubase::models::ReportType {
@@ -49,10 +51,10 @@ impl ProjectConclusion {
     /// DocuError::JsonConversion(serde_json::Error)
     /// ```
     ///
-    /// it returns an error if serde_json failed to convert the
+    /// it returns an error if ``serde_json`` failed to convert the
     /// provided instance to json
-    pub fn message(content: &Self) -> Result<String, DocuError> {
-        let string = serde_json::to_string(content)?;
+    pub fn message(&self) -> Result<String, DocuError> {
+        let string = serde_json::to_string(self)?;
         Ok(format!("projectConclusion: {string:#?}\n"))
     }
 }

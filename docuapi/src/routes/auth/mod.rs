@@ -1,8 +1,4 @@
-use super::super::mw::my_middleware;
-use actix_web::{
-    middleware::from_fn,
-    web::{self, ServiceConfig},
-};
+use actix_web::web::{self, ServiceConfig};
 
 pub mod error;
 mod login;

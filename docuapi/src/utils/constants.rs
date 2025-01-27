@@ -12,3 +12,5 @@ pub static ADDRESS: Lazy<String> = Lazy::new(|| {
 });
 
 pub const JWT_COOKIE: &str = "jwt_token";
+
+pub const API_TIMEOUT: u64 = 100;

@@ -2,36 +2,51 @@ use actix_web::{body::BoxBody, http::StatusCode, HttpResponse};
 use docubase::error::DocuBaseError;
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Clone, thiserror::Error)]
+#[derive(Debug, thiserror::Error)]
 pub enum AuthError {
-    #[error("the user already has an account")]
-    UserIsAlreadySignedUp,
-
-    #[error("the user doesn't exists")]
-    UserDoesNotExists,
-
-    #[error("internal error")]
-    InternalError,
-
-    #[error("jwt creation error")]
-    JwtError,
-
-    /// TODO: remove this
-    #[error("unknown error")]
-    Unknown,
+    #[error("{0}")]
+    DBError(#[from] docubase::error::DocuBaseError),
 }
 
 impl AuthError {
-    pub fn to_status_code(&self) -> StatusCode {
+    #[must_use]
+    pub const fn to_status_code(&self) -> StatusCode {
         match self {
-            AuthError::UserIsAlreadySignedUp => StatusCode::FORBIDDEN,
-            AuthError::UserDoesNotExists => StatusCode::NOT_FOUND,
-            AuthError::InternalError => StatusCode::INTERNAL_SERVER_ERROR,
-            AuthError::JwtError => StatusCode::EXPECTATION_FAILED,
-            AuthError::Unknown => StatusCode::NO_CONTENT,
+            // Database errors
+            AuthError::DBError(error) => match error {
+                // Not Found
+                DocuBaseError::UserDoesNotExist
+                | DocuBaseError::ProjectDoesNotExist
+                | DocuBaseError::ReportDoesNotExist
+                | DocuBaseError::ProjectStateNotFound => StatusCode::NOT_FOUND,
+
+                // Conflict
+                DocuBaseError::UserExist
+                | DocuBaseError::ProjectExist
+                | DocuBaseError::ReportExist => StatusCode::CONFLICT,
+
+                // Forbidden
+                DocuBaseError::UserDoesNotOwnProject | DocuBaseError::ProjectDoesNotOwnReport => {
+                    StatusCode::FORBIDDEN
+                }
+
+                // Unauthorized
+                DocuBaseError::UsernameOrPasswordAreWrong | DocuBaseError::ExpiredToken => {
+                    StatusCode::UNAUTHORIZED
+                }
+
+                // Bad Request
+                DocuBaseError::InvalidReportType(_) => StatusCode::BAD_REQUEST,
+
+                // Internal Server Error
+                DocuBaseError::SqlxError(_)
+                | DocuBaseError::JwtError(_)
+                | DocuBaseError::PasswordHashingError(_) => StatusCode::INTERNAL_SERVER_ERROR,
+            },
         }
     }
 
+    #[must_use]
     pub fn to_response(&self) -> AuthErrorResponse {
         AuthErrorResponse {
             error: self.to_string(),
@@ -67,17 +82,5 @@ impl actix_web::ResponseError for AuthError {
         HttpResponse::build(status)
             .content_type("application/json")
             .json(self.to_response())
-    }
-}
-
-impl From<DocuBaseError> for AuthError {
-    fn from(value: DocuBaseError) -> Self {
-        match value {
-            DocuBaseError::UserExists => Self::UserIsAlreadySignedUp,
-            DocuBaseError::UserDoesNotExists => Self::UserDoesNotExists,
-            DocuBaseError::SqlxError(_) => Self::InternalError,
-            DocuBaseError::JwtError(_) => Self::JwtError,
-            _ => Self::Unknown,
-        }
     }
 }

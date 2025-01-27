@@ -5,7 +5,7 @@ use crate::DocuError;
 
 schema2struct! {
     type: object,
-    struct: Abstract,
+    struct: ProjectAbstract,
     required: ["r#abstract"],
     properties: {
         "r#abstract": { type: string }
@@ -13,9 +13,11 @@ schema2struct! {
 
 }
 
-impl ReportMetadata for Abstract {
+impl ReportMetadata for ProjectAbstract {
     fn content(&self) -> serde_json::Value {
-        serde_json::to_value(self).unwrap()
+        serde_json::to_value(self).unwrap_or_else(|err| {
+            panic!("couldn't serialize AdditionalInstruction into json, error: {err}",)
+        })
     }
 
     fn report_type(&self) -> docubase::models::ReportType {
@@ -23,10 +25,10 @@ impl ReportMetadata for Abstract {
     }
 }
 
-impl Abstract {
+impl ProjectAbstract {
     #[must_use]
     pub fn to_json() -> serde_json::Value {
-        (*ABSTRACT_JSON_VALUE).clone()
+        (*PROJECTABSTRACT_JSON_VALUE).clone()
     }
 
     /// # Errors
@@ -34,17 +36,10 @@ impl Abstract {
     /// DocuError::JsonConversion(serde_json::Error)
     /// ```
     ///
-    /// it returns an error if serde_json failed to convert the
+    /// it returns an error if ``serde_json`` failed to convert the
     /// provided instance to json
-    pub fn message(content: &Self) -> Result<String, DocuError> {
-        let string = serde_json::to_string(content)?;
+    pub fn message(&self) -> Result<String, DocuError> {
+        let string = serde_json::to_string(self)?;
         Ok(format!("abstract: {string:#?}\n"))
     }
 }
-
-//pub(crate) fn create_project_abstract_schema() -> Value {
-//    Schema::new(SchemaType::Object)
-//        .required(&["abstract"])
-//        .property("abstract", string!())
-//        .build()
-//}

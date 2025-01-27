@@ -23,7 +23,7 @@ pub async fn my_middleware(
         .ok_or(MiddlewareError::NoJwtTokenProvided)?;
 
     // jwt must be valid before procceding
-    docubase::utils::validate_jwt(jwt_cookie.value()).map_err(Into::<MiddlewareError>::into)?;
+    docubase::utils::validate_jwt(jwt_cookie.value()).map_err(|_| MiddlewareError::InvalidJwt)?;
 
     next.call(req).await
 }

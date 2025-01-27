@@ -1,6 +1,6 @@
 pub mod mw;
-mod routes;
-mod utils;
+pub mod routes;
+pub mod utils;
 
 use std::sync::Arc;
 
@@ -28,7 +28,11 @@ async fn main() {
 
     info!("Starting the application...");
 
-    let database = Arc::new(DocuBase::new().await.unwrap());
+    let database = Arc::new(
+        DocuBase::new()
+            .await
+            .unwrap_or_else(|err| panic!("couldn't connect to database, error: {err}")),
+    );
 
     //let user = database
     //    .create_user(
@@ -56,5 +60,5 @@ async fn main() {
     .workers(4)
     .run()
     .await
-    .unwrap();
+    .unwrap_or_else(|err| panic!("something wrong with actix HttpServer, error: {err}"));
 }

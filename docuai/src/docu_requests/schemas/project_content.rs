@@ -91,7 +91,9 @@ schema2struct! {
 
 impl ReportMetadata for ProjectContent {
     fn content(&self) -> serde_json::Value {
-        serde_json::to_value(self).unwrap()
+        serde_json::to_value(self).unwrap_or_else(|err| {
+            panic!("couldn't serialize AdditionalInstruction into json, error: {err}",)
+        })
     }
 
     fn report_type(&self) -> docubase::models::ReportType {
@@ -112,50 +114,8 @@ impl ProjectContent {
     ///
     /// it returns an error if ``serde_json`` failed to convert the
     /// provided instance to json
-    pub fn message(content: &Self) -> Result<String, DocuError> {
-        let string = serde_json::to_string(content)?;
+    pub fn message(&self) -> Result<String, DocuError> {
+        let string = serde_json::to_string(self)?;
         Ok(format!("projectContent: {string:#?}\n"))
     }
 }
-
-//pub(crate) fn create_alternative_titles_schema() -> Value {
-//    let project_content_required_schema = Schema::new(SchemaType::Object)
-//        .required(&["description", "steps"])
-//        .property("description", string!())
-//        .property("steps", array!(string!()));
-//
-//    let project_content = Schema::new(SchemaType::Object)
-//        .required(&[
-//            "problemStatement",
-//            "researchQuestions",
-//            "literatureReview",
-//            "methodology",
-//            "systemDesign",
-//            "implementation",
-//            "testingAndValidation",
-//            "resultsAndAnalysis",
-//            "futureWork",
-//            "contributions",
-//        ])
-//        .property("problemStatement", project_content_required_schema.clone())
-//        .property("researchQuestions", project_content_required_schema.clone())
-//        .property("literatureReview", project_content_required_schema.clone())
-//        .property("methodology", project_content_required_schema.clone())
-//        .property("systemDesign", project_content_required_schema.clone())
-//        .property("implementation", project_content_required_schema.clone())
-//        .property(
-//            "testingAndValidation",
-//            project_content_required_schema.clone(),
-//        )
-//        .property(
-//            "resultsAndAnalysis",
-//            project_content_required_schema.clone(),
-//        )
-//        .property("futureWork", project_content_required_schema.clone())
-//        .property("contributions", project_content_required_schema.clone());
-//
-//    Schema::new(SchemaType::Object)
-//        .required(&["projectContent"])
-//        .property("projectContent", project_content)
-//        .build()
-//}

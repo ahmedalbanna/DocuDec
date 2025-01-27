@@ -1,18 +1,8 @@
-use actix_web::{
-    body::BoxBody, http::StatusCode, HttpRequest, HttpResponse, Responder, ResponseError,
-};
+use actix_web::{body::BoxBody, http::StatusCode, HttpResponse};
 use docubase::error::DocuBaseError;
 use google_generative_ai_rs::v1::errors::GoogleAPIError;
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
-
-/// A helper function to map Google API errors to ``GenError``
-pub fn map_ai_error(error: &GoogleAPIError) -> GenError {
-    GenError::AiRequestError(format!(
-        "Couldn't complete the AI request, error: {:#?}",
-        error.message
-    ))
-}
 
 #[derive(Debug, Error)]
 pub enum GenError {
@@ -35,42 +25,58 @@ pub enum GenError {
     #[error("Validation error: {0}")]
     ValidationError(String),
 
-    #[error("project alredy exists")]
-    ProjectExists,
-
-    #[error("project doesn't exists")]
-    ProjectDoesNotExists,
-
-    #[error("report alredy exists")]
-    ReportExists,
-
-    #[error("internal database error")]
-    InternalDBError,
-
-    #[error("jwt error")]
-    JwtError,
-
-    #[error("the user doesn't exists")]
-    UserDoesNotExists,
+    #[error("{0}")]
+    DBError(#[from] DocuBaseError),
 }
 
 impl GenError {
-    fn to_status_code(&self) -> StatusCode {
+    #[must_use]
+    const fn to_status_code(&self) -> StatusCode {
         match self {
-            GenError::ProjectExists | GenError::ReportExists => StatusCode::CONFLICT,
-            GenError::InternalDBError | GenError::UnknownError | GenError::AiRequestError(_) => {
+            GenError::ValidationError(_)
+            | GenError::MissingContent(_)
+            | GenError::InvalidTitle(_)
+            | GenError::SyntaxError(_) => StatusCode::BAD_REQUEST,
+
+            GenError::AiRequestError(_) | GenError::UnknownError => {
                 StatusCode::INTERNAL_SERVER_ERROR
             }
-            GenError::UserDoesNotExists => StatusCode::NOT_FOUND,
-            GenError::SyntaxError(_)
-            | GenError::InvalidTitle(_)
-            | GenError::MissingContent(_)
-            | GenError::ValidationError(_)
-            | GenError::JwtError
-            | GenError::ProjectDoesNotExists => StatusCode::BAD_REQUEST,
+
+            // Database errors
+            GenError::DBError(error) => match error {
+                // Not Found
+                DocuBaseError::UserDoesNotExist
+                | DocuBaseError::ProjectDoesNotExist
+                | DocuBaseError::ReportDoesNotExist
+                | DocuBaseError::ProjectStateNotFound => StatusCode::NOT_FOUND,
+
+                // Conflict
+                DocuBaseError::UserExist
+                | DocuBaseError::ProjectExist
+                | DocuBaseError::ReportExist => StatusCode::CONFLICT,
+
+                // Forbidden
+                DocuBaseError::UserDoesNotOwnProject | DocuBaseError::ProjectDoesNotOwnReport => {
+                    StatusCode::FORBIDDEN
+                }
+
+                // Unauthorized
+                DocuBaseError::UsernameOrPasswordAreWrong | DocuBaseError::ExpiredToken => {
+                    StatusCode::UNAUTHORIZED
+                }
+
+                // Bad Request
+                DocuBaseError::InvalidReportType(_) => StatusCode::BAD_REQUEST,
+
+                // Internal Server Error
+                DocuBaseError::SqlxError(_)
+                | DocuBaseError::JwtError(_)
+                | DocuBaseError::PasswordHashingError(_) => StatusCode::INTERNAL_SERVER_ERROR,
+            },
         }
     }
 
+    #[must_use]
     fn to_response(&self) -> GenErrorResponse {
         GenErrorResponse {
             error: self.to_string(),
@@ -115,24 +121,8 @@ impl From<serde_json::Error> for GenError {
     }
 }
 
-// Optional: Conversion from GoogleAPIError
-impl From<&GoogleAPIError> for GenError {
-    fn from(err: &GoogleAPIError) -> Self {
-        map_ai_error(err)
-    }
-}
-
-impl From<DocuBaseError> for GenError {
-    fn from(value: DocuBaseError) -> Self {
-        use DocuBaseError as DE;
-        match value {
-            DE::ProjectExists => Self::ProjectExists,
-            DE::ReportExists => Self::ReportExists,
-            DE::SqlxError(_) => Self::InternalDBError,
-            DE::JwtError(_) => Self::JwtError,
-            DE::UserDoesNotExists => Self::UserDoesNotExists,
-            DE::ProjectDoesNotExists => Self::ProjectDoesNotExists,
-            _ => Self::UnknownError,
-        }
+impl From<GoogleAPIError> for GenError {
+    fn from(err: GoogleAPIError) -> Self {
+        GenError::AiRequestError(err.message)
     }
 }

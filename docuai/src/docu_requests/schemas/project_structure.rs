@@ -36,7 +36,9 @@ schema2struct! {
 
 impl ReportMetadata for ProjectStructure {
     fn content(&self) -> serde_json::Value {
-        serde_json::to_value(self).unwrap()
+        serde_json::to_value(self).unwrap_or_else(|err| {
+            panic!("couldn't serialize AdditionalInstruction into json, error: {err}",)
+        })
     }
 
     fn report_type(&self) -> docubase::models::ReportType {
@@ -57,30 +59,8 @@ impl ProjectStructure {
     ///
     /// it returns an error if ``serde_json`` failed to convert the
     /// provided instance to json
-    pub fn message(content: &Self) -> Result<String, DocuError> {
-        let string = serde_json::to_string(content)?;
+    pub fn message(&self) -> Result<String, DocuError> {
+        let string = serde_json::to_string(self)?;
         Ok(format!("projectStructure: {string:#?}\n"))
     }
 }
-
-//pub(crate) fn create_project_structure_schema() -> Value {
-//    let chapter_structure = Schema::new(SchemaType::Object)
-//        .required(&["description", "chapters"])
-//        .property("description", string!())
-//        .property("chapters", array!(string!()));
-//
-//    let visual_aids = Schema::new(SchemaType::Object)
-//        .required(&["description"])
-//        .property("description", string!());
-//
-//    let structure_and_format = Schema::new(SchemaType::Object)
-//        .required(&["targetLength", "chapterStructure", "visualAids"])
-//        .property("targetLength", string!())
-//        .property("chapterStructure", chapter_structure)
-//        .property("visualAids", visual_aids);
-//
-//    Schema::new(SchemaType::Object)
-//        .required(&["structureAndFormat"])
-//        .property("structureAndFormat", structure_and_format)
-//        .build()
-//}

@@ -5,6 +5,14 @@ use validator::{Validate, ValidationError};
 
 use super::super::error::GenError;
 
+/// # Errors
+/// ```rust
+/// [
+///     "Title cannot be purely numeric",
+///     "Excessive special characters in title".
+///     "Invalid title pattern"
+/// ]
+/// ```
 pub fn validate_title_content(title: &str) -> Result<(), ValidationError> {
     // Prevent purely numeric titles
     if title.chars().all(char::is_numeric) {
@@ -12,11 +20,14 @@ pub fn validate_title_content(title: &str) -> Result<(), ValidationError> {
     }
 
     // Prevent titles with excessive special characters
+    //
+    // the title it self is in between 3 and 150, so no loss would happen
+    #[allow(clippy::cast_precision_loss)]
     let special_char_ratio = title
         .chars()
         .filter(|c| !c.is_alphanumeric() && !c.is_whitespace())
-        .count() as f32
-        / title.len() as f32;
+        .count() as f64
+        / title.len() as f64;
 
     if special_char_ratio > 0.2 {
         return Err(ValidationError::new(
@@ -37,6 +48,12 @@ pub fn validate_title_content(title: &str) -> Result<(), ValidationError> {
     Ok(())
 }
 
+/// # Errors
+/// ```rust
+/// // a key value validation error
+/// // e.g { "title": "blahblah" }
+/// GenError::ValidationError(String)
+/// ```
 pub fn validate_title_request<T>(payload: &'_ Json<T>) -> Result<(), GenError>
 where
     T: for<'de> Deserialize<'de> + Validate,

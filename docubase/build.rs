@@ -6,7 +6,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     dotenv()?;
     let db_url = std::env::var("DATABASE_URL")?;
 
-    let pool = PgPool::connect(&db_url).await.unwrap();
+    let pool = PgPool::connect(&db_url)
+        .await
+        .expect("couldn't connect to database");
 
     create_tables(&pool).await?;
 

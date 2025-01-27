@@ -3,23 +3,32 @@ pub enum DocuBaseError {
     #[error("sqlx error: {0}")]
     SqlxError(#[from] sqlx::Error),
 
-    #[error("user already exists")]
-    UserExists,
+    #[error("user already exist")]
+    UserExist,
 
-    #[error("user does not exists")]
-    UserDoesNotExists,
+    #[error("user does not exist")]
+    UserDoesNotExist,
 
-    #[error("project does ot exists")]
-    ProjectDoesNotExists,
+    #[error("user does not own the project")]
+    UserDoesNotOwnProject,
 
-    #[error("project alredy exists")]
-    ProjectExists,
+    #[error("username or password is wrong")]
+    UsernameOrPasswordAreWrong,
 
-    #[error("report does ot exists")]
-    ReportDoesNotExists,
+    #[error("project does ot exist")]
+    ProjectDoesNotExist,
 
-    #[error("report (type) alredy exists")]
-    ReportExists,
+    #[error("project alredy exist")]
+    ProjectExist,
+
+    #[error("project does not own the report")]
+    ProjectDoesNotOwnReport,
+
+    #[error("report does ot exist")]
+    ReportDoesNotExist,
+
+    #[error("report (type) alredy exist")]
+    ReportExist,
 
     #[error("project state is not found, perhabs it's a new project")]
     ProjectStateNotFound,

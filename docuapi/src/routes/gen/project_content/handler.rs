@@ -1,72 +1,107 @@
-use std::sync::Arc;
+use std::{str::FromStr as _, sync::Arc};
 
 use actix_web::{
     web::{self, Json},
-    HttpResponse,
+    HttpRequest, HttpResponse,
 };
-use docuai::{
-    docu_requests::{
-        schemas::{ProjectContent, ProjectInfo},
-        DocuRequest,
-    },
-    DocuError,
-};
+use docuai::docu_requests::{schemas::ProjectContent, DocuRequest};
+use docubase::DocuBase;
 use google_generative_ai_rs::v1::api::Client;
-use tracing::{debug, error, instrument};
+use tracing::{instrument, trace};
+use uuid::Uuid;
 
-use super::super::error::{map_ai_error, GenError};
+use crate::routes::gen::generate_report;
 
-use super::super::validators::validate_project_content::validate_project_content_request;
+use super::super::error::GenError;
+
 use super::request::ProjectContentRequest;
 
-#[instrument(skip(model))]
+/// # Request
+/// ```json
+/// {
+///     "project_id": "...",
+///     "project_info": { ... }
+/// }
+/// ```
+///
+/// # Success
+/// {
+///     [`ProjectContent`](../../../../../docuai/docu_requests/schemas/project_content/struct.ProjectContent.html)
+/// }
+///
+/// # Errors
+/// ```rust
+///
+/// // if there is something wrong with the ai api
+/// GenError::ApiRequestError => (500 , "Internal AI error: { String }"),
+///
+/// // if there is something wrong with the provided json
+/// GenError::SyntaxError => (400, "Syntax error: { String }")
+///
+/// GenError::DBError => {
+///
+///        // internal database error
+///        DocuBaseError::SqlxError => (500, "sqlx error: { sqlx::Error }")
+///
+///        // something wrong with validating the user jwt
+///        DocuBaseError::JwtError(...) => (500, "jwt error: { jsonwebtoken::errors::Error }"),
+///
+///        // if for some reason the user have a valid jwt, but the user got deleted
+///        DocuBaseError::UserDoesNotExist => (404, "user does not exist"),
+///
+///        // if the provided `project_id` does not exist
+///        DocuBaseError::ProjectDoesNotExist => (404, "project does ot exist"),
+///
+///        // if the user provided a `project_id` that does not belong to him
+///        DocuBaseError::UserDoesNotOwnProject => (403, "user does not own the project"),
+///
+///        // this might happen if the user provided a report that he already did before
+///        DocuBaseError::ReportExist => (409, "report (type) alredy exist"),
+///
+///     }
+/// ```
+///
+/// # Panics
+///
+/// it will panic if it couldn't get the cookie, which is impossible
+///
+/// or the user_id is not convertable to a Uuid
+#[instrument(skip(model, db))]
 #[actix_web::post("/project-content")]
 pub async fn generate_project_content(
     model: web::Data<Arc<Client>>,
+    db: web::Data<Arc<DocuBase>>,
+    req: HttpRequest,
     payload: Json<ProjectContentRequest>,
 ) -> Result<HttpResponse, GenError> {
-    // Validate payload
-    validate_project_content_request(&payload)?;
+    let jwt_token = req
+        .cookie(crate::utils::constants::JWT_COOKIE)
+        .expect("the endpoint is not accessable without the cookie, so we're fine");
 
-    debug!(
+    let user_id = docubase::utils::validate_jwt(jwt_token.value()).map(|s| {
+        Uuid::from_str(&s).unwrap_or_else(|e| {
+            panic!("can't convert the id to a Uuid, original is: {s}, error: {e}")
+        })
+    })?;
+
+    trace!(
         ">> Generating project content based on the provided project info: {:#?}",
         payload.project_info
     );
 
-    // Generate project content
-    let result =
-        generate_project_content_with_validation(model.as_ref(), &payload.project_info).await?;
+    let project_content = generate_report::<ProjectContent>(
+        model.as_ref(),
+        DocuRequest::ProjectContent(&payload.project_info),
+    )
+    .await?;
 
-    debug!("\n>> Generated project content: \n\n{:#?}\n", result);
+    db.create_report(&payload.project_id, &user_id, &project_content)
+        .await?;
 
-    Ok(HttpResponse::Ok().json(result))
-}
+    trace!(
+        "\n>> Generated project content: \n\n{:#?}\n",
+        project_content
+    );
 
-/// Secure project content generation with error mapping
-async fn generate_project_content_with_validation(
-    model: &Client,
-    project_info: &ProjectInfo,
-) -> Result<ProjectContent, GenError> {
-    match docuai::request::<ProjectContent>(model, DocuRequest::ProjectContent(project_info), 100)
-        .await
-    {
-        Ok(project_content) => Ok(project_content),
-        Err(error) => {
-            error!("Project content generation failed: {:?}", error);
-
-            match error {
-                DocuError::ApiRequest(ge) => {
-                    error!(
-                        "AI request failed. Error: {}, Status: {:?}",
-                        ge.message, ge.code
-                    );
-                    Err(map_ai_error(&ge))
-                }
-                _ => {
-                    error!("Unrecoverable error in project content generation");
-                    Err(GenError::UnknownError)
-                }
-            }
-        }
-    }
+    Ok(HttpResponse::Ok().json(project_content))
 }

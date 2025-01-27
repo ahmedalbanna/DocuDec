@@ -3048,6 +3048,7 @@ dependencies = [
  "docuai",
  "dotenv",
  "httpc-test",
+ "once_cell",
  "serde",
  "serde_json",
  "tokio",
