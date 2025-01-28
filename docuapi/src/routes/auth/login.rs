@@ -17,12 +17,21 @@ struct Login {
     password: String,
 }
 
+/// # Request
+///
+/// ```json
+/// {
+///     "username": "...",
+///     "password": "..."
+/// }
+/// ```
 /// # Success
-/// ```rust
+/// ```json
 /// {
 ///     "jwt_token": "23fkjnd-sdkcnas-akajshcs",
 /// }
 /// ```
+///
 /// # Errors
 /// ```rust
 /// AuthError::UserDoesNotExists => (404, "the user doesn't exists")
@@ -30,7 +39,6 @@ struct Login {
 /// AuthError::JwtError => (417, "jwt creation error") // when we can't generate a jwt token out of
 /// the user_id
 /// ```
-///
 #[instrument(skip(db))]
 #[actix_web::post("/login")]
 pub async fn login(

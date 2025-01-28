@@ -32,8 +32,9 @@ impl DocuBase {
     pub async fn new() -> Result<Self, DocuBaseError> {
         dotenv::dotenv().ok();
         let db_url = &*DATABASE_URL;
+        println!("{db_url:#?}");
 
-        let pool = PgPool::connect(db_url).await?;
+        let pool = PgPool::connect(&db_url).await?;
 
         Ok(Self { pool })
     }

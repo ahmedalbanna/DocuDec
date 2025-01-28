@@ -1,5 +1,5 @@
-pub mod r#abstract;
 pub mod additional_instruction;
+pub mod project_abstract;
 pub mod project_appendices;
 pub mod project_conclusion;
 pub mod project_content;
