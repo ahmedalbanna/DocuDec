@@ -30,11 +30,9 @@ impl DocuBase {
     ///
     ///  could be because of the url, or the database is not avaliable
     pub async fn new() -> Result<Self, DocuBaseError> {
-        dotenv::dotenv().ok();
         let db_url = &*DATABASE_URL;
-        println!("{db_url:#?}");
 
-        let pool = PgPool::connect(&db_url).await?;
+        let pool = PgPool::connect(db_url).await?;
 
         Ok(Self { pool })
     }
@@ -164,7 +162,7 @@ impl DocuBase {
     /// DocuBaseError::UserDoesNotExist |
     /// DocuBaseError::PasswordHashingError |
     /// DocuBaseError::UsernameOrPasswordAreWrong |
-    /// DocuBaseError::SqlxError
+    /// DocuBaseError::SqlxErron
     /// ```
     ///
     pub async fn delete_user(

@@ -10,18 +10,19 @@ use super::super::error::GenError;
 /// [
 ///     "Title cannot be purely numeric",
 ///     "Excessive special characters in title".
-///     "Invalid title pattern"
 /// ]
 /// ```
 pub fn validate_title_content(title: &str) -> Result<(), ValidationError> {
     // Prevent purely numeric titles
     if title.chars().all(char::is_numeric) {
-        return Err(ValidationError::new("Title cannot be purely numeric"));
+        return Err(
+            ValidationError::new("400").with_message("Title cannot be purely numeric".into())
+        );
     }
 
     // Prevent titles with excessive special characters
     //
-    // the title it self is in between 3 and 150, so no loss would happen
+    // the title it self is in between 30 and 80, so no loss would happen
     #[allow(clippy::cast_precision_loss)]
     let special_char_ratio = title
         .chars()
@@ -30,20 +31,19 @@ pub fn validate_title_content(title: &str) -> Result<(), ValidationError> {
         / title.len() as f64;
 
     if special_char_ratio > 0.2 {
-        return Err(ValidationError::new(
-            "Excessive special characters in title",
-        ));
+        return Err(ValidationError::new("400")
+            .with_message("Excessive special characters in title".into()));
     }
 
-    // Prevent common spam or placeholder titles
-    let banned_patterns = ["test", "placeholder", "example", "untitled", "new project"];
-
-    if banned_patterns
-        .iter()
-        .any(|&pattern| title.to_lowercase().contains(pattern))
-    {
-        return Err(ValidationError::new("Invalid title pattern"));
-    }
+    //// Prevent common spam or placeholder titles
+    //let banned_patterns = ["test", "placeholder", "example", "untitled", "new project"];
+    //
+    //if banned_patterns
+    //    .iter()
+    //    .any(|&pattern| title.to_lowercase().contains(pattern))
+    //{
+    //    return Err(ValidationError::new("Invalid title pattern"));
+    //}
 
     Ok(())
 }

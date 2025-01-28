@@ -47,6 +47,13 @@ async fn make_sure_db_exists(full_db_url: &str) -> Result<String, Box<dyn std::e
 
     let connection = PgPool::connect(&format!("{db_url}/postgres")).await?;
 
+    // recreate the docudec_test again to test from the beggining
+    if db_name == "docudec_test" {
+        sqlx::query("DROP DATABASE IF EXISTS docudec_test")
+            .execute(&connection)
+            .await?;
+    }
+
     let query =
         format!("SELECT EXISTS(SELECT 1 FROM pg_catalog.pg_database WHERE datname = '{db_name}');");
 

@@ -47,9 +47,13 @@ use super::super::validators::validate_title::validate_title_request;
 ///
 /// // if the validation failed, it will return what field is wrong, and what's the error
 /// // it might return like this {
-///          "title": "Title must be between 3 and 150 characters"
+///          "title": "Title must be between 30 and 80 characters"
 ///     }
-/// // the rules are min = 3, max = 150
+/// // the rules are min = 30, max = 80
+/// // other validation error => [
+///     "Title cannot be purely numeric",
+///     "Excessive special characters in title",
+/// ]
 ///
 /// GenError::ValidationError(...) => (400, "{field}: {error}")
 ///

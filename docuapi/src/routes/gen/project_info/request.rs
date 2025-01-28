@@ -8,7 +8,7 @@ pub struct ProjectInfoRequest {
         length(
             min = 3,
             max = 150,
-            message = "Title must be between 3 and 150 characters"
+            message = "Title must be between 30 and 80 characters"
         ),
         custom(function = "validate_title_content")
     )]

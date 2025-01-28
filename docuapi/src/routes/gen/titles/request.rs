@@ -4,12 +4,11 @@ use validator::Validate;
 
 #[derive(Deserialize, Serialize, Debug, Default, Clone, Validate)]
 pub struct TitleRequest {
-    #[serde(default)]
     #[validate(
         length(
-            min = 3,
-            max = 150,
-            message = "Title must be between 3 and 150 characters"
+            min = 30,
+            max = 80,
+            message = "Title must be between 30 and 80 characters"
         ),
         custom(function = "validate_title_content")
     )]
