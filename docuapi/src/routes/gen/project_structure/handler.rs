@@ -48,6 +48,10 @@ static REPORTS: Lazy<Arc<Mutex<Option<Vec<Report>>>>> = Lazy::new(|| Arc::new(Mu
 /// // if there is something wrong with the provided json
 /// GenError::SyntaxError => (400, "Syntax error: { String }")
 ///
+/// // if the user did not provide the necessary previous data, and the api is trying to get it from the
+/// // database instead, but couldn't get it, it will return the missing report
+/// GenError::MissingReports(ReportType) => (404, "missing reports: { ReportType }")
+///
 /// GenError::DBError => {
 ///
 ///        // internal database error
