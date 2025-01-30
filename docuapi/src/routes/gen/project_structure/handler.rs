@@ -5,21 +5,28 @@ use actix_web::{
     HttpRequest, HttpResponse,
 };
 use docuai::docu_requests::{schemas::ProjectStructure, DocuRequest};
-use docubase::DocuBase;
+use docubase::{models::Report, DocuBase};
 use google_generative_ai_rs::v1::api::Client;
+use once_cell::sync::Lazy;
+use tokio::sync::Mutex;
 use tracing::{instrument, trace};
 use uuid::Uuid;
 
 use crate::routes::gen::generate_report;
 
 use super::super::error::GenError;
-
 use super::request::ProjectStructureRequest;
+
+use super::super::payload_getters;
+// will be used to store the reports coming from the database, so it can be used more than once
+static REPORTS: Lazy<Arc<Mutex<Option<Vec<Report>>>>> = Lazy::new(|| Arc::new(Mutex::new(None)));
 
 /// # Request
 /// ```json
 /// {
 ///     "project_id": "...",
+///
+///     // optional
 ///     "project_info": { ... },
 ///     "project_content": { ... }
 /// }
@@ -87,13 +94,21 @@ pub async fn generate_project_structure(
         })
     })?;
 
+    let project_info =
+        payload_getters::project_info(&*payload, &payload.project_id, &db, &user_id, &REPORTS)
+            .await?;
+
+    let project_content =
+        payload_getters::project_content(&*payload, &payload.project_id, &db, &user_id, &REPORTS)
+            .await?;
+
     trace!(
         ">> Generating project structure | Project Info: {:#?} | Project Content: {:#?}",
-        payload.project_info,
-        payload.project_content
+        project_info,
+        project_content
     );
 
-    let request = DocuRequest::ProjectStructure(&payload.project_info, &payload.project_content);
+    let request = DocuRequest::ProjectStructure(&project_info, &project_content);
 
     let project_structure = generate_report::<ProjectStructure>(model.as_ref(), request).await?;
 

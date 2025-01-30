@@ -1,5 +1,5 @@
 use actix_web::{body::BoxBody, http::StatusCode, HttpResponse};
-use docubase::error::DocuBaseError;
+use docubase::{error::DocuBaseError, models::ReportType};
 use google_generative_ai_rs::v1::errors::GoogleAPIError;
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
@@ -25,6 +25,9 @@ pub enum GenError {
     #[error("Validation error: {0}")]
     ValidationError(String),
 
+    #[error("missing reports: {0}")]
+    MissingReports(ReportType),
+
     #[error("{0}")]
     DBError(#[from] DocuBaseError),
 }
@@ -41,6 +44,8 @@ impl GenError {
             GenError::AiRequestError(_) | GenError::UnknownError => {
                 StatusCode::INTERNAL_SERVER_ERROR
             }
+
+            GenError::MissingReports(_) => StatusCode::NOT_FOUND,
 
             // Database errors
             GenError::DBError(error) => match error {

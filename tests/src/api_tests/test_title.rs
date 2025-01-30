@@ -1,15 +1,11 @@
-#[cfg(test)]
-pub mod tests {
-    use crate::api_tests::TESTS_RAN;
+use collect_tests::collect_tests;
 
-    use super::super::{wait_until_logged_in, CLIENT};
-    use docuai::docu_requests::schemas::AlternativeTitles;
+#[collect_tests]
+mod tests {
+    use super::super::CLIENT;
     use serde_json::json;
 
-    #[tokio::test]
-    async fn test_empty_title() {
-        wait_until_logged_in();
-
+    pub async fn test_empty_title() {
         let client = &*CLIENT;
 
         let res = client
@@ -30,16 +26,9 @@ pub mod tests {
             .expect("Failed to get the error value");
 
         assert!(error_json.contains("Title must be between 30 and 80 characters"));
-
-        if let Ok(mut test_ran) = TESTS_RAN.write() {
-            *test_ran += 1;
-        }
     }
 
-    #[tokio::test]
-    async fn test_big_title() {
-        wait_until_logged_in();
-
+    pub async fn test_big_title() {
         let client = &*CLIENT;
 
         let res = client
@@ -60,16 +49,9 @@ pub mod tests {
             .expect("Failed to get the error value");
 
         assert!(error_json.contains("Title must be between 30 and 80 characters"));
-
-        if let Ok(mut test_ran) = TESTS_RAN.write() {
-            *test_ran += 1;
-        }
     }
 
-    #[tokio::test]
-    async fn test_all_numbers() {
-        wait_until_logged_in();
-
+    pub async fn test_all_numbers() {
         let client = &*CLIENT;
 
         let res = client
@@ -82,8 +64,6 @@ pub mod tests {
             .await
             .unwrap();
 
-        println!("{:#?}", res.json_body());
-
         assert_eq!(res.status().as_u16(), 400);
 
         let json_body = res.json_body().expect("Failed get a json body");
@@ -92,16 +72,9 @@ pub mod tests {
             .expect("Failed to get the error value");
 
         assert!(error_json.contains("Title cannot be purely numeric"));
-
-        if let Ok(mut test_ran) = TESTS_RAN.write() {
-            *test_ran += 1;
-        }
     }
 
-    #[tokio::test]
-    async fn test_all_special_characters() {
-        wait_until_logged_in();
-
+    pub async fn test_all_special_characters() {
         let client = &*CLIENT;
 
         let res = client
@@ -122,16 +95,9 @@ pub mod tests {
             .expect("Failed to get the error value");
 
         assert!(error_json.contains("Excessive special characters in title"));
-
-        if let Ok(mut test_ran) = TESTS_RAN.write() {
-            *test_ran += 1;
-        }
     }
 
-    #[tokio::test]
-    async fn test_valid_title() {
-        wait_until_logged_in();
-
+    pub async fn test_valid_title() {
         let client = &*CLIENT;
 
         let res = client
@@ -147,13 +113,9 @@ pub mod tests {
         assert_eq!(res.status().as_u16(), 200);
 
         let json_body = res
-            .json_body_as::<AlternativeTitles>()
+            .json_body_as::<docuai::docu_requests::schemas::AlternativeTitles>()
             .expect("Failed convert the return JSON back to a Title struct");
 
         assert!(!json_body.recommendation.is_empty());
-
-        if let Ok(mut test_ran) = TESTS_RAN.write() {
-            *test_ran += 1;
-        }
     }
 }

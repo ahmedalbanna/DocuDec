@@ -5,21 +5,29 @@ use actix_web::{
     HttpRequest, HttpResponse,
 };
 use docuai::docu_requests::{schemas::ProjectContent, DocuRequest};
-use docubase::DocuBase;
+use docubase::{models::Report, DocuBase};
 use google_generative_ai_rs::v1::api::Client;
+use tokio::sync::Mutex;
 use tracing::{instrument, trace};
 use uuid::Uuid;
 
 use crate::routes::gen::generate_report;
 
 use super::super::error::GenError;
-
 use super::request::ProjectContentRequest;
+
+use super::super::payload_getters;
+use once_cell::sync::Lazy;
+
+// will be used to store the reports coming from the database, so it can be used more than once
+static REPORTS: Lazy<Arc<Mutex<Option<Vec<Report>>>>> = Lazy::new(|| Arc::new(Mutex::new(None)));
 
 /// # Request
 /// ```json
 /// {
 ///     "project_id": "...",
+///
+///     // optional if you have it, or it will be taken from the database if avaliable
 ///     "project_info": { ... }
 /// }
 /// ```
@@ -37,6 +45,10 @@ use super::request::ProjectContentRequest;
 ///
 /// // if there is something wrong with the provided json
 /// GenError::SyntaxError => (400, "Syntax error: { String }")
+///
+/// // if the user did not provide the project_info, and the api is trying to get it from the
+/// // database instead, it will return a list of missing reports
+/// GenError::MissingReports([...]) => (404, "missing reports: [ ... ]")
 ///
 /// GenError::DBError => {
 ///
@@ -84,14 +96,23 @@ pub async fn generate_project_content(
         })
     })?;
 
+    // right here, we give it everything
+    //
+    // if the user provided the project_info, then we take that, nothing special, but if not, we
+    // search through the user reports if he already done that, we take that, if not, then we
+    // reutrn an error
+    let project_info =
+        payload_getters::project_info(&*payload, &payload.project_id, &db, &user_id, &REPORTS)
+            .await?;
+
     trace!(
         ">> Generating project content based on the provided project info: {:#?}",
-        payload.project_info
+        project_info
     );
 
     let project_content = generate_report::<ProjectContent>(
         model.as_ref(),
-        DocuRequest::ProjectContent(&payload.project_info),
+        DocuRequest::ProjectContent(&project_info),
     )
     .await?;
 

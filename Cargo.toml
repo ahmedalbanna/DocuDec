@@ -2,9 +2,11 @@
 resolver = "2"
 members = [ 
   "docubase",
+  "docubase_pre",
   "docuapi",
-  "docuai"
-, "tests"]
+  "docuai", 
+  "tests"
+]
 
 [workspace.dependencies]
 dotenv = "0.15.0"

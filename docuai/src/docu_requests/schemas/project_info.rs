@@ -126,3 +126,7 @@ impl ProjectInfo {
         Ok(format!("projectInfo: {string:#?}\n"))
     }
 }
+
+pub trait HasProjectInfo {
+    fn get_project_info(&self) -> Option<&ProjectInfo>;
+}

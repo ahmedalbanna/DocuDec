@@ -11,6 +11,7 @@ use tracing::error;
 pub mod error;
 
 pub mod additional_instruction;
+pub mod payload_getters;
 pub mod project_abstract;
 pub mod project_appendices;
 pub mod project_conclusion;
