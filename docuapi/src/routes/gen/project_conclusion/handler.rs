@@ -5,7 +5,10 @@ use actix_web::{
     HttpRequest, HttpResponse,
 };
 use docuai::docu_requests::{schemas::ProjectConclusion, DocuRequest};
-use docubase::{models::Report, DocuBase};
+use docubase::{
+    models::{Report, ReportType},
+    DocuBase,
+};
 use google_generative_ai_rs::v1::api::Client;
 use tracing::{instrument, trace};
 use uuid::Uuid;
@@ -56,13 +59,17 @@ use super::request::ProjectConclusionRequest;
 ///        DocuBaseError::UserDoesNotExist => (404, "user does not exist"),
 ///
 ///        // if the provided `project_id` does not exist
-///        DocuBaseError::ProjectDoesNotExist => (404, "project does ot exist"),
+///        DocuBaseError::ProjectDoesNotExist => (404, "project does not exist"),
 ///
 ///        // if the user provided a `project_id` that does not belong to him
 ///        DocuBaseError::UserDoesNotOwnProject => (403, "user does not own the project"),
 ///
 ///        // this might happen if the user provided a report that he already did before
-///        DocuBaseError::ReportExist => (409, "report (type) alredy exist"),
+///        DocuBaseError::ReportExist => (409, "report (type) already exist"),
+///
+///        // this might happen if the user specifed to update the report, overriding the previous
+///        one, but there was no previous report
+///        DocuBaseError::ReportDoesNotExist => (404, "report does not exist"),
 ///
 ///     }
 /// ```
@@ -89,6 +96,14 @@ pub async fn generate_project_conclusion(
             panic!("can't convert the id to a Uuid, original is: {s}, error: {e}")
         })
     })?;
+
+    if !payload.update.is_some_and(|b| b) {
+        db.check_report_type_exists(
+            &payload.project_id,
+            ReportType::ProjectConclusion.to_string(),
+        )
+        .await?;
+    }
 
     trace!(">> Generating project conclusion");
 
@@ -124,8 +139,13 @@ pub async fn generate_project_conclusion(
 
     let project_conclusion = generate_report::<ProjectConclusion>(&model, request).await?;
 
-    db.create_report(&payload.project_id, &user_id, &project_conclusion)
-        .await?;
+    if payload.update.is_some_and(|b| b) {
+        db.update_report(&payload.project_id, &user_id, &project_conclusion)
+            .await?;
+    } else {
+        db.create_report(&payload.project_id, &user_id, &project_conclusion)
+            .await?;
+    }
 
     trace!(
         "\n>> Generated project conclusion: \n\n{:#?}\n",

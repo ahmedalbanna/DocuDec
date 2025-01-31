@@ -42,9 +42,9 @@ fn main() {
     test_titles(&args);
     test_project_info(&args);
     test_project_content(&args);
+    test_project_structure(&args);
 
     std::thread::sleep(std::time::Duration::from_secs(5));
-
     stop_server();
 }
 
@@ -62,6 +62,14 @@ fn test_project_content(args: &Arguments) -> ExitCode {
     api_tests::test_project_content::register_tests(&mut project_content);
 
     libtest_mimic::run(args, project_content).exit_code()
+}
+
+fn test_project_structure(args: &Arguments) -> ExitCode {
+    let mut project_structure = Vec::new();
+
+    api_tests::test_project_structure::register_tests(&mut project_structure);
+
+    libtest_mimic::run(args, project_structure).exit_code()
 }
 
 fn test_titles(args: &Arguments) -> ExitCode {

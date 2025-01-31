@@ -457,22 +457,45 @@ impl DocuBase {
     /// ```rust
     /// DocuBaseError::SqlxError(sqlx::Error)
     /// ```
-    async fn report_type_exists(
+    pub async fn report_type_exists(
         &self,
         project_id: &Uuid,
-        report_type: &str,
+        report_type: impl AsRef<str>,
     ) -> Result<bool, DocuBaseError> {
         let report = sqlx::query!(
             r#"
             SELECT EXISTS(SELECT 1 FROM reports WHERE project_id = $1 AND type = $2)
            "#,
             project_id,
-            report_type
+            report_type.as_ref()
         )
         .fetch_one(&self.pool)
         .await?;
 
         Ok(report.exists.unwrap_or(false))
+    }
+
+    /// # Errors
+    /// ```rust
+    /// DocuBaseError::SqlxError(sqlx::Error)
+    /// DocuBaseError::ReportExist
+    /// ```
+    pub async fn check_report_type_exists(
+        &self,
+        project_id: &Uuid,
+        report_type: impl AsRef<str>,
+    ) -> Result<bool, DocuBaseError> {
+        let report = sqlx::query!(
+            r#"
+            SELECT EXISTS(SELECT 1 FROM reports WHERE project_id = $1 AND type = $2)
+           "#,
+            project_id,
+            report_type.as_ref()
+        )
+        .fetch_one(&self.pool)
+        .await?;
+
+        report.exists.ok_or(DocuBaseError::ReportExist)
     }
 
     /// # Errors
@@ -538,6 +561,56 @@ impl DocuBase {
             project_id,
             report_type,
             report.content(),
+        )
+        .fetch_one(&self.pool)
+        .await?;
+
+        Ok(CreateResponse {
+            id: report.id,
+            created_at: report.created_at,
+        })
+    }
+
+    /// # Errors
+    /// ```rust
+    /// DocuBaseError::UserDoesNotExist |
+    /// DocuBaseError::ProjectDoesNotExist |
+    /// DocuBaseError::UserDoesNotOwnProject |
+    /// DocuBaseError::ReportDoesNotExist |
+    /// DocuBaseError::SqlxError
+    /// ```
+    pub async fn update_report<R: ReportMetadata>(
+        &self,
+        project_id: &Uuid,
+        user_id: &Uuid,
+        report: &R,
+    ) -> Result<CreateResponse, DocuBaseError> {
+        if !self.user_exists(LookupField::Id(user_id)).await? {
+            return Err(DocuBaseError::UserDoesNotExist);
+        }
+
+        if !self.project_exists(project_id).await? {
+            return Err(DocuBaseError::ProjectDoesNotExist);
+        }
+
+        if !self.project_belongs_to_user(project_id, user_id).await? {
+            return Err(DocuBaseError::UserDoesNotOwnProject);
+        }
+
+        let report_type = report.report_type().to_string();
+
+        if !self.report_type_exists(project_id, &report_type).await? {
+            return Err(DocuBaseError::ReportDoesNotExist);
+        }
+
+        let report = sqlx::query!(
+            r#"
+            UPDATE reports SET content = $1 WHERE project_id = $2 AND type = $3
+            RETURNING id, created_at
+            "#,
+            report.content(),
+            project_id,
+            report_type,
         )
         .fetch_one(&self.pool)
         .await?;

@@ -15,19 +15,19 @@ pub enum DocuBaseError {
     #[error("username or password is wrong")]
     UsernameOrPasswordAreWrong,
 
-    #[error("project does ot exist")]
+    #[error("project does not exist")]
     ProjectDoesNotExist,
 
-    #[error("project alredy exist")]
+    #[error("project already exist")]
     ProjectExist,
 
     #[error("project does not own the report")]
     ProjectDoesNotOwnReport,
 
-    #[error("report does ot exist")]
+    #[error("report does not exist")]
     ReportDoesNotExist,
 
-    #[error("report (type) alredy exist")]
+    #[error("report (type) already exist")]
     ReportExist,
 
     #[error("project state is not found, perhabs it's a new project")]

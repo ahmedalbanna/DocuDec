@@ -7,6 +7,7 @@ use crate::routes::gen::ProvidesReport;
 #[derive(Deserialize, Serialize, Debug, Default)]
 pub struct ProjectContentRequest {
     pub project_id: Uuid,
+    pub update: Option<bool>,
     pub project_info: Option<ProjectInfo>,
 }
 

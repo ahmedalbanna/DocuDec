@@ -5,7 +5,10 @@ use actix_web::{
     HttpRequest, HttpResponse,
 };
 use docuai::docu_requests::{schemas::AdditionalInstruction, DocuRequest};
-use docubase::{models::Report, DocuBase};
+use docubase::{
+    models::{Report, ReportType},
+    DocuBase,
+};
 use google_generative_ai_rs::v1::api::Client;
 use tracing::{instrument, trace};
 use uuid::Uuid;
@@ -58,13 +61,17 @@ use super::request::AdditionalInstructionRequest;
 ///        DocuBaseError::UserDoesNotExist => (404, "user does not exist"),
 ///
 ///        // if the provided `project_id` does not exist
-///        DocuBaseError::ProjectDoesNotExist => (404, "project does ot exist"),
+///        DocuBaseError::ProjectDoesNotExist => (404, "project does not exist"),
 ///
 ///        // if the user provided a `project_id` that does not belong to him
 ///        DocuBaseError::UserDoesNotOwnProject => (403, "user does not own the project"),
 ///
 ///        // this might happen if the user provided a report that he already did before
-///        DocuBaseError::ReportExist => (409, "report (type) alredy exist"),
+///        DocuBaseError::ReportExist => (409, "report (type) already exist"),
+///
+///        // this might happen if the user specifed to update the report, overriding the previous
+///        one, but there was no previous report
+///        DocuBaseError::ReportDoesNotExist => (404, "report does not exist"),
 ///
 ///     }
 /// ```
@@ -92,6 +99,14 @@ pub async fn generate_additional_instruction(
         })
     })?;
 
+    if !payload.update.is_some_and(|b| b) {
+        db.check_report_type_exists(
+            &payload.project_id,
+            ReportType::AdditionalInstruction.to_string(),
+        )
+        .await?;
+    }
+
     trace!(">> Generating additional instruction");
 
     let mut reports: Option<Vec<Report>> = None;
@@ -110,8 +125,13 @@ pub async fn generate_additional_instruction(
     let additional_instruction =
         generate_report::<AdditionalInstruction>(model.as_ref(), request).await?;
 
-    db.create_report(&payload.project_id, &user_id, &additional_instruction)
-        .await?;
+    if payload.update.is_some_and(|b| b) {
+        db.update_report(&payload.project_id, &user_id, &additional_instruction)
+            .await?;
+    } else {
+        db.create_report(&payload.project_id, &user_id, &additional_instruction)
+            .await?;
+    }
 
     trace!(
         "\n>> Generated additional instruction: \n\n{:#?}\n",

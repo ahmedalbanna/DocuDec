@@ -69,7 +69,7 @@ use super::super::validators::validate_title::validate_title_request;
 ///        DocuBaseError::UserDoesNotExist => (404, "user does not exist"),
 ///
 ///        // this will not happen in `project-info` but for other, it might happen
-///        DocuBaseError::ProjectDoesNotExist => (404, "project does ot exist"),
+///        DocuBaseError::ProjectDoesNotExist => (404, "project does not exist"),
 ///
 ///        // if the user provided a project-id that does not belong to him
 ///        // again this will not happen in `project-info`
@@ -77,10 +77,10 @@ use super::super::validators::validate_title::validate_title_request;
 ///
 ///        // this might happen if the user provided a report that he already did before
 ///        // this also will not happen in `project-info`
-///        DocuBaseError::ReportExist => (409, "report (type) alredy exist"),
+///        DocuBaseError::ReportExist => (409, "report (type) already exist"),
 ///
 ///        // if the user is trying to generate a project with the exact same title
-///        DocuBaseError::ProjectExist => (409, "project alredy exist"),
+///        DocuBaseError::ProjectExist => (409, "project already exist"),
 ///
 ///
 ///     }

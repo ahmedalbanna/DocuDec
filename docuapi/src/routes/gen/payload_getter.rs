@@ -5,6 +5,7 @@ use docubase::{
     DocuBase,
 };
 use serde::Deserialize;
+use tracing::trace;
 use uuid::Uuid;
 
 use super::error::GenError;
@@ -62,18 +63,31 @@ where
                 .expect("we just put the reports to it, so we can get it just fine")
         };
 
-        match reports.as_slice() {
-            [report @ Report {
-                content: report_content,
-                ..
-            }] if report.r#type == report_type => Cow::Owned(
-                serde_json::from_value(report_content.clone()).unwrap_or_else(|err| panic!(
-                    "couldn't convert the report coming from the database to a {report_type}, error: {err}"
-                )),
-            ),
+        trace!("{reports:#?}");
 
-            _ => return Err(GenError::MissingReports(report_type)),
-        }
+        let report = reports.iter().find(|&report| report.r#type == report_type);
+
+        let report_content = report
+            .ok_or_else(|| GenError::MissingReports(report_type))?
+            .content
+            .clone();
+
+        Cow::Owned(serde_json::from_value(report_content).unwrap_or_else(|err| 
+            panic!("couldn't convert the report coming from the database to a {report_type}, error: {err}")
+        ))
+
+        //match reports.as_slice() {
+        //    [report @ Report {
+        //        content: report_content,
+        //        ..
+        //    }] if report.r#type == report_type => Cow::Owned(
+        //        serde_json::from_value(report_content.clone()).unwrap_or_else(|err| panic!(
+        //            "couldn't convert the report coming from the database to a {report_type}, error: {err}"
+        //        )),
+        //    ),
+        //
+        //    _ => return Err(GenError::MissingReports(report_type)),
+        //}
     };
 
     Ok(gotten_report)

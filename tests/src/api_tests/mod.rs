@@ -11,8 +11,8 @@ pub mod test_auth;
 pub mod test_project_content;
 pub mod test_project_info;
 //mod test_project_references;
-//mod test_project_structure;
 pub mod run_server;
+pub mod test_project_structure;
 pub mod test_title;
 
 pub static CLIENT: Lazy<httpc_test::Client> = Lazy::new(|| {
