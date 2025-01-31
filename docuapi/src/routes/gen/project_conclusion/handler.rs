@@ -5,12 +5,12 @@ use actix_web::{
     HttpRequest, HttpResponse,
 };
 use docuai::docu_requests::{schemas::ProjectConclusion, DocuRequest};
-use docubase::DocuBase;
+use docubase::{models::Report, DocuBase};
 use google_generative_ai_rs::v1::api::Client;
 use tracing::{instrument, trace};
 use uuid::Uuid;
 
-use crate::routes::gen::generate_report;
+use crate::{fetch_reports, routes::gen::generate_report};
 
 use super::super::error::GenError;
 
@@ -20,6 +20,8 @@ use super::request::ProjectConclusionRequest;
 /// ```json
 /// {
 ///     "project_id": "...",
+///
+///     // optional if you have it, or it will be taken from the database if avaliable
 ///     "project_info": { ... }
 ///     "project_content": { ... },
 ///     "project_structure": { .. },
@@ -90,12 +92,34 @@ pub async fn generate_project_conclusion(
 
     trace!(">> Generating project conclusion");
 
+    let mut reports: Option<Vec<Report>> = None;
+
+    let (
+        project_info,
+        project_content,
+        project_structure,
+        additional_instruction,
+        project_abstract,
+    ) = fetch_reports!(
+        payload,
+        db,
+        user_id,
+        reports,
+        [
+            ProjectInfo,
+            ProjectContent,
+            ProjectStructure,
+            AdditionalInstruction,
+            ProjectAbstract
+        ]
+    );
+
     let request = DocuRequest::ProjectConclusion(
-        &payload.project_info,
-        &payload.project_content,
-        &payload.project_structure,
-        &payload.additional_instruction,
-        &payload.project_abstract,
+        &project_info,
+        &project_content,
+        &project_structure,
+        &additional_instruction,
+        &project_abstract,
     );
 
     let project_conclusion = generate_report::<ProjectConclusion>(&model, request).await?;

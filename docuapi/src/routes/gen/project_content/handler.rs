@@ -7,20 +7,13 @@ use actix_web::{
 use docuai::docu_requests::{schemas::ProjectContent, DocuRequest};
 use docubase::{models::Report, DocuBase};
 use google_generative_ai_rs::v1::api::Client;
-use tokio::sync::Mutex;
 use tracing::{instrument, trace};
 use uuid::Uuid;
 
-use crate::routes::gen::generate_report;
+use crate::{fetch_reports, routes::gen::generate_report};
 
 use super::super::error::GenError;
 use super::request::ProjectContentRequest;
-
-use super::super::payload_getters;
-use once_cell::sync::Lazy;
-
-// will be used to store the reports coming from the database, so it can be used more than once
-static REPORTS: Lazy<Arc<Mutex<Option<Vec<Report>>>>> = Lazy::new(|| Arc::new(Mutex::new(None)));
 
 /// # Request
 /// ```json
@@ -96,14 +89,15 @@ pub async fn generate_project_content(
         })
     })?;
 
+    let mut reports: Option<Vec<Report>> = None;
+
     // right here, we give it everything
     //
     // if the user provided the project_info, then we take that, nothing special, but if not, we
     // search through the user reports if he already done that, we take that, if not, then we
     // reutrn an error
-    let project_info =
-        payload_getters::project_info(&*payload, &payload.project_id, &db, &user_id, &REPORTS)
-            .await?;
+
+    let project_info = fetch_reports!(payload, db, user_id, reports, [ProjectInfo]);
 
     trace!(
         ">> Generating project content based on the provided project info: {:#?}",

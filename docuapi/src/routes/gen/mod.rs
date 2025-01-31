@@ -8,10 +8,12 @@ use google_generative_ai_rs::v1::api::Client;
 use serde::de::DeserializeOwned;
 use tracing::error;
 
+pub use payload_getter::ProvidesReport;
+
 pub mod error;
 
 pub mod additional_instruction;
-pub mod payload_getters;
+pub mod payload_getter;
 pub mod project_abstract;
 pub mod project_appendices;
 pub mod project_conclusion;

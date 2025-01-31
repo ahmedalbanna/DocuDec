@@ -5,12 +5,12 @@ use actix_web::{
     HttpRequest, HttpResponse,
 };
 use docuai::docu_requests::{schemas::ProjectAbstract, DocuRequest};
-use docubase::DocuBase;
+use docubase::{models::Report, DocuBase};
 use google_generative_ai_rs::v1::api::Client;
 use tracing::{instrument, trace};
 use uuid::Uuid;
 
-use crate::routes::gen::generate_report;
+use crate::{fetch_reports, routes::gen::generate_report};
 
 use super::super::error::GenError;
 
@@ -20,6 +20,8 @@ use super::request::ProjectAbstractRequest;
 /// ```json
 /// {
 ///     "project_id": "...",
+///
+///     // optional if you have it, or it will be taken from the database if avaliable
 ///     "project_info": { ... }
 ///     "project_content": { ... },
 ///     "project_structure": { .. },
@@ -89,11 +91,26 @@ pub async fn generate_project_abstract(
 
     trace!(">> Generating project abstraction");
 
+    let mut reports: Option<Vec<Report>> = None;
+
+    let (project_info, project_content, project_structure, additional_instruction) = fetch_reports!(
+        payload,
+        db,
+        user_id,
+        reports,
+        [
+            ProjectInfo,
+            ProjectContent,
+            ProjectStructure,
+            AdditionalInstruction
+        ]
+    );
+
     let request = DocuRequest::ProjectAbstract(
-        &payload.project_info,
-        &payload.project_content,
-        &payload.project_structure,
-        &payload.additional_instruction,
+        &project_info,
+        &project_content,
+        &project_structure,
+        &additional_instruction,
     );
 
     let project_abstract = generate_report::<ProjectAbstract>(model.as_ref(), request).await?;

@@ -5,12 +5,12 @@ use actix_web::{
     HttpRequest, HttpResponse,
 };
 use docuai::docu_requests::{schemas::AdditionalInstruction, DocuRequest};
-use docubase::DocuBase;
+use docubase::{models::Report, DocuBase};
 use google_generative_ai_rs::v1::api::Client;
 use tracing::{instrument, trace};
 use uuid::Uuid;
 
-use crate::routes::gen::generate_report;
+use crate::{fetch_reports, routes::gen::generate_report};
 
 use super::super::error::GenError;
 
@@ -20,6 +20,8 @@ use super::request::AdditionalInstructionRequest;
 /// ```json
 /// {
 ///     "project_id": "...",
+///
+///     // optional if you have it, or it will be taken from the database if avaliable
 ///     "project_info": { ... },
 ///     "project_content": { ... },
 ///     "project_structure": { ... }
@@ -39,6 +41,10 @@ use super::request::AdditionalInstructionRequest;
 ///
 /// // if there is something wrong with the provided json
 /// GenError::SyntaxError => (400, "Syntax error: { String }")
+///
+/// // if the user did not provide the necessary previous data, and the api is trying to get it from the
+/// // database instead, but couldn't get it, it will return the missing report
+/// GenError::MissingReports(ReportType) => (404, "missing reports: { ReportType }")
 ///
 /// GenError::DBError => {
 ///
@@ -88,11 +94,18 @@ pub async fn generate_additional_instruction(
 
     trace!(">> Generating additional instruction");
 
-    let request = DocuRequest::AdditionalInstruction(
-        &payload.project_info,
-        &payload.project_content,
-        &payload.project_structure,
+    let mut reports: Option<Vec<Report>> = None;
+
+    let (project_info, project_content, project_structure) = fetch_reports!(
+        payload,
+        db,
+        user_id,
+        reports,
+        [ProjectInfo, ProjectContent, ProjectStructure]
     );
+
+    let request =
+        DocuRequest::AdditionalInstruction(&project_info, &project_content, &project_structure);
 
     let additional_instruction =
         generate_report::<AdditionalInstruction>(model.as_ref(), request).await?;

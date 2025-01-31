@@ -119,7 +119,3 @@ impl ProjectContent {
         Ok(format!("projectContent: {string:#?}\n"))
     }
 }
-
-pub trait HasProjectContent {
-    fn get_project_content(&self) -> Option<&ProjectContent>;
-}
