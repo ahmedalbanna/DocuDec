@@ -21,3 +21,5 @@ pub static JWT_SECRET: Lazy<String> = Lazy::new(|| {
 });
 
 pub static ARGON_CONFIG: Lazy<argon2::Argon2> = Lazy::new(argon2::Argon2::default);
+
+pub static JWT_TOKEN_EXPIRE_DAYS: i64 = 1;

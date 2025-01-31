@@ -70,7 +70,7 @@ use super::request::ProjectAppendicesRequest;
 ///        DocuBaseError::ReportExist => (409, "report (type) already exist"),
 ///
 ///        // this might happen if the user specifed to update the report, overriding the previous
-///        one, but there was no previous report
+///        // one, but there was no previous report
 ///        DocuBaseError::ReportDoesNotExist => (404, "report does not exist"),
 ///
 ///     }

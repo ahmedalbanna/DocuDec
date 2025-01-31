@@ -1,5 +1,5 @@
 use crate::{
-    constants::{ARGON_CONFIG, JWT_SECRET}, // Fixed typo, added Argon config
+    constants::{ARGON_CONFIG, JWT_SECRET, JWT_TOKEN_EXPIRE_DAYS},
     error::DocuBaseError,
     models::Claims,
 };
@@ -61,7 +61,7 @@ pub fn verify_password(password: &str, hash: &str) -> Result<bool, DocuBaseError
 ///
 pub fn generate_jwt(user_id: &str) -> Result<String, DocuBaseError> {
     let expiration = Utc::now()
-        .checked_add_signed(Duration::hours(1))
+        .checked_add_signed(Duration::days(JWT_TOKEN_EXPIRE_DAYS))
         .expect("Invalid timestamp")
         .timestamp();
 

@@ -1,3 +1,12 @@
+//! the main entry point to the api
+//! we run it from here
+//!
+//! routes -> contains all api routes
+//!
+//! mw -> the middlewares for the api
+//!
+//! utils -> a couple of utilities related the api
+
 pub mod mw;
 pub mod routes;
 pub mod utils;

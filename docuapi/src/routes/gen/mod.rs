@@ -1,3 +1,15 @@
+//! contains the generation routers
+//!
+//! - alternative titles
+//! - project info
+//! - project content
+//! - project structure
+//! - additional instruction
+//! - project abstract
+//! - project conclusion
+//! - project references
+//! - project appendices
+
 use std::sync::Arc;
 
 use crate::mw::my_middleware;
