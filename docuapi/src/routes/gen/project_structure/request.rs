@@ -8,6 +8,7 @@ use crate::routes::gen::ProvidesReport;
 pub struct ProjectStructureRequest {
     pub project_id: Uuid,
     pub update: Option<bool>,
+    pub update_if_exist: Option<bool>,
     pub project_info: Option<ProjectInfo>,
     pub project_content: Option<ProjectContent>,
 }

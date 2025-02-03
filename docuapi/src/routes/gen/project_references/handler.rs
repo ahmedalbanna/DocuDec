@@ -13,7 +13,10 @@ use google_generative_ai_rs::v1::api::Client;
 use tracing::{debug, instrument};
 use uuid::Uuid;
 
-use crate::{fetch_reports, routes::gen::generate_report};
+use crate::{
+    fetch_reports,
+    routes::gen::{generate_report, update_action, UpdateAction},
+};
 
 use super::super::error::GenError;
 
@@ -23,6 +26,9 @@ use super::request::ProjectReferencesRequest;
 /// ```json
 /// {
 ///     "project_id": "...",
+///
+///     "update": bool,
+///     "update_if_exist": bool,
 ///
 ///     // optional if you have it, or it will be taken from the database if avaliable
 ///     "project_info": { ... }
@@ -48,6 +54,9 @@ use super::request::ProjectReferencesRequest;
 ///
 /// // if there is something wrong with the provided json
 /// GenError::SyntaxError => (400, "Syntax error: { String }")
+///
+/// // if you set 'update' and 'update_if_exist' to true at the same time
+/// GenError::UpdateMisuse => (400, "you can't use update and update_if_exist at the same time")
 ///
 /// GenError::DBError => {
 ///
@@ -99,12 +108,11 @@ pub async fn generate_project_references(
         })
     })?;
 
-    if !payload.update.is_some_and(|b| b) {
-        db.check_report_type_exists(
-            &payload.project_id,
-            ReportType::ProjectReferences.to_string(),
-        )
-        .await?;
+    let update_action = update_action(payload.update, payload.update_if_exist)?;
+
+    if matches!(update_action, UpdateAction::No) {
+        db.check_report_type_exists(&payload.project_id, ReportType::ProjectReferences)
+            .await?;
     }
 
     debug!(">> Generating project references");
@@ -144,12 +152,30 @@ pub async fn generate_project_references(
 
     let project_references = generate_report::<ProjectReferences>(&model, request).await?;
 
-    if payload.update.is_some_and(|b| b) {
-        db.update_report(&payload.project_id, &user_id, &project_references)
-            .await?;
-    } else {
-        db.create_report(&payload.project_id, &user_id, &project_references)
-            .await?;
+    match update_action {
+        UpdateAction::No => {
+            db.create_report(&payload.project_id, &user_id, &project_references)
+                .await?;
+        }
+        UpdateAction::Yes => {
+            db.update_report(&payload.project_id, &user_id, &project_references)
+                .await?;
+        }
+        UpdateAction::YesIfExist => {
+            if db
+                .report_type_exists(&payload.project_id, ReportType::ProjectReferences)
+                .await?
+            {
+                db.delete_report_with_type(
+                    ReportType::ProjectReferences,
+                    &payload.project_id,
+                    &user_id,
+                )
+                .await?;
+            }
+            db.create_report(&payload.project_id, &user_id, &project_references)
+                .await?;
+        }
     }
 
     debug!(

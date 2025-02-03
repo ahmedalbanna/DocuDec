@@ -28,6 +28,9 @@ pub enum GenError {
     #[error("missing reports: {0}")]
     MissingReports(ReportType),
 
+    #[error("you can't use update and update_if_exist at the same time")]
+    UpdateMisuse,
+
     #[error("{0}")]
     DBError(#[from] DocuBaseError),
 }
@@ -39,7 +42,8 @@ impl GenError {
             GenError::ValidationError(_)
             | GenError::MissingContent(_)
             | GenError::InvalidTitle(_)
-            | GenError::SyntaxError(_) => StatusCode::BAD_REQUEST,
+            | GenError::SyntaxError(_)
+            | GenError::UpdateMisuse => StatusCode::BAD_REQUEST,
 
             GenError::AiRequestError(_) | GenError::UnknownError => {
                 StatusCode::INTERNAL_SERVER_ERROR

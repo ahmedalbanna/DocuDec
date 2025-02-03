@@ -1,7 +1,5 @@
 extern crate libtest_mimic;
 
-use std::process::ExitCode;
-
 use libtest_mimic::{Arguments, Trial};
 use tokio::runtime::Runtime;
 mod api_tests;
@@ -39,6 +37,8 @@ fn main() {
 
     libtest_mimic::run(&args, vec![required_before_api_tests]).exit_code();
 
+    let mut failed_tests = 0;
+
     let registers = [
         api_tests::test_title::register_tests,
         api_tests::test_project_info::register_tests,
@@ -52,12 +52,17 @@ fn main() {
     ];
 
     for registery in registers {
+        if failed_tests > 0 {
+            stop_server();
+            panic!("last test gave an error")
+        }
+
         std::thread::sleep(std::time::Duration::from_secs(2));
 
         let mut tests = Vec::new();
         registery(&mut tests);
 
-        libtest_mimic::run(&args, tests).exit_code();
+        failed_tests = libtest_mimic::run(&args, tests).num_failed;
     }
 
     std::thread::sleep(std::time::Duration::from_secs(5));

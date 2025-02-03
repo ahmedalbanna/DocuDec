@@ -97,3 +97,27 @@ where
         }
     }
 }
+
+enum UpdateAction {
+    Yes,
+    YesIfExist,
+    No,
+}
+fn update_action(
+    update: Option<bool>,
+    update_if_exist: Option<bool>,
+) -> Result<UpdateAction, GenError> {
+    if update.is_some_and(|b| b) && update_if_exist.is_some_and(|b| b) {
+        return Err(GenError::UpdateMisuse);
+    }
+
+    if update.is_some_and(|b| b) {
+        return Ok(UpdateAction::Yes);
+    }
+
+    if update_if_exist.is_some_and(|b| b) {
+        return Ok(UpdateAction::YesIfExist);
+    }
+
+    Ok(UpdateAction::No)
+}

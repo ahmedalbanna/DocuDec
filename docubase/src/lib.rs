@@ -457,17 +457,39 @@ impl DocuBase {
     /// ```rust
     /// DocuBaseError::SqlxError(sqlx::Error)
     /// ```
+    async fn report_exists_with_type(
+        &self,
+        report: &str,
+        project_id: &Uuid,
+    ) -> Result<bool, DocuBaseError> {
+        let report = sqlx::query!(
+            r#"
+            SELECT EXISTS(SELECT 1 FROM reports WHERE type = $1 AND project_id = $2)
+           "#,
+            report,
+            project_id
+        )
+        .fetch_one(&self.pool)
+        .await?;
+
+        Ok(report.exists.unwrap_or(false))
+    }
+
+    /// # Errors
+    /// ```rust
+    /// DocuBaseError::SqlxError(sqlx::Error)
+    /// ```
     pub async fn report_type_exists(
         &self,
         project_id: &Uuid,
-        report_type: impl AsRef<str>,
+        report_type: ReportType,
     ) -> Result<bool, DocuBaseError> {
         let report = sqlx::query!(
             r#"
             SELECT EXISTS(SELECT 1 FROM reports WHERE project_id = $1 AND type = $2)
            "#,
             project_id,
-            report_type.as_ref()
+            report_type.to_string()
         )
         .fetch_one(&self.pool)
         .await?;
@@ -483,14 +505,14 @@ impl DocuBase {
     pub async fn check_report_type_exists(
         &self,
         project_id: &Uuid,
-        report_type: impl AsRef<str>,
+        report_type: ReportType,
     ) -> Result<bool, DocuBaseError> {
         let report = sqlx::query!(
             r#"
             SELECT EXISTS(SELECT 1 FROM reports WHERE project_id = $1 AND type = $2)
            "#,
             project_id,
-            report_type.as_ref()
+            report_type.to_string()
         )
         .fetch_one(&self.pool)
         .await?;
@@ -546,9 +568,9 @@ impl DocuBase {
             return Err(DocuBaseError::UserDoesNotOwnProject);
         }
 
-        let report_type = report.report_type().to_string();
+        let report_type = report.report_type();
 
-        if self.report_type_exists(project_id, &report_type).await? {
+        if self.report_type_exists(project_id, report_type).await? {
             return Err(DocuBaseError::ReportExist);
         }
 
@@ -559,7 +581,7 @@ impl DocuBase {
             RETURNING id, created_at
             "#,
             project_id,
-            report_type,
+            report_type.to_string(),
             report.content(),
         )
         .fetch_one(&self.pool)
@@ -597,9 +619,9 @@ impl DocuBase {
             return Err(DocuBaseError::UserDoesNotOwnProject);
         }
 
-        let report_type = report.report_type().to_string();
+        let report_type = report.report_type();
 
-        if !self.report_type_exists(project_id, &report_type).await? {
+        if !self.report_type_exists(project_id, report_type).await? {
             return Err(DocuBaseError::ReportDoesNotExist);
         }
 
@@ -610,7 +632,7 @@ impl DocuBase {
             "#,
             report.content(),
             project_id,
-            report_type,
+            report_type.to_string(),
         )
         .fetch_one(&self.pool)
         .await?;
@@ -619,6 +641,52 @@ impl DocuBase {
             id: report.id,
             created_at: report.created_at,
         })
+    }
+
+    /// # Errors
+    /// ```rust
+    /// DocuBaseError::UserDoesNotExist |
+    /// DocuBaseError::ProjectDoesNotExist |
+    /// DocuBaseError::UserDoesNotOwnProject |
+    /// DocuBaseError::ReportDoesNotExist |
+    /// DocuBaseError::SqlxError
+    /// ```
+    pub async fn delete_report_with_type(
+        &self,
+        report: ReportType,
+        project_id: &Uuid,
+        user_id: &Uuid,
+    ) -> Result<DeleteResponse, DocuBaseError> {
+        if !self.user_exists(LookupField::Id(user_id)).await? {
+            return Err(DocuBaseError::UserDoesNotExist);
+        }
+
+        if !self.project_exists(project_id).await? {
+            return Err(DocuBaseError::ProjectDoesNotExist);
+        }
+
+        if !self.project_belongs_to_user(project_id, user_id).await? {
+            return Err(DocuBaseError::UserDoesNotOwnProject);
+        }
+
+        let report = report.to_string();
+
+        if !self.report_exists_with_type(&report, project_id).await? {
+            return Err(DocuBaseError::ReportDoesNotExist);
+        }
+
+        let report = sqlx::query!(
+            r#"
+            DELETE FROM reports WHERE type = $1 AND project_id = $2
+            RETURNING id
+            "#,
+            report,
+            project_id
+        )
+        .fetch_one(&self.pool)
+        .await?;
+
+        Ok(DeleteResponse { id: report.id })
     }
 
     /// # Errors

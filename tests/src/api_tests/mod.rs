@@ -23,7 +23,7 @@ pub static CLIENT: Lazy<httpc_test::Client> = Lazy::new(|| {
         .parse::<u16>()
         .expect("Failed to parse the PORT as a number");
 
-    httpc_test::new_client(format!("http://localhost:{}", port))
+    httpc_test::new_client(format!("http://localhost:{port}"))
         .expect("Failed to create a new test http client")
 });
 
