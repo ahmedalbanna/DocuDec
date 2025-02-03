@@ -26,3 +26,8 @@ libtest-mimic = "0.8"
 collect_tests = { path = "./collect_tests" }
 docuai = {path = "../docuai"}
 docubase_pre = { path = "../docubase_pre" }
+
+
+[lints]
+workspace = true
+

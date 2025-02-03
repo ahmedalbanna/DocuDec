@@ -3,15 +3,15 @@ use std::{process::Child, sync::RwLock};
 use dotenv::dotenv;
 use once_cell::sync::Lazy;
 
-//mod test_abstract;
-//mod test_additional_instruction;
+pub mod run_server;
+pub mod test_additional_instruction;
 pub mod test_auth;
-//mod test_project_appendices;
-//mod test_project_conclusion;
+pub mod test_project_abstract;
+pub mod test_project_appendices;
+pub mod test_project_conclusion;
 pub mod test_project_content;
 pub mod test_project_info;
-//mod test_project_references;
-pub mod run_server;
+pub mod test_project_references;
 pub mod test_project_structure;
 pub mod test_title;
 

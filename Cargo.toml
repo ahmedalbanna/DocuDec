@@ -8,6 +8,15 @@ members = [
   "tests"
 ]
 
+
+[profile.release]
+codegen-units = 1
+lto = true 
+strip = true
+opt-level = 3
+debug = false
+incremental = false
+
 [workspace.dependencies]
 dotenv = "0.15.0"
 serde = { version = "1.0.217", features = ["derive"] }

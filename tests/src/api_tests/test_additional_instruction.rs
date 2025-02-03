@@ -1,16 +1,24 @@
-#[cfg(test)]
-pub mod tests {
-    use super::super::get_client;
-    use serde_json::{json, Value};
+use collect_tests::collect_tests;
 
-    #[tokio::test]
-    async fn test_empty_additional_instruction() {
-        let client = get_client();
+#[collect_tests]
+pub mod tests {
+    use serde_json::json;
+
+    use crate::api_tests::{CLIENT, PROJECT_ID};
+
+    pub async fn test_empty_additional_instruction() {
+        let client = &CLIENT;
+
+        let project_id = {
+            let project_id = PROJECT_ID.read().unwrap();
+            (*project_id).clone().unwrap()
+        };
 
         let res = client
             .do_post(
                 "/gen/additional-instruction",
                 json!({
+                    "project_id": project_id,
                     "project_info": "",
                     "project_content": "",
                     "project_structure": "",
@@ -27,14 +35,19 @@ pub mod tests {
         assert!(&json_body.contains("JSON Deserialization Error"));
     }
 
-    #[tokio::test]
-    async fn test_partial_project_structure() {
-        let client = get_client();
+    pub async fn test_partial_additional_instruction() {
+        let client = &CLIENT;
+
+        let project_id = {
+            let project_id = PROJECT_ID.read().unwrap();
+            (*project_id).clone().unwrap()
+        };
 
         let res = client
             .do_post(
                 "/gen/additional-instruction",
                 json!({
+                    "project_id": project_id,
                     "project_structure": {
 
                     },
@@ -59,41 +72,23 @@ pub mod tests {
         assert!(&json_body.contains("JSON Deserialization Error"));
     }
 
-    #[tokio::test]
-    async fn test_valid_project_structure() {
-        let client = get_client();
+    pub async fn test_valid_additional_instruction() {
+        let client = &CLIENT;
 
-        let project_content_json =
-            crate::json_templates::project_content::camel_case::PROJECT_CONTENT_TEMPLATE;
-        let project_info_json =
-            crate::json_templates::project_info::camel_case::PROJECT_INFO_TEMPLATE;
-
-        let project_structure_json =
-            crate::json_templates::project_structure::camel_case::PROJECT_STRUCTURE_TEMPLATE;
-
-        let project_info: Value =
-            serde_json::from_str(project_info_json).expect("Failed to parse json to ProjectInfo");
-
-        let project_structure: Value = serde_json::from_str(project_structure_json)
-            .expect("Failed to parse json to ProjectStructure");
-
-        let project_content: docuai::docu_requests::schemas::ProjectContent =
-            serde_json::from_str(project_content_json)
-                .expect("Failed to parse JSON to ProjectContent");
+        let project_id = {
+            let project_id = PROJECT_ID.read().unwrap();
+            (*project_id).clone().unwrap()
+        };
 
         let res = client
             .do_post(
                 "/gen/additional-instruction",
                 json!({
-                    "project_info": project_info,
-                    "project_content": project_content,
-                    "project_structure": project_structure,
+                    "project_id": project_id,
                 }),
             )
             .await
             .unwrap();
-
-        println!("{:#?}", res.json_body().unwrap());
 
         assert_eq!(res.status().as_u16(), 200);
 

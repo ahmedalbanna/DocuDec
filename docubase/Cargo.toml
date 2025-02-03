@@ -28,3 +28,4 @@ docubase_pre = { path = "../docubase_pre" }
 
 [lints]
 workspace = true
+

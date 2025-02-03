@@ -39,43 +39,27 @@ fn main() {
 
     libtest_mimic::run(&args, vec![required_before_api_tests]).exit_code();
 
-    test_titles(&args);
-    test_project_info(&args);
-    test_project_content(&args);
-    test_project_structure(&args);
+    let registers = [
+        api_tests::test_title::register_tests,
+        api_tests::test_project_info::register_tests,
+        api_tests::test_project_content::register_tests,
+        api_tests::test_project_structure::register_tests,
+        api_tests::test_additional_instruction::register_tests,
+        api_tests::test_project_abstract::register_tests,
+        api_tests::test_project_conclusion::register_tests,
+        api_tests::test_project_references::register_tests,
+        api_tests::test_project_appendices::register_tests,
+    ];
+
+    for registery in registers {
+        std::thread::sleep(std::time::Duration::from_secs(2));
+
+        let mut tests = Vec::new();
+        registery(&mut tests);
+
+        libtest_mimic::run(&args, tests).exit_code();
+    }
 
     std::thread::sleep(std::time::Duration::from_secs(5));
     stop_server();
-}
-
-fn test_project_info(args: &Arguments) -> ExitCode {
-    let mut project_info = Vec::new();
-
-    api_tests::test_project_info::register_tests(&mut project_info);
-
-    libtest_mimic::run(args, project_info).exit_code()
-}
-
-fn test_project_content(args: &Arguments) -> ExitCode {
-    let mut project_content = Vec::new();
-
-    api_tests::test_project_content::register_tests(&mut project_content);
-
-    libtest_mimic::run(args, project_content).exit_code()
-}
-
-fn test_project_structure(args: &Arguments) -> ExitCode {
-    let mut project_structure = Vec::new();
-
-    api_tests::test_project_structure::register_tests(&mut project_structure);
-
-    libtest_mimic::run(args, project_structure).exit_code()
-}
-
-fn test_titles(args: &Arguments) -> ExitCode {
-    let mut titles = Vec::new();
-
-    api_tests::test_title::register_tests(&mut titles);
-
-    libtest_mimic::run(args, titles).exit_code()
 }
