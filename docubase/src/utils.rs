@@ -6,7 +6,6 @@ use crate::{
 use argon2::password_hash::{
     rand_core::OsRng, PasswordHash, PasswordHasher, PasswordVerifier, SaltString,
 };
-use chrono::{Duration, Utc};
 use jsonwebtoken::{decode, encode, Algorithm, DecodingKey, EncodingKey, Header, Validation};
 
 /// # Errors
@@ -60,8 +59,8 @@ pub fn verify_password(password: &str, hash: &str) -> Result<bool, DocuBaseError
 /// this will panic if the ``checked_add_signed`` failed, this should not happen
 ///
 pub fn generate_jwt(user_id: &str) -> Result<String, DocuBaseError> {
-    let expiration = Utc::now()
-        .checked_add_signed(Duration::days(JWT_TOKEN_EXPIRE_DAYS))
+    let expiration = chrono::Utc::now()
+        .checked_add_signed(chrono::Duration::days(JWT_TOKEN_EXPIRE_DAYS))
         .expect("Invalid timestamp")
         .timestamp();
 

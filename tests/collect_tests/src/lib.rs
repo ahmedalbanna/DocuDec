@@ -33,7 +33,7 @@ pub fn collect_tests(_attr: TokenStream, item: TokenStream) -> TokenStream {
         if is_async {
             quote! {
                 tests.push(libtest_mimic::Trial::test(stringify!(#func_name), || {
-                    let rt = tokio::runtime::Runtime::new().unwrap();
+                    let rt = actix_web::rt::Runtime::new().expect("failed to create a test runtime");
                     rt.block_on(async {
                         #mod_name::#func_name().await
                         }

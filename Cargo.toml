@@ -18,10 +18,10 @@ debug = false
 incremental = false
 
 [workspace.dependencies]
+actix-web = "4"
 dotenv = "0.15.0"
-serde = { version = "1.0.217", features = ["derive"] }
-serde_json = {version = "1.0.134", features = ["preserve_order"]}
-tokio = { version = "1.42.0", features = ["full"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = {version = "1", features = ["preserve_order"]}
 tracing = "0.1"
 tracing-subscriber = {version = "0.3", features = ["env-filter"]}
 google-generative-ai-rs = {version = "0.3.4", features = ["beta"]}

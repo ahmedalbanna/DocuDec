@@ -21,7 +21,7 @@ use tracing::info;
 use tracing_subscriber::{fmt, layer::SubscriberExt, util::SubscriberInitExt, EnvFilter};
 use utils::json_error_handler;
 
-#[tokio::main]
+#[actix_web::main]
 async fn main() {
     dotenv::dotenv().expect("Failed to find a .env file, make sure it's in the root directory");
 

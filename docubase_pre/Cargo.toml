@@ -14,7 +14,7 @@ sqlx = { version = "0.8", features = [
     "json"
     ]}
 
-tokio = { workspace = true }
+actix-web = {workspace = true}
 
 [lints]
 workspace = true

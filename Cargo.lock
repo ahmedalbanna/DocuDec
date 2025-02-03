@@ -814,7 +814,6 @@ dependencies = [
  "serde",
  "serde_json",
  "thiserror 2.0.9",
- "tokio",
 ]
 
 [[package]]
@@ -822,18 +821,15 @@ name = "docuapi"
 version = "0.1.0"
 dependencies = [
  "actix-web",
- "async-trait",
  "chrono",
  "docuai",
  "docubase",
  "dotenv",
- "futures",
  "google-generative-ai-rs",
  "once_cell",
  "serde",
  "serde_json",
  "thiserror 2.0.9",
- "tokio",
  "tracing",
  "tracing-subscriber",
  "uuid",
@@ -861,9 +857,9 @@ dependencies = [
 name = "docubase_pre"
 version = "0.1.0"
 dependencies = [
+ "actix-web",
  "dotenv",
  "sqlx",
- "tokio",
 ]
 
 [[package]]
@@ -3161,6 +3157,7 @@ dependencies = [
 name = "tests"
 version = "0.1.0"
 dependencies = [
+ "actix-web",
  "collect_tests",
  "docuai",
  "docubase_pre",
@@ -3171,7 +3168,6 @@ dependencies = [
  "serde",
  "serde_json",
  "serial_test",
- "tokio",
 ]
 
 [[package]]

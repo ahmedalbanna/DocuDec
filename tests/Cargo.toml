@@ -18,7 +18,7 @@ httpc-test = "0.1.1"
 once_cell = { workspace = true }
 serde = {workspace = true}
 serde_json = {workspace = true}
-tokio = {workspace = true}
+actix-web = {workspace = true}
 dotenv = {workspace = true}
 serial_test = "3.2.0"
 libtest-mimic = "0.8"

@@ -13,7 +13,7 @@ use std::env;
 ///
 /// if it couldn't connect to the database
 ///
-#[tokio::main]
+#[actix_web::main]
 pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
     dotenv()?;
 

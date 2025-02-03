@@ -1,7 +1,6 @@
 extern crate libtest_mimic;
 
 use libtest_mimic::{Arguments, Trial};
-use tokio::runtime::Runtime;
 mod api_tests;
 mod json_conversions;
 
@@ -22,7 +21,7 @@ fn stop_server() {
 
 fn main() {
     let args = Arguments::from_args();
-    let rt = Runtime::new().unwrap();
+    let rt = actix_web::rt::Runtime::new().unwrap();
 
     start_server();
 
