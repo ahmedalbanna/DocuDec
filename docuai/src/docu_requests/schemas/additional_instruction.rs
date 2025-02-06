@@ -1,7 +1,10 @@
 use docubase::models::ReportMetadata;
 use schema2struct::schema2struct;
 
-use crate::DocuError;
+use crate::{
+    docu_requests::{sysinsts, DocuComponent, RequestSchema, ToMessage},
+    DocuError,
+};
 
 schema2struct! {
     type: object,
@@ -33,21 +36,25 @@ impl ReportMetadata for AdditionalInstruction {
     }
 }
 
-impl AdditionalInstruction {
-    #[must_use]
-    pub fn to_json() -> serde_json::Value {
-        (*ADDITIONALINSTRUCTION_JSON_VALUE).clone()
-    }
+impl ToMessage for AdditionalInstruction {
+    fn write_message(&self, writer: &mut String) -> Result<(), DocuError> {
+        writer.push_str(&format!(
+            "additionalInstructions: {:#?}\n",
+            serde_json::to_string(self)?
+        ));
 
-    /// # Errors
-    /// ```rust
-    /// DocuError::JsonConversion(serde_json::Error)
-    /// ```
-    ///
-    /// it returns an error if ``serde_json`` failed to convert the
-    /// provided instance to json
-    pub fn message(&self) -> Result<String, DocuError> {
-        let string = serde_json::to_string(self)?;
-        Ok(format!("additionalInstructions: {string:#?}\n"))
+        Ok(())
     }
 }
+
+impl RequestSchema for AdditionalInstruction {
+    fn to_json_value() -> serde_json::Value {
+        ADDITIONALINSTRUCTION_JSON_VALUE.clone()
+    }
+
+    fn to_system_instruction<'a>(_is_plain: bool) -> &'a str {
+        sysinsts::ADDITIONAL_INSTRUCTION_SYSTEM_INSTRUCTION
+    }
+}
+
+impl DocuComponent for AdditionalInstruction {}

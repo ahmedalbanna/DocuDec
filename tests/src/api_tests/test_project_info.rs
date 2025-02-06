@@ -3,16 +3,9 @@ use collect_tests::collect_tests;
 #[collect_tests]
 pub mod tests {
     use docuai::docu_requests::schemas::ProjectInfo;
-    use serde::{Deserialize, Serialize};
     use serde_json::json;
 
     use super::super::{CLIENT, PROJECT_ID};
-
-    #[derive(Serialize, Deserialize)]
-    struct ProjectInfoRes {
-        project_id: String,
-        content: ProjectInfo,
-    }
 
     pub async fn test_empty_project_info_title() {
         let client = &*CLIENT;
@@ -52,14 +45,25 @@ pub mod tests {
 
         assert_eq!(res.status().as_u16(), 200);
 
-        let json_body = res
-            .json_body_as::<ProjectInfoRes>()
-            .expect("Failed convert the return JSON back to a ProjectInfo struct");
+        let json_body = res.json_body().expect("Couldn't get the json body");
 
-        assert!(!json_body.content.project_title.is_empty());
+        let project_id = json_body
+            .get("project_id")
+            .expect("there was no project_id in the return json body")
+            .to_string();
 
-        if let Ok(mut project_id) = PROJECT_ID.write() {
-            *project_id = Some(json_body.project_id);
+        let json_body: ProjectInfo = serde_json::from_value(
+            json_body
+                .get("content")
+                .expect("there is no content in the response")
+                .to_owned(),
+        )
+        .expect("Couldn't convert the returned content into a ProjectInfo");
+
+        assert!(!json_body.project_title.is_empty());
+
+        if let Ok(mut project_id_state) = PROJECT_ID.write() {
+            *project_id_state = Some(project_id.trim_matches('"').to_string());
         }
     }
 }

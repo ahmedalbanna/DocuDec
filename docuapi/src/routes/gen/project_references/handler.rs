@@ -10,7 +10,7 @@ use docubase::{
     DocuBase,
 };
 use google_generative_ai_rs::v1::api::Client;
-use tracing::{debug, instrument};
+use tracing::{debug, instrument, trace};
 use uuid::Uuid;
 
 use crate::{
@@ -115,7 +115,7 @@ pub async fn generate_project_references(
             .await?;
     }
 
-    debug!(">> Generating project references");
+    trace!(">> Generating project references");
 
     let mut reports: Option<Vec<Report>> = None;
 
@@ -178,8 +178,8 @@ pub async fn generate_project_references(
         }
     }
 
-    debug!(
-        "\n>> Generated project references: \n\n{:#?}\n",
+    trace!(
+        "\n>> Generated project appendices: \n\n{:#?}\n",
         project_references
     );
 

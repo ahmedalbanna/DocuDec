@@ -6,6 +6,28 @@ mod tests {
     use serde_json::json;
 
     pub async fn test_empty_title() {
+        //let model = actix_web::web::Data::new(std::sync::Arc::new(docuai::get_model().unwrap()));
+        //let g = docuapi::routes::gen::titles::handler::generate_titles;
+        //
+        //let app =
+        //    actix_web::test::init_service(actix_web::App::new().app_data(model).service(g)).await;
+        //let req = actix_web::test::TestRequest::post()
+        //    .uri("/titles")
+        //    .cookie(actix_web::cookie::Cookie::new("jwt_token", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzNzNlYjY3Mi04N2ExLTQ5YWItYTU0Yi1iMzMyMTNmZmIwNTciLCJleHAiOjE3Mzg2ODE4NzF9.LkvsRv7zQv4rGdY6RQHZmVsw8SW0ut59ZYkTvSGbc2Y"))
+        //    .set_json(json!({
+        //        "title": ""
+        //    }))
+        //    .to_request();
+        //
+        //let resp = test::call_service(&app, req).await;
+        //let s = resp.status();
+        //
+        //let bj = actix_web::test::read_body(resp).await;
+        //
+        //dbg!(bj);
+        //
+        //assert_eq!(s, StatusCode::BAD_REQUEST);
+
         let client = &*CLIENT;
 
         let res = client

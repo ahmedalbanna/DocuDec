@@ -4,9 +4,6 @@ use libtest_mimic::{Arguments, Trial};
 mod api_tests;
 mod json_conversions;
 
-//#[allow(dead_code)]
-//mod json_templates;
-
 fn start_server() {
     std::env::set_var("TEST_MODE", "1");
     docubase_pre::main().unwrap();
@@ -21,7 +18,7 @@ fn stop_server() {
 
 fn main() {
     let args = Arguments::from_args();
-    let rt = actix_web::rt::Runtime::new().unwrap();
+    let rt = tokio::runtime::Runtime::new().unwrap();
 
     start_server();
 

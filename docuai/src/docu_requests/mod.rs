@@ -2,7 +2,7 @@
 
 pub mod requests;
 //pub mod responses;
-pub mod schema;
+pub mod config;
 pub mod schemas;
 pub mod sysinsts;
 
@@ -12,13 +12,35 @@ use google_generative_ai_rs::v1::{
 };
 
 use schemas::{
-    AdditionalInstruction, AlternativeTitles, ProjectAbstract, ProjectAppendices,
-    ProjectConclusion, ProjectContent, ProjectInfo, ProjectReferences, ProjectStructure,
+    AdditionalInstruction, ProjectAbstract, ProjectAppendices, ProjectConclusion, ProjectContent,
+    ProjectInfo, ProjectReferences, ProjectStructure,
 };
 
 use serde::de::DeserializeOwned;
+use serde_json::Value;
 
 use crate::error::DocuError;
+
+pub trait ToMessage {
+    /// # Errors
+    /// ```rust
+    /// DocuError::JsonConversion(serde_json::Error)
+    /// ```
+    ///
+    /// it returns an error if ``serde_json`` failed to convert the
+    /// provided instance to json
+    fn write_message(&self, writer: &mut String) -> Result<(), DocuError>;
+}
+
+pub trait RequestSchema {
+    #[must_use]
+    fn to_json_value() -> Value;
+
+    #[must_use]
+    fn to_system_instruction<'a>(is_plain: bool) -> &'a str;
+}
+
+pub trait DocuComponent: RequestSchema + ToMessage {}
 
 pub enum DocuRequest<'a> {
     AlterTitles(&'a str),
@@ -61,64 +83,6 @@ pub enum DocuRequest<'a> {
 }
 
 impl DocuRequest<'_> {
-    #[must_use]
-    pub fn to_config(&self) -> GenerationConfig {
-        match self {
-            Self::AlterTitles(..) => schema::get_gen_config(AlternativeTitles::to_json()),
-
-            Self::ProjectInfo(..) => schema::get_gen_config(ProjectInfo::to_json()),
-
-            Self::ProjectContent(..) => schema::get_gen_config(ProjectContent::to_json()),
-
-            Self::ProjectStructure(..) => schema::get_gen_config(ProjectStructure::to_json()),
-
-            Self::AdditionalInstruction(..) => {
-                schema::get_gen_config(AdditionalInstruction::to_json())
-            }
-
-            Self::ProjectAbstract(..) => schema::get_gen_config(ProjectAbstract::to_json()),
-
-            Self::ProjectConclusion(..) => schema::get_gen_config(ProjectConclusion::to_json()),
-
-            Self::ProjectReferences(..) => schema::get_gen_config(ProjectReferences::to_json()),
-
-            Self::ProjectAppendices(..) => schema::get_gen_config(ProjectAppendices::to_json()),
-        }
-    }
-
-    #[must_use]
-    pub fn to_system_instruction(&self) -> String {
-        match self {
-            Self::AlterTitles(..) => sysinsts::ALTER_TITLES_SYSTEM_INSTRUCTION.to_string(),
-
-            Self::ProjectInfo(..) => sysinsts::PROJECT_INFO_SYSTEM_INSTRUCTION.to_string(),
-
-            Self::ProjectContent(..) => sysinsts::PROJECT_CONTENT_SYSTEM_INSTRUCTION.to_string(),
-
-            Self::ProjectStructure(..) => {
-                sysinsts::PROJECT_STRUCTURE_SYSTEM_INSTRUCTION.to_string()
-            }
-
-            Self::AdditionalInstruction(..) => {
-                sysinsts::ADDITIONAL_INSTRUCTION_SYSTEM_INSTRUCTION.to_string()
-            }
-
-            Self::ProjectAbstract(..) => sysinsts::PROJECT_ABSTRACT_SYSTEM_INSTRUCTION.to_string(),
-
-            Self::ProjectConclusion(..) => {
-                sysinsts::PROJECT_CONCLUSION_SYSTEM_INSTRUCTION.to_string()
-            }
-
-            Self::ProjectReferences(..) => {
-                sysinsts::PROJECT_REFERENCES_SYSTEM_INSTRUCTION.to_string()
-            }
-
-            Self::ProjectAppendices(..) => {
-                sysinsts::PROJECT_APPENDICES_SYSTEM_INSTRUCTION.to_string()
-            }
-        }
-    }
-
     /// # Errors
     /// ```rust
     /// DocuError::NoTextFoundInResponse | DocuError::JsonConversion(serde_json::Error)
@@ -130,10 +94,9 @@ impl DocuRequest<'_> {
     where
         R: DeserializeOwned,
     {
-        let text = crate::get_text(post_result).ok_or(DocuError::NoTextFoundInResponse)?;
-
-        let parsed_json = serde_json::from_str(&text)?;
-        Ok(parsed_json)
+        crate::get_text(post_result)
+            .map(|s| serde_json::from_str(&s).map_err(DocuError::JsonConversion))
+            .ok_or(DocuError::NoTextFoundInResponse)?
     }
 
     // TODO: reduce the lines
@@ -145,145 +108,89 @@ impl DocuRequest<'_> {
     ///
     /// it returns an error if ``serde_json`` failed to convert the
     /// provided instance to json
-    pub fn to_request(&self) -> Result<Request, DocuError> {
+    pub fn to_request(
+        &self,
+        config: GenerationConfig,
+        is_plain: bool,
+    ) -> Result<Request, DocuError> {
+        let mut message = String::new();
+        let mut system_instruction = String::new();
+
         match self {
-            Self::AlterTitles(orig_title) => Ok(requests::get_request(
-                (*orig_title).to_string(),
-                self.to_config(),
-                self.to_system_instruction(),
-            )),
+            Self::AlterTitles(orig_title) => {
+                message.push_str(orig_title);
+            }
 
             Self::ProjectInfo(chosen_title) => {
-                let message = format!("title: {chosen_title}");
-                Ok(requests::get_request(
-                    message,
-                    self.to_config(),
-                    self.to_system_instruction(),
-                ))
+                message.push_str(&format!("title: {chosen_title}"));
             }
 
-            Self::ProjectContent(project_info) => {
-                let message = project_info.message()?;
+            _ => self.write_components(&mut message, &mut system_instruction, is_plain)?,
+        };
 
-                Ok(requests::get_request(
-                    message,
-                    self.to_config(),
-                    self.to_system_instruction(),
-                ))
+        Ok(requests::get_request(message, config, system_instruction))
+    }
+
+    #[inline]
+    fn write_components(
+        &self,
+        writer: &mut String,
+        system_instruction: &mut String,
+        is_plain: bool,
+    ) -> Result<(), DocuError> {
+        let components: (&[&dyn ToMessage], &str) = match *self {
+            Self::ProjectContent(info) => {
+                (&[info], ProjectContent::to_system_instruction(is_plain))
             }
+            Self::ProjectStructure(info, content) => (
+                &[info, content],
+                ProjectStructure::to_system_instruction(is_plain),
+            ),
+            Self::AdditionalInstruction(info, content, structure) => (
+                &[info, content, structure],
+                AdditionalInstruction::to_system_instruction(is_plain),
+            ),
 
-            Self::ProjectStructure(project_info, project_content) => {
-                let mut message = project_info.message()?;
+            Self::ProjectAbstract(info, content, structure, add_info) => (
+                &[info, content, structure, add_info],
+                ProjectAbstract::to_system_instruction(is_plain),
+            ),
 
-                message.push_str(&project_content.message()?);
+            Self::ProjectConclusion(info, content, structure, add_info, p_abstract) => (
+                &[info, content, structure, add_info, p_abstract],
+                ProjectConclusion::to_system_instruction(is_plain),
+            ),
 
-                Ok(requests::get_request(
-                    message,
-                    self.to_config(),
-                    self.to_system_instruction(),
-                ))
-            }
-
-            Self::AdditionalInstruction(project_info, project_content, project_structure) => {
-                let mut message = project_info.message()?;
-
-                message.push_str(&project_content.message()?);
-                message.push_str(&project_structure.message()?);
-
-                Ok(requests::get_request(
-                    message,
-                    self.to_config(),
-                    self.to_system_instruction(),
-                ))
-            }
-
-            Self::ProjectAbstract(
-                project_info,
-                project_content,
-                project_structure,
-                additional_instruction,
-            ) => {
-                let mut message = project_info.message()?;
-
-                message.push_str(&project_content.message()?);
-                message.push_str(&project_structure.message()?);
-                message.push_str(&additional_instruction.message()?);
-
-                Ok(requests::get_request(
-                    message,
-                    self.to_config(),
-                    self.to_system_instruction(),
-                ))
-            }
-
-            Self::ProjectConclusion(
-                project_info,
-                project_content,
-                project_structure,
-                additional_instruction,
-                project_abstract,
-            ) => {
-                let mut message = project_info.message()?;
-
-                message.push_str(&project_content.message()?);
-                message.push_str(&project_structure.message()?);
-                message.push_str(&additional_instruction.message()?);
-                message.push_str(&project_abstract.message()?);
-
-                Ok(requests::get_request(
-                    message,
-                    self.to_config(),
-                    self.to_system_instruction(),
-                ))
-            }
-
-            Self::ProjectReferences(
-                project_info,
-                project_content,
-                project_structure,
-                additional_instruction,
-                project_abstract,
-                project_conclusion,
-            ) => {
-                let mut message = project_info.message()?;
-
-                message.push_str(&project_content.message()?);
-                message.push_str(&project_structure.message()?);
-                message.push_str(&additional_instruction.message()?);
-                message.push_str(&project_abstract.message()?);
-                message.push_str(&project_conclusion.message()?);
-
-                Ok(requests::get_request(
-                    message,
-                    self.to_config(),
-                    self.to_system_instruction(),
-                ))
+            Self::ProjectReferences(info, content, structure, add_info, p_abstract, conclusion) => {
+                (
+                    &[info, content, structure, add_info, p_abstract, conclusion],
+                    ProjectReferences::to_system_instruction(is_plain),
+                )
             }
 
             Self::ProjectAppendices(
-                project_info,
-                project_content,
-                project_structure,
-                additional_instruction,
-                project_abstract,
-                project_conclusion,
-                project_references,
-            ) => {
-                let mut message = project_info.message()?;
+                info,
+                content,
+                structure,
+                add_info,
+                p_abstract,
+                conclusion,
+                references,
+            ) => (
+                &[
+                    info, content, structure, add_info, p_abstract, conclusion, references,
+                ],
+                ProjectAppendices::to_system_instruction(is_plain),
+            ),
 
-                message.push_str(&project_content.message()?);
-                message.push_str(&project_structure.message()?);
-                message.push_str(&additional_instruction.message()?);
-                message.push_str(&project_abstract.message()?);
-                message.push_str(&project_conclusion.message()?);
-                message.push_str(&project_references.message()?);
+            Self::AlterTitles(..) | Self::ProjectInfo(..) => (&[], ""),
+        };
 
-                Ok(requests::get_request(
-                    message,
-                    self.to_config(),
-                    self.to_system_instruction(),
-                ))
-            }
-        }
+        system_instruction.push_str(components.1);
+
+        components
+            .0
+            .iter()
+            .try_for_each(|c| c.write_message(writer))
     }
 }

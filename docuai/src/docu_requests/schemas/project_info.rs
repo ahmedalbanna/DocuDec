@@ -1,7 +1,10 @@
 use docubase::models::ReportMetadata;
 use schema2struct::schema2struct;
 
-use crate::DocuError;
+use crate::{
+    docu_requests::{sysinsts, DocuComponent, RequestSchema, ToMessage},
+    DocuError,
+};
 
 schema2struct! {
     type: object,
@@ -108,25 +111,24 @@ impl ReportMetadata for ProjectInfo {
     }
 }
 
-impl ProjectInfo {
-    #[must_use]
-    pub fn to_json() -> serde_json::Value {
-        (*PROJECTINFO_JSON_VALUE).clone()
-    }
+impl ToMessage for ProjectInfo {
+    fn write_message(&self, writer: &mut String) -> Result<(), DocuError> {
+        writer.push_str(&format!(
+            "projectInfo: {:#?}\n",
+            serde_json::to_string(self)?
+        ));
 
-    /// # Errors
-    /// ```rust
-    /// DocuError::JsonConversion(serde_json::Error)
-    /// ```
-    ///
-    /// it returns an error if ``serde_json`` failed to convert the
-    /// provided instance to json
-    pub fn message(&self) -> Result<String, DocuError> {
-        let string = serde_json::to_string(self)?;
-        Ok(format!("projectInfo: {string:#?}\n"))
+        Ok(())
     }
 }
 
-pub trait HasProjectInfo {
-    fn get_project_info(&self) -> Option<&ProjectInfo>;
+impl RequestSchema for ProjectInfo {
+    fn to_json_value() -> serde_json::Value {
+        PROJECTINFO_JSON_VALUE.clone()
+    }
+    fn to_system_instruction<'a>(_is_plain: bool) -> &'a str {
+        sysinsts::PROJECT_INFO_SYSTEM_INSTRUCTION
+    }
 }
+
+impl DocuComponent for ProjectInfo {}

@@ -1,6 +1,9 @@
 use schema2struct::schema2struct;
 
-use crate::DocuError;
+use crate::{
+    docu_requests::{sysinsts, DocuComponent, RequestSchema, ToMessage},
+    DocuError,
+};
 
 schema2struct! {
     type: object,
@@ -33,21 +36,25 @@ schema2struct! {
     }
 }
 
-impl AlternativeTitles {
-    #[must_use]
-    pub fn to_json() -> serde_json::Value {
-        (*ALTERNATIVETITLES_JSON_VALUE).clone()
-    }
+impl ToMessage for AlternativeTitles {
+    fn write_message(&self, writer: &mut String) -> Result<(), DocuError> {
+        writer.push_str(&format!(
+            "alternativeTitles: {:#?}\n",
+            serde_json::to_string(self)?
+        ));
 
-    /// # Errors
-    /// ```rust
-    /// DocuError::JsonConversion(serde_json::Error)
-    /// ```
-    ///
-    /// it returns an error if ``serde_json`` failed to convert the
-    /// provided instance to json
-    pub fn message(&self) -> Result<String, DocuError> {
-        let string = serde_json::to_string(self)?;
-        Ok(format!("alternativeTitles: {string:#?}\n"))
+        Ok(())
     }
 }
+
+impl RequestSchema for AlternativeTitles {
+    fn to_json_value() -> serde_json::Value {
+        ALTERNATIVETITLES_JSON_VALUE.clone()
+    }
+
+    fn to_system_instruction<'a>(_is_plain: bool) -> &'a str {
+        sysinsts::ALTER_TITLES_SYSTEM_INSTRUCTION
+    }
+}
+
+impl DocuComponent for AlternativeTitles {}

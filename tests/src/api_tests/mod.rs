@@ -1,7 +1,7 @@
 use std::{process::Child, sync::RwLock};
 
 use dotenv::dotenv;
-use once_cell::sync::Lazy;
+use std::sync::LazyLock;
 
 pub mod run_server;
 pub mod test_additional_instruction;
@@ -15,7 +15,7 @@ pub mod test_project_references;
 pub mod test_project_structure;
 pub mod test_title;
 
-pub static CLIENT: Lazy<httpc_test::Client> = Lazy::new(|| {
+pub static CLIENT: LazyLock<httpc_test::Client> = LazyLock::new(|| {
     dotenv().ok();
 
     let port = std::env::var("PORT")
@@ -30,3 +30,5 @@ pub static CLIENT: Lazy<httpc_test::Client> = Lazy::new(|| {
 pub static SERVER_PROCESS: RwLock<Option<Child>> = RwLock::new(None);
 
 pub static PROJECT_ID: RwLock<Option<String>> = RwLock::new(None);
+
+pub static USER_COOKIE: RwLock<Option<String>> = RwLock::new(None);

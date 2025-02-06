@@ -15,16 +15,19 @@ path = "src/lib.rs"
 [dependencies]
 httpc-test = "0.1.1"
 
-once_cell = { workspace = true }
 serde = {workspace = true}
 serde_json = {workspace = true}
 actix-web = {workspace = true}
 dotenv = {workspace = true}
-serial_test = "3.2.0"
+tokio = {workspace = true}
+google-generative-ai-rs = {workspace = true}
+
 libtest-mimic = "0.8"
 
 collect_tests = { path = "./collect_tests" }
 docuai = {path = "../docuai"}
+docuapi = {path = "../docuapi"}
+docubase = {path = "../docubase"}
 docubase_pre = { path = "../docubase_pre" }
 
 

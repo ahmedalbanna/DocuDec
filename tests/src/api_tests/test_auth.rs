@@ -1,3 +1,5 @@
+use crate::api_tests::USER_COOKIE;
+
 use super::CLIENT;
 use serde_json::json;
 
@@ -34,4 +36,10 @@ pub async fn login() {
         .unwrap();
 
     assert_eq!(res.status().as_u16(), 200);
+
+    let token = res.res_cookie_value("jwt_token").unwrap();
+
+    if let Ok(mut cookie) = USER_COOKIE.write() {
+        *cookie = Some(token);
+    }
 }

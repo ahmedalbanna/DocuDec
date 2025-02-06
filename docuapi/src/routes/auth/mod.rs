@@ -1,13 +1,12 @@
 use actix_web::web::{self, ServiceConfig};
 
 pub mod error;
-mod login;
-mod signup;
+pub mod login;
+pub mod signup;
+
+pub use login::login as Login;
+pub use signup::signup as Signup;
 
 pub fn config(config: &mut ServiceConfig) {
-    config.service(
-        web::scope("/auth")
-            .service(login::login)
-            .service(signup::signup),
-    );
+    config.service(web::scope("/auth").service(Login).service(Signup));
 }

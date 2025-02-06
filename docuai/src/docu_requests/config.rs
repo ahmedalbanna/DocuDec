@@ -14,3 +14,17 @@ pub(crate) fn get_gen_config(schema: Value) -> GenerationConfig {
         response_schema: Some(schema),
     }
 }
+
+#[must_use]
+pub(crate) const fn get_plain_gen_config() -> GenerationConfig {
+    GenerationConfig {
+        temperature: Some(1.0),
+        top_p: Some(0.95),
+        top_k: Some(40),
+        candidate_count: None,
+        max_output_tokens: Some(8192),
+        stop_sequences: None,
+        response_mime_type: None,
+        response_schema: None,
+    }
+}

@@ -180,13 +180,6 @@ pub async fn generate_project_appendices(
                 .await?;
         }
     }
-    if payload.update.is_some_and(|b| b) {
-        db.update_report(&payload.project_id, &user_id, &project_appendices)
-            .await?;
-    } else {
-        db.create_report(&payload.project_id, &user_id, &project_appendices)
-            .await?;
-    }
 
     trace!(
         "\n>> Generated project appendices: \n\n{:#?}\n",
