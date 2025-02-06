@@ -10,7 +10,7 @@ use docubase::{
     DocuBase,
 };
 use google_generative_ai_rs::v1::api::Client;
-use tracing::{debug, instrument, trace};
+use tracing::{instrument, trace};
 use uuid::Uuid;
 
 use crate::{
