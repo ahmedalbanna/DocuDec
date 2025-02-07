@@ -14,7 +14,10 @@ use std::sync::Arc;
 
 use crate::mw::my_middleware;
 use actix_web::{middleware::from_fn, web};
-use docuai::{docu_requests::RequestSchema, DocuError, DocuRequest};
+use docuai::{
+    docu_requests::{context::ProcessRequest, RequestSchema},
+    DocuError, DocuRequest,
+};
 use error::GenError;
 use google_generative_ai_rs::v1::api::Client;
 use serde::de::DeserializeOwned;
@@ -66,12 +69,12 @@ pub fn config(config: &mut web::ServiceConfig) {
 /// # Panics
 ///
 /// will panic if there is no text in the request
-async fn generate_report<R>(model: &Client, request: DocuRequest<'_>) -> Result<R, GenError>
+async fn generate_report<R>(model: &Client, request: DocuRequest<'_, R>) -> Result<R, GenError>
 where
-    R: DeserializeOwned + RequestSchema,
+    R: DeserializeOwned + RequestSchema + ProcessRequest,
 {
-    match docuai::request::<R>(model, request, crate::utils::constants::API_TIMEOUT).await {
-        Ok(project_info) => Ok(project_info),
+    match docuai::request(model, request, crate::utils::constants::API_TIMEOUT).await {
+        Ok(report) => Ok(report),
 
         Err(error) => {
             error!("generation failed: {:?}", error);

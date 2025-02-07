@@ -1,8 +1,8 @@
 use schema2struct::schema2struct;
 
 use crate::{
-    docu_requests::{sysinsts, DocuComponent, RequestSchema, ToMessage},
-    DocuError,
+    docu_requests::{context::ProcessRequest, sysinsts, DocuComponent, RequestSchema, ToMessage},
+    DocuError, DocuRequest,
 };
 
 schema2struct! {
@@ -36,16 +36,16 @@ schema2struct! {
     }
 }
 
-impl ToMessage for AlternativeTitles {
-    fn write_message(&self, writer: &mut String) -> Result<(), DocuError> {
-        writer.push_str(&format!(
-            "alternativeTitles: {:#?}\n",
-            serde_json::to_string(self)?
-        ));
-
-        Ok(())
-    }
-}
+//impl ToMessage for AlternativeTitles {
+//    fn write_message(&self, writer: &mut String) -> Result<(), DocuError> {
+//        writer.push_str(&format!(
+//            "alternativeTitles: {:#?}\n",
+//            serde_json::to_string(self)?
+//        ));
+//
+//        Ok(())
+//    }
+//}
 
 impl RequestSchema for AlternativeTitles {
     fn to_json_value() -> serde_json::Value {
@@ -57,4 +57,29 @@ impl RequestSchema for AlternativeTitles {
     }
 }
 
-impl DocuComponent for AlternativeTitles {}
+//impl DocuComponent for AlternativeTitles {}
+
+impl ProcessRequest for AlternativeTitles {
+    fn process_request(
+        request: &crate::DocuRequest<Self>,
+        message: &mut String,
+        system_instruction: &mut String,
+        is_plain: bool,
+    ) -> Result<(), DocuError>
+    where
+        Self: Sized,
+    {
+        match request {
+            DocuRequest {
+                titles: Some(title),
+                ..
+            } => {
+                message.push_str(title);
+                system_instruction.push_str(Self::to_system_instruction(is_plain));
+            }
+            _ => unreachable!(),
+        }
+
+        Ok(())
+    }
+}

@@ -8,9 +8,9 @@ members = [
   "tests"
 ]
 
-default-members = [
-  "docuapi"
-]
+# default-members = [
+#   "docuapi"
+# ]
 
 [profile.release]
 codegen-units = 1

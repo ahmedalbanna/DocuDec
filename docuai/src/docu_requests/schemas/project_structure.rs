@@ -2,8 +2,8 @@ use docubase::models::ReportMetadata;
 use schema2struct::schema2struct;
 
 use crate::{
-    docu_requests::{sysinsts, DocuComponent, RequestSchema, ToMessage},
-    DocuError,
+    docu_requests::{context::ProcessRequest, sysinsts, DocuComponent, RequestSchema, ToMessage},
+    DocuError, DocuRequest,
 };
 
 schema2struct! {
@@ -70,3 +70,31 @@ impl RequestSchema for ProjectStructure {
 }
 
 impl DocuComponent for ProjectStructure {}
+
+impl ProcessRequest for ProjectStructure {
+    fn process_request(
+        request: &crate::DocuRequest<Self>,
+        message: &mut String,
+        system_instruction: &mut String,
+        is_plain: bool,
+    ) -> Result<(), DocuError>
+    where
+        Self: Sized,
+    {
+        match request {
+            DocuRequest {
+                filled_info: Some(info),
+                content: Some(content),
+                ..
+            } => {
+                info.write_message(message)?;
+                content.write_message(message)?;
+
+                system_instruction.push_str(Self::to_system_instruction(is_plain));
+            }
+            _ => unreachable!(),
+        }
+
+        Ok(())
+    }
+}

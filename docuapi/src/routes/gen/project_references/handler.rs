@@ -4,7 +4,7 @@ use actix_web::{
     web::{self, Json},
     HttpRequest, HttpResponse,
 };
-use docuai::docu_requests::{schemas::ProjectReferences, DocuRequest};
+use docuai::{docu_requests::schemas::ProjectReferences, DocuRequest};
 use docubase::{
     models::{Report, ReportType},
     DocuBase,
@@ -141,16 +141,15 @@ pub async fn generate_project_references(
         ]
     );
 
-    let request = DocuRequest::ProjectReferences(
-        &project_info,
-        &project_content,
-        &project_structure,
-        &additional_instruction,
-        &project_abstract,
-        &project_conclusion,
-    );
+    let request = DocuRequest::new()
+        .with_filled_info(&project_info)
+        .with_content(&project_content)
+        .with_structure(&project_structure)
+        .with_additional_instruction(&additional_instruction)
+        .with_project_abstract(&project_abstract)
+        .with_project_conclusion(&project_conclusion);
 
-    let project_references = generate_report::<ProjectReferences>(&model, request).await?;
+    let project_references = generate_report(&model, request).await?;
 
     match update_action {
         UpdateAction::No => {

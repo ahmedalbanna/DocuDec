@@ -1,12 +1,12 @@
 pub mod docu_requests;
 
 mod error;
-mod macros;
 
-use docu_requests::{config, RequestSchema};
+use docu_requests::{config, context::ProcessRequest, requests, RequestSchema};
 pub use error::DocuError;
 
-pub use docu_requests::DocuRequest;
+//pub use docu_requests::DocuRequest;
+pub use docu_requests::context::DocuRequest;
 
 use google_generative_ai_rs::v1::{
     api::{Client, PostResult},
@@ -28,20 +28,22 @@ use serde::de::DeserializeOwned;
 /// ```
 pub async fn request<R>(
     client: &Client,
-    request_type: DocuRequest<'_>,
+    request: DocuRequest<'_, R>,
     timeout: u64,
 ) -> Result<R, DocuError>
 where
-    R: DeserializeOwned + RequestSchema,
+    R: DeserializeOwned + ProcessRequest + RequestSchema,
 {
-    let request_object =
-        request_type.to_request(config::get_gen_config(R::to_json_value()), false)?;
-
+    let request_object = crate::docu_requests::to_request(
+        request,
+        config::get_gen_config(R::to_json_value()),
+        false,
+    )?;
     let post_result = client.post(timeout, &request_object).await?;
 
-    let response: R = request_type.to_response(post_result)?;
-
-    Ok(response)
+    get_text(post_result)
+        .map(|s| serde_json::from_str(&s).map_err(DocuError::JsonConversion))
+        .ok_or(DocuError::NoTextFoundInResponse)?
 }
 
 /// # Errors
@@ -53,20 +55,22 @@ where
 /// // there was no text in the ai response
 /// DocuError::NoTextFoundInResponse
 /// ```
-pub async fn request_plain(
+pub async fn request_plain<R>(
     client: &Client,
-    request_type: DocuRequest<'_>,
+    request: DocuRequest<'_, R>,
     timeout: u64,
-) -> Result<String, DocuError> {
-    let request_object = request_type.to_request(config::get_plain_gen_config(), true)?;
-
+) -> Result<String, DocuError>
+where
+    R: ProcessRequest + RequestSchema,
+{
+    let request_object =
+        crate::docu_requests::to_request(request, config::get_plain_gen_config(), true)?;
     let post_result = client.post(timeout, &request_object).await?;
 
-    let response = get_text(post_result).ok_or(DocuError::NoTextFoundInResponse)?;
-
-    Ok(response)
+    get_text(post_result).ok_or(DocuError::NoTextFoundInResponse)
 }
 
+/// gets the text output of the gemini ai response
 #[must_use]
 pub fn get_text(req_result: PostResult) -> Option<String> {
     req_result
@@ -74,14 +78,11 @@ pub fn get_text(req_result: PostResult) -> Option<String> {
         .candidates
         .into_iter()
         .find_map(|cand| cand.content.parts.into_iter().find_map(|p| p.text))
-
-    //req_result
-    //    .rest()?
-    //    .candidates
-    //    .into_iter()
-    //    .find_map(|cand| cand.content.parts.first()?.text)
 }
 
+/// gets the gemini ai Model
+///
+/// it would return None if the env ``GOOGLE_API_KEY`` is not set
 #[must_use]
 pub fn get_model() -> Option<Client> {
     Some(Client::new_from_model(

@@ -4,7 +4,7 @@ use actix_web::{
     web::{self, Json},
     HttpRequest, HttpResponse,
 };
-use docuai::docu_requests::{schemas::AlternativeTitles, DocuRequest};
+use docuai::{docu_requests::schemas::AlternativeTitles, DocuRequest};
 use google_generative_ai_rs::v1::api::Client;
 use tracing::{instrument, trace};
 
@@ -84,10 +84,8 @@ pub async fn generate_titles(
     validate_title_request(&payload)?;
 
     trace!("Generating titles | Input: '{}' ", payload.title);
-
     let alternative_titles =
-        generate_report::<AlternativeTitles>(&model, DocuRequest::AlterTitles(&payload.title))
-            .await?;
+        generate_report(&model, DocuRequest::new().with_titles(&payload.title)).await?;
 
     trace!("Generated titles: {:#?}", alternative_titles);
 

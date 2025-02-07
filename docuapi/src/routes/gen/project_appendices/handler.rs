@@ -4,7 +4,7 @@ use actix_web::{
     web::{self, Json},
     HttpRequest, HttpResponse,
 };
-use docuai::docu_requests::{schemas::ProjectAppendices, DocuRequest};
+use docuai::{docu_requests::schemas::ProjectAppendices, DocuRequest};
 use docubase::{
     models::{Report, ReportType},
     DocuBase,
@@ -143,17 +143,16 @@ pub async fn generate_project_appendices(
         ]
     );
 
-    let request = DocuRequest::ProjectAppendices(
-        &project_info,
-        &project_content,
-        &project_structure,
-        &additional_instruction,
-        &project_abstract,
-        &project_conclusion,
-        &project_references,
-    );
+    let request = DocuRequest::new()
+        .with_filled_info(&project_info)
+        .with_content(&project_content)
+        .with_structure(&project_structure)
+        .with_additional_instruction(&additional_instruction)
+        .with_project_abstract(&project_abstract)
+        .with_project_conclusion(&project_conclusion)
+        .with_project_references(&project_references);
 
-    let project_appendices = generate_report::<ProjectAppendices>(&model, request).await?;
+    let project_appendices = generate_report(&model, request).await?;
 
     match update_action {
         UpdateAction::No => {

@@ -4,7 +4,7 @@ use actix_web::{
     web::{self, Json},
     HttpRequest, HttpResponse,
 };
-use docuai::docu_requests::{schemas::ProjectConclusion, DocuRequest};
+use docuai::{docu_requests::schemas::ProjectConclusion, DocuRequest};
 use docubase::{
     models::{Report, ReportType},
     DocuBase,
@@ -137,15 +137,14 @@ pub async fn generate_project_conclusion(
         ]
     );
 
-    let request = DocuRequest::ProjectConclusion(
-        &project_info,
-        &project_content,
-        &project_structure,
-        &additional_instruction,
-        &project_abstract,
-    );
+    let request = DocuRequest::new()
+        .with_filled_info(&project_info)
+        .with_content(&project_content)
+        .with_structure(&project_structure)
+        .with_additional_instruction(&additional_instruction)
+        .with_project_abstract(&project_abstract);
 
-    let project_conclusion = generate_report::<ProjectConclusion>(&model, request).await?;
+    let project_conclusion = generate_report(&model, request).await?;
 
     match update_action {
         UpdateAction::No => {

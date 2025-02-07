@@ -116,8 +116,7 @@ pub async fn generate_project_info(
     trace!(">> Generating project info for title: {}", payload.title);
 
     let project_info =
-        generate_report::<ProjectInfo>(model.as_ref(), DocuRequest::ProjectInfo(&payload.title))
-            .await?;
+        generate_report(model.as_ref(), DocuRequest::new().with_info(&payload.title)).await?;
 
     db.create_report(&project_res.id, &user_id, &project_info)
         .await?;
