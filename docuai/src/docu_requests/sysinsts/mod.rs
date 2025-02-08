@@ -41,3 +41,5 @@ pub use project_content::*;
 pub use project_info::*;
 pub use project_references::*;
 pub use project_structure::*;
+
+pub const TRIM_UNECESSARY_TEXT_ADDION: &str = "And the most important thing; don't prefix the response with any messages, such as 'okay I will create the chapter' or also at the end saying 'that was the chapter3' or something, only give me the actual content, don't give more than what I'm asking you.";

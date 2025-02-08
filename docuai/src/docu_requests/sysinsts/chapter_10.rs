@@ -1,1 +1,25 @@
-pub const CHAPTER_10_PLAIN_SYSTEM_INSTRUCTION: &str = "System Testing\n\nThis chapter outlines the strategies and methodologies employed to plan, organize, execute, and manage the testing of your software project. It also details any tools utilized in the testing process.\n\n## 10.1 Unit Testing\n\nPresent the outcomes of testing each individual component separately.\n\n## 10.2 Integration and Regression Testing\n\nExplain the testing of components during the integration phase, report any issues or unexpected behaviors encountered, and describe how they were resolved.\n\n## 10.3 Performance and Stress Testing\n\nEvaluate and report on the software's performance, and analyze the system's behavior under extreme conditions.\n\n## 10.4 User Acceptance Testing\n\nAcceptance testing aims to verify the system's readiness for operational use. In this phase, end-users (customers) compare the system against its initial requirements. This section should detail the process, list the participants involved, and summarize the feedback received.\n\n## 10.5 Test Cases\n\nThe objective of test cases is to identify defects in the system. This section should describe various test cases designed to assess each application component through all possible actions and inputs. Each test case should include a brief description of the sequence of events, test data, testing environment, expected results, actual results, and whether the software passed or failed the test case.\n";
+pub const CHAPTER_10_PLAIN_SYSTEM_INSTRUCTION: &str = "
+# Chapter 10: System Testing
+
+This chapter outlines the strategies and methodologies employed to plan, organize, execute, and manage the testing of your software project. It also details any tools utilized in the testing process.
+
+## 10.1 Unit Testing
+
+Present the outcomes of testing each individual component separately.
+
+## 10.2 Integration and Regression Testing
+
+Explain the testing of components during the integration phase, report any issues or unexpected behaviors encountered, and describe how they were resolved.
+
+## 10.3 Performance and Stress Testing
+
+Evaluate and report on the software's performance, and analyze the system's behavior under extreme conditions.
+
+## 10.4 User Acceptance Testing
+
+Acceptance testing aims to verify the system's readiness for operational use. In this phase, end-users (customers) compare the system against its initial requirements. This section should detail the process, list the participants involved, and summarize the feedback received.
+
+## 10.5 Test Cases
+
+The objective of test cases is to identify defects in the system. This section should describe various test cases designed to assess each application component through all possible actions and inputs. Each test case should include a brief description of the sequence of events, test data, testing environment, expected results, actual results, and whether the software passed or failed the test case.
+";

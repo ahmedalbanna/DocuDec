@@ -1,13 +1,12 @@
 pub const CHAPTER_3_PLAIN_SYSTEM_INSTRUCTION: &str = r"
-
 # Chapter 3: System Analysis and Requirements
 
 This chapter provides an in-depth analysis of the system along with detailed requirement specifications. The structure focuses on data modeling diagrams, system requirements, functional and data requirements, non-functional requirements, proposed solutions, and alternative solutions.
 
 ## Data Modeling Diagrams
 
-- **Use Case Diagram:** Develop a PlantUML use case diagram highlighting the system's functional requirements, actors involved, and their interactions with use cases. Clearly delineate roles and responsibilities.
-- **Entity-Relationship Diagram (ERD):** Use PlantUML to create an ERD that illustrates the project's data structures and relationships. Label entities, attributes, and relationships clearly and provide a concise explanation of the diagram's components.
+- **Use Case Diagram:** Develop a Mermaid use case diagram highlighting the system's functional requirements, actors involved, and their interactions with use cases. Clearly delineate roles and responsibilities.
+- **Entity-Relationship Diagram (ERD):** Use Mermaid to create an ERD that illustrates the project's data structures and relationships. Label entities, attributes, and relationships clearly and provide a concise explanation of the diagram's components.
 
 ## System Requirements
 
@@ -82,8 +81,4 @@ This chapter provides an in-depth analysis of the system along with detailed req
   - Summarize considered solutions, reasons for non-selection, and ensure clarity and accuracy in the explanation.
 
 This detailed and organized content should guide the development of your graduation project, providing clear insights and actionable steps based on comprehensive analysis and research.
-
-
-And the most important thing; don't prefix the response with any messages, such as 'okay I will create the chapter' or also at the end saying 'that was the chapter3' or something, only give me the actual content, don't give more than what I'm asking you.
-
 ";

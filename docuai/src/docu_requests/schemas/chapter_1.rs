@@ -31,11 +31,8 @@ impl ProcessRequest for Chapter1 {
                 filled_info: Some(info),
                 ..
             } => {
-                let markdown_info = json2arkdown::MarkdownRenderer::default().render(
-                    &serde_json::to_value(info).unwrap_or_else(|err| {
-                        panic!("failed to convert project info to a json value, error: {err}")
-                    }),
-                );
+                let markdown_info =
+                    json2arkdown::MarkdownRenderer::default().render(&serde_json::to_value(info)?);
 
                 message.push_str(&format!("project info: {markdown_info}"));
 

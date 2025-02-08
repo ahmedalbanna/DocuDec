@@ -1,1 +1,72 @@
-pub const CHAPTER_4_PLAIN_SYSTEM_INSTRUCTION: &str = "Methodology\n\nThis chapter outlines the methods used to conduct the research, detailing each step and approach taken. Key components include:\n\n- **Research Design**\n - Outline the type of research (qualitative, quantitative, or mixed-methods).\n - Justify the choice of design.\n - Describe the framework and structure of the study.\n- **Data Collection**\n - Specify data sources.\n - Detail methods such as surveys, interviews, observations, and experiments.\n - Provide a timeline for data collection.\n- **Sampling Method**\n - Describe the sampling technique (random, stratified, purposive).\n - Define sample size and selection criteria.\n - Explain the sampling process.\n- **Data Analysis**\n - Outline analysis methods like statistical, thematic, or content analysis.\n - List tools and software for analysis.\n - Describe data interpretation steps.\n- **Ethical Considerations**\n - Detail how consent is obtained.\n - Ensure confidentiality.\n - Address ethical issues.\n- **Limitations and Delimitations**\n - Identify study limitations.\n - Define research scope and boundaries.\n- **Validation and Reliability**\n - Explain validity methods.\n - Describe reliability testing and maintenance.\n- **Resources and Budget**\n - List necessary resources (equipment, software).\n - Provide a budget estimate.\n- **Timeline**\n - Create a timeline for research phases.\n - Set milestones and deadlines.\n- **Conclusion**\n - Summarize the methodology.\n - Highlight the significance of the chosen methods.\n\n**Steps to Address Research Questions**\n\n- Clearly define the main question and its components.\n- Conduct a literature review to identify existing research and gaps.\n- Develop a research plan, selecting appropriate methods and data collection techniques.\n- Collect data, ensuring accuracy and reliability.\n- Analyze data using suitable methods and tools.\n- Draw conclusions, relate findings to the question and literature, and discuss implications.\n- Communicate results through reports or presentations.\n- Reflect on the process for biases and consider future research improvements.\n\n**Techniques to Test Hypothesis**\n\n- Conduct experiments, prepare samples, and record data.\n- Design and distribute questionnaires, and collect responses.\n- Conduct interviews, transcribe data, and analyze results.\n- Develop simulations or conduct text analysis.\n- Use secondary data sources and compare findings.\n\n**Practical Considerations**\n\n- Identify project type and objectives.\n- List equipment needs and ensure availability.\n- Ensure facilities meet infrastructure requirements.\n- Plan for human resources and budgeting.\n- Obtain necessary permits and ensure regulatory compliance.\n- Manage time effectively and prepare contingency plans.\n- Consider environmental impact and security measures.\n\nThis methodology ensures a structured approach to reliably answer the research question while addressing practical and ethical considerations.\n";
+pub const CHAPTER_4_PLAIN_SYSTEM_INSTRUCTION: &str = "
+# Chapter 4: Methodology
+
+This chapter outlines the methods used to conduct the research, detailing each step and approach taken. Key components include:
+
+- **Research Design**
+  - Outline the type of research (qualitative, quantitative, or mixed-methods).
+  - Justify the choice of design.
+  - Describe the framework and structure of the study.
+- **Data Collection**
+  - Specify data sources.
+  - Detail methods such as surveys, interviews, observations, and experiments.
+  - Provide a timeline for data collection.
+- **Sampling Method**
+  - Describe the sampling technique (random, stratified, purposive).
+  - Define sample size and selection criteria.
+  - Explain the sampling process.
+- **Data Analysis**
+  - Outline analysis methods like statistical, thematic, or content analysis.
+  - List tools and software for analysis.
+  - Describe data interpretation steps.
+- **Ethical Considerations**
+  - Detail how consent is obtained.
+  - Ensure confidentiality.
+  - Address ethical issues.
+- **Limitations and Delimitations**
+  - Identify study limitations.
+  - Define research scope and boundaries.
+- **Validation and Reliability**
+  - Explain validity methods.
+  - Describe reliability testing and maintenance.
+- **Resources and Budget**
+  - List necessary resources (equipment, software).
+  - Provide a budget estimate.
+- **Timeline**
+  - Create a timeline for research phases.
+  - Set milestones and deadlines.
+- **Conclusion**
+  - Summarize the methodology.
+  - Highlight the significance of the chosen methods.
+
+**Steps to Address Research Questions**
+
+- Clearly define the main question and its components.
+- Conduct a literature review to identify existing research and gaps.
+- Develop a research plan, selecting appropriate methods and data collection techniques.
+- Collect data, ensuring accuracy and reliability.
+- Analyze data using suitable methods and tools.
+- Draw conclusions, relate findings to the question and literature, and discuss implications.
+- Communicate results through reports or presentations.
+- Reflect on the process for biases and consider future research improvements.
+
+**Techniques to Test Hypothesis**
+
+- Conduct experiments, prepare samples, and record data.
+- Design and distribute questionnaires, and collect responses.
+- Conduct interviews, transcribe data, and analyze results.
+- Develop simulations or conduct text analysis.
+- Use secondary data sources and compare findings.
+
+**Practical Considerations**
+
+- Identify project type and objectives.
+- List equipment needs and ensure availability.
+- Ensure facilities meet infrastructure requirements.
+- Plan for human resources and budgeting.
+- Obtain necessary permits and ensure regulatory compliance.
+- Manage time effectively and prepare contingency plans.
+- Consider environmental impact and security measures.
+
+This methodology ensures a structured approach to reliably answer the research question while addressing practical and ethical considerations.
+";
