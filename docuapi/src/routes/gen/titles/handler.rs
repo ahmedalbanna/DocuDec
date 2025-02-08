@@ -4,14 +4,14 @@ use actix_web::{
     web::{self, Json},
     HttpRequest, HttpResponse,
 };
-use docuai::{docu_requests::schemas::AlternativeTitles, DocuRequest};
+use docuai::DocuRequest;
 use google_generative_ai_rs::v1::api::Client;
 use tracing::{instrument, trace};
 
 use super::super::error::GenError;
 use crate::routes::gen::generate_report;
 
-use super::super::validators::validate_title::validate_title_request;
+use super::super::validators::validate_title_content;
 use super::request::TitleRequest;
 
 /// # Request
@@ -81,11 +81,14 @@ pub async fn generate_titles(
 
     docubase::utils::validate_jwt(jwt_token.value())?;
 
-    validate_title_request(&payload)?;
+    validate_title_content(&payload.title)?;
 
     trace!("Generating titles | Input: '{}' ", payload.title);
-    let alternative_titles =
-        generate_report(&model, DocuRequest::new().with_titles(&payload.title)).await?;
+    let alternative_titles = generate_report(
+        model.as_ref().as_ref(),
+        &DocuRequest::new().with_titles(&payload.title),
+    )
+    .await?;
 
     trace!("Generated titles: {:#?}", alternative_titles);
 

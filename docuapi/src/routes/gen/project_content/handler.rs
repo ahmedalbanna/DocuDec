@@ -4,7 +4,7 @@ use actix_web::{
     web::{self, Json},
     HttpRequest, HttpResponse,
 };
-use docuai::{docu_requests::schemas::ProjectContent, DocuRequest};
+use docuai::DocuRequest;
 use docubase::{
     models::{Report, ReportType},
     DocuBase,
@@ -128,10 +128,9 @@ pub async fn generate_project_content(
         project_info
     );
 
-
     let project_content = generate_report(
-        model.as_ref(),
-        DocuRequest::new().with_filled_info(&project_info),
+        model.as_ref().as_ref(),
+        &DocuRequest::new().with_filled_info(&project_info),
     )
     .await?;
 

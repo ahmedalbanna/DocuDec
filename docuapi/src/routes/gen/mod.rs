@@ -69,7 +69,7 @@ pub fn config(config: &mut web::ServiceConfig) {
 /// # Panics
 ///
 /// will panic if there is no text in the request
-async fn generate_report<R>(model: &Client, request: DocuRequest<'_, R>) -> Result<R, GenError>
+async fn generate_report<R>(model: &Client, request: &DocuRequest<'_, R>) -> Result<R, GenError>
 where
     R: DeserializeOwned + RequestSchema + ProcessRequest,
 {

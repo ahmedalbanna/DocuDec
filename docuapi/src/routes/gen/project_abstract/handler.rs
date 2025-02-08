@@ -4,7 +4,7 @@ use actix_web::{
     web::{self, Json},
     HttpRequest, HttpResponse,
 };
-use docuai::{docu_requests::schemas::ProjectAbstract, DocuRequest};
+use docuai::DocuRequest;
 use docubase::{
     models::{Report, ReportType},
     DocuBase,
@@ -135,7 +135,7 @@ pub async fn generate_project_abstract(
         .with_structure(&project_structure)
         .with_additional_instruction(&additional_instruction);
 
-    let project_abstract = generate_report(model.as_ref(), request).await?;
+    let project_abstract = generate_report(model.as_ref().as_ref(), &request).await?;
 
     trace!(
         "\n>> Generated project abstraction: \n\n{:#?}\n",

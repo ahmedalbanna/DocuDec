@@ -4,7 +4,7 @@ use actix_web::{
     web::{self, Json},
     HttpRequest, HttpResponse,
 };
-use docuai::{docu_requests::schemas::ProjectStructure, DocuRequest};
+use docuai::DocuRequest;
 use docubase::{
     models::{Report, ReportType},
     DocuBase,
@@ -130,7 +130,7 @@ pub async fn generate_project_structure(
         .with_filled_info(&project_info)
         .with_content(&project_content);
 
-    let project_structure = generate_report(model.as_ref(), request).await?;
+    let project_structure = generate_report(model.as_ref().as_ref(), &request).await?;
 
     match update_action {
         UpdateAction::No => {

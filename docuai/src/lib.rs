@@ -28,7 +28,7 @@ use serde::de::DeserializeOwned;
 /// ```
 pub async fn request<R>(
     client: &Client,
-    request: DocuRequest<'_, R>,
+    request: &DocuRequest<'_, R>,
     timeout: u64,
 ) -> Result<R, DocuError>
 where
@@ -57,7 +57,7 @@ where
 /// ```
 pub async fn request_plain<R>(
     client: &Client,
-    request: DocuRequest<'_, R>,
+    request: &DocuRequest<'_, R>,
     timeout: u64,
 ) -> Result<String, DocuError>
 where

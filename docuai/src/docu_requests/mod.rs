@@ -44,7 +44,7 @@ pub trait DocuComponent: RequestSchema + ToMessage {}
 /// it returns an error if ``serde_json`` failed to convert the
 /// provided instance to json
 pub fn to_request<R>(
-    request: DocuRequest<'_, R>,
+    request: &DocuRequest<'_, R>,
     config: GenerationConfig,
     is_plain: bool,
 ) -> Result<Request, DocuError>
@@ -54,7 +54,7 @@ where
     let mut message = String::new();
     let mut system_instruction = String::new();
 
-    R::process_request(&request, &mut message, &mut system_instruction, is_plain)?;
+    R::process_request(request, &mut message, &mut system_instruction, is_plain)?;
 
     Ok(requests::get_request(message, config, system_instruction))
 }

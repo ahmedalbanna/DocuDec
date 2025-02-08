@@ -1,23 +1,23 @@
-use actix_web::web::Json;
-use serde::Deserialize;
-use tracing::error;
-use validator::{Validate, ValidationError};
-
 use super::super::error::GenError;
 
 /// # Errors
 /// ```rust
+/// // a key value validation error
+/// // e.g { "title": "blahblah" }
+/// GenError::ValidationError(String)
+///
+/// // possible errors
 /// [
 ///     "Title cannot be purely numeric",
 ///     "Excessive special characters in title".
 /// ]
 /// ```
-pub fn validate_title_content(title: &str) -> Result<(), ValidationError> {
+pub fn validate_title_content(title: &str) -> Result<(), GenError> {
     // Prevent purely numeric titles
     if title.chars().all(char::is_numeric) {
-        return Err(
-            ValidationError::new("400").with_message("Title cannot be purely numeric".into())
-        );
+        return Err(GenError::ValidationError(
+            "Title cannot be purely numeric".into(),
+        ));
     }
 
     // Prevent titles with excessive special characters
@@ -31,8 +31,9 @@ pub fn validate_title_content(title: &str) -> Result<(), ValidationError> {
         / title.len() as f64;
 
     if special_char_ratio > 0.2 {
-        return Err(ValidationError::new("400")
-            .with_message("Excessive special characters in title".into()));
+        return Err(GenError::ValidationError(
+            "Excessive special characters in title".into(),
+        ));
     }
 
     //// Prevent common spam or placeholder titles
@@ -44,40 +45,6 @@ pub fn validate_title_content(title: &str) -> Result<(), ValidationError> {
     //{
     //    return Err(ValidationError::new("Invalid title pattern"));
     //}
-
-    Ok(())
-}
-
-/// # Errors
-/// ```rust
-/// // a key value validation error
-/// // e.g { "title": "blahblah" }
-/// GenError::ValidationError(String)
-/// ```
-pub fn validate_title_request<T>(payload: &'_ Json<T>) -> Result<(), GenError>
-where
-    T: for<'de> Deserialize<'de> + Validate,
-{
-    payload.validate().map_err(|validation_errors| {
-        let error_details = validation_errors
-            .field_errors()
-            .iter()
-            .map(|(field, errors)| {
-                let error_messages = errors
-                    .iter()
-                    .map(|e| e.message.clone().unwrap_or_default().to_string())
-                    .collect::<Vec<_>>()
-                    .join(", ");
-
-                format!("{field}: {error_messages}")
-            })
-            .collect::<Vec<_>>()
-            .join("; ");
-
-        error!("Validation failed: {}", error_details);
-
-        GenError::ValidationError(error_details)
-    })?;
 
     Ok(())
 }

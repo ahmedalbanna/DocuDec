@@ -8,10 +8,14 @@ use super::schemas::{
     ProjectStructure,
 };
 
-#[derive(Default)]
+#[derive(Default, Clone, Copy)]
 pub struct Empty;
 
 pub trait ProcessRequest {
+    /// # Errors 
+    /// ```rust
+    /// DocuError::JsonConversion(serde_json::Error)
+    /// ```
     fn process_request(
         request: &DocuRequest<Self>,
         message: &mut String,
@@ -22,7 +26,7 @@ pub trait ProcessRequest {
         Self: Sized;
 }
 
-#[derive(Debug, Default)]
+#[derive(Debug, Default, Clone, Copy)]
 pub struct DocuRequest<'a, S = Empty> {
     pub(crate) titles: Option<&'a str>,
     pub(crate) info: Option<&'a str>,

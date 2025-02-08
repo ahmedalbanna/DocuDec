@@ -3,7 +3,6 @@ use std::sync::Arc;
 
 use actix_web::web::{self, Json};
 use actix_web::{HttpRequest, HttpResponse};
-use docuai::docu_requests::schemas::ProjectInfo;
 use docuai::DocuRequest;
 use docubase::DocuBase;
 use google_generative_ai_rs::v1::api::Client;
@@ -15,7 +14,7 @@ use crate::routes::gen::generate_report;
 use super::super::error::GenError;
 use super::request::ProjectInfoRequest;
 
-use super::super::validators::validate_title::validate_title_request;
+use super::super::validators::validate_title_content;
 
 ///
 /// # Request
@@ -109,14 +108,17 @@ pub async fn generate_project_info(
         })
     })?;
 
-    let project_res = db.create_project(&user_id, &payload.title).await?;
+    validate_title_content(&payload.title)?;
 
-    validate_title_request(&payload)?;
+    let project_res = db.create_project(&user_id, &payload.title).await?;
 
     trace!(">> Generating project info for title: {}", payload.title);
 
-    let project_info =
-        generate_report(model.as_ref(), DocuRequest::new().with_info(&payload.title)).await?;
+    let project_info = generate_report(
+        model.as_ref().as_ref(),
+        &DocuRequest::new().with_info(&payload.title),
+    )
+    .await?;
 
     db.create_report(&project_res.id, &user_id, &project_info)
         .await?;
