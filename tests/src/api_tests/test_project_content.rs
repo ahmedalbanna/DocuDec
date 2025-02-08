@@ -3,15 +3,13 @@ use collect_tests::collect_tests;
 
 #[collect_tests]
 pub mod tests {
-    use super::super::{CLIENT, PROJECT_ID};
-    //use super::*;
+    use crate::api_tests::read_project_id;
+
+    use super::super::CLIENT;
     use serde_json::json;
 
     pub async fn test_empty_project_content() {
-        let project_id = {
-            let project_id = PROJECT_ID.read().unwrap();
-            (*project_id).clone().unwrap()
-        };
+        let project_id = read_project_id();
 
         let client = &*CLIENT;
 
@@ -24,7 +22,7 @@ pub mod tests {
                 }),
             )
             .await
-            .unwrap();
+            .unwrap_or_else(|err| panic!("project-content failed, error: {err}"));
 
         assert_eq!(res.status().as_u16(), 400);
 
@@ -37,10 +35,7 @@ pub mod tests {
     pub async fn test_partial_project_content() {
         let client = &*CLIENT;
 
-        let project_id = {
-            let project_id = PROJECT_ID.read().unwrap();
-            (*project_id).clone().unwrap()
-        };
+        let project_id = read_project_id();
 
         let res = client
             .do_post(
@@ -55,7 +50,7 @@ pub mod tests {
                 }),
             )
             .await
-            .unwrap();
+            .unwrap_or_else(|err| panic!("project-content failed, error: {err}"));
 
         assert_eq!(res.status().as_u16(), 400);
 
@@ -68,16 +63,7 @@ pub mod tests {
     pub async fn test_valid_project_content() {
         let client = &*CLIENT;
 
-        let project_id = {
-            let project_id = PROJECT_ID.read().unwrap();
-            (*project_id).clone().unwrap()
-        };
-
-        //let json_data = PROJECT_INFO_TEMPLATE;
-
-        //let project_info: serde_json::Value =
-        //    serde_json::from_str(json_data).expect("Failed to parse json to ProjectInfo");
-        //
+        let project_id = read_project_id();
 
         let res = client
             .do_post(
@@ -87,7 +73,7 @@ pub mod tests {
                 }),
             )
             .await
-            .unwrap();
+            .unwrap_or_else(|err| panic!("project-content failed, error: {err}"));
 
         assert_eq!(res.status().as_u16(), 200);
 

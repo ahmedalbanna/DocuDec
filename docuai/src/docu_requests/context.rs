@@ -3,8 +3,9 @@ use std::marker::PhantomData;
 use crate::DocuError;
 
 use super::schemas::{
-    AdditionalInstruction, AlternativeTitles, ProjectAbstract, ProjectAppendices,
-    ProjectConclusion, ProjectContent, ProjectInfo, ProjectReferences, ProjectStructure,
+    AdditionalInstruction, AlternativeTitles, Chapter1, Chapter2, Chapter3, ProjectAbstract,
+    ProjectAppendices, ProjectConclusion, ProjectContent, ProjectInfo, ProjectReferences,
+    ProjectStructure,
 };
 
 #[derive(Default)]
@@ -52,6 +53,30 @@ impl<'a> DocuRequest<'a, Empty> {
 
     #[must_use]
     pub fn with_filled_info(self, info: &'a ProjectInfo) -> DocuRequest<'a, ProjectContent> {
+        DocuRequest {
+            filled_info: Some(info),
+            ..Default::default()
+        }
+    }
+
+    #[must_use]
+    pub fn to_chapter_1(self, info: &'a ProjectInfo) -> DocuRequest<'a, Chapter1> {
+        DocuRequest {
+            filled_info: Some(info),
+            ..Default::default()
+        }
+    }
+
+    #[must_use]
+    pub fn to_chapter_2(self, info: &'a ProjectInfo) -> DocuRequest<'a, Chapter2> {
+        DocuRequest {
+            filled_info: Some(info),
+            ..Default::default()
+        }
+    }
+
+    #[must_use]
+    pub fn to_chapter_3(self, info: &'a ProjectInfo) -> DocuRequest<'a, Chapter3> {
         DocuRequest {
             filled_info: Some(info),
             ..Default::default()

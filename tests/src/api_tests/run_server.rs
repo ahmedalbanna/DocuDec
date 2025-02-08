@@ -17,12 +17,13 @@ pub fn run() {
         .spawn();
 
     if let Ok(child) = result {
-        dotenv().expect("there is no .env found");
-        // Wait for the server to start and bind to the port
         const MAX_RETRIES: u32 = 100;
         const RETRY_DELAY: Duration = Duration::from_millis(1000);
+
+        dotenv().expect("there is no .env found");
+
         let port = std::env::var("PORT").expect("there is not PORT in the .env");
-        let address = format!("127.0.0.1:{}", port);
+        let address = format!("127.0.0.1:{port}");
 
         let mut retries = 0;
         while retries < MAX_RETRIES {
@@ -41,10 +42,7 @@ pub fn run() {
         }
 
         // If we exhausted retries, fail the test
-        panic!(
-            "Server did not start within the expected time on port {}",
-            port
-        );
+        panic!("Server did not start within the expected time on port {port}",);
     } else {
         panic!("Failed to spawn the server process");
     }
@@ -53,7 +51,8 @@ pub fn run() {
 pub fn stop() {
     if let Ok(mut process) = SERVER_PROCESS.write() {
         if let Some(mut proc) = process.take() {
-            proc.kill().unwrap()
+            proc.kill()
+                .unwrap_or_else(|err| panic!("unable to kill the program, error: {err}"));
         }
     }
 }

@@ -38,7 +38,7 @@ mod tests {
                 }),
             )
             .await
-            .unwrap();
+            .unwrap_or_else(|err| panic!("titles failed, error: {err}"));
 
         assert_eq!(res.status().as_u16(), 400);
 
@@ -61,7 +61,7 @@ mod tests {
                 }),
             )
             .await
-            .unwrap();
+            .unwrap_or_else(|err| panic!("titles failed, error: {err}"));
 
         assert_eq!(res.status().as_u16(), 400);
 
@@ -84,7 +84,7 @@ mod tests {
                 }),
             )
             .await
-            .unwrap();
+            .unwrap_or_else(|err| panic!("titles failed, error: {err}"));
 
         assert_eq!(res.status().as_u16(), 400);
 
@@ -107,7 +107,7 @@ mod tests {
                 }),
             )
             .await
-            .unwrap();
+            .unwrap_or_else(|err| panic!("titles failed, error: {err}"));
 
         assert_eq!(res.status().as_u16(), 400);
 
@@ -130,7 +130,7 @@ mod tests {
                 }),
             )
             .await
-            .unwrap_or_else(|err| panic!("something went wrong: {err}"));
+            .unwrap_or_else(|err| panic!("titles failed, error: {err}"));
 
         assert_eq!(res.status().as_u16(), 200);
 

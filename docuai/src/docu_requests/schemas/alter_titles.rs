@@ -1,7 +1,7 @@
 use schema2struct::schema2struct;
 
 use crate::{
-    docu_requests::{context::ProcessRequest, sysinsts, DocuComponent, RequestSchema, ToMessage},
+    docu_requests::{context::ProcessRequest, sysinsts, RequestSchema},
     DocuError, DocuRequest,
 };
 

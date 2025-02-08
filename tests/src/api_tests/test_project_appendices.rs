@@ -4,15 +4,12 @@ use collect_tests::collect_tests;
 pub mod tests {
     use serde_json::json;
 
-    use crate::api_tests::{CLIENT, PROJECT_ID};
+    use crate::api_tests::{read_project_id, CLIENT};
 
     pub async fn test_empty_project_appendices() {
         let client = &CLIENT;
 
-        let project_id = {
-            let project_id = PROJECT_ID.read().unwrap();
-            (*project_id).clone().unwrap()
-        };
+        let project_id = read_project_id();
 
         let res = client
             .do_post(
@@ -29,7 +26,7 @@ pub mod tests {
                 }),
             )
             .await
-            .unwrap();
+            .unwrap_or_else(|err| panic!("project-appendices failed, error: {err}"));
 
         assert_eq!(res.status().as_u16(), 400);
 
@@ -42,10 +39,7 @@ pub mod tests {
     pub async fn test_partial_project_appendices() {
         let client = &CLIENT;
 
-        let project_id = {
-            let project_id = PROJECT_ID.read().unwrap();
-            (*project_id).clone().unwrap()
-        };
+        let project_id = read_project_id();
 
         let res = client
             .do_post(
@@ -72,7 +66,7 @@ pub mod tests {
                 }),
             )
             .await
-            .unwrap();
+            .unwrap_or_else(|err| panic!("project-appendices failed, error: {err}"));
 
         assert_eq!(res.status().as_u16(), 400);
 
@@ -85,10 +79,7 @@ pub mod tests {
     pub async fn test_valid_project_appendices() {
         let client = &CLIENT;
 
-        let project_id = {
-            let project_id = PROJECT_ID.read().unwrap();
-            (*project_id).clone().unwrap()
-        };
+        let project_id = read_project_id();
 
         let res = client
             .do_post(
@@ -98,12 +89,12 @@ pub mod tests {
                 }),
             )
             .await
-            .unwrap();
+            .unwrap_or_else(|err| panic!("project-appendices failed, error: {err}"));
 
         assert_eq!(res.status().as_u16(), 200);
 
         let json_body = res.json_body().expect("Failed to get the json value");
 
-        assert_eq!(json_body.get("error"), None)
+        assert_eq!(json_body.get("error"), None);
     }
 }

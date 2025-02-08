@@ -6,6 +6,7 @@ edition = "2021"
 [dependencies]
 actix-web = {workspace = true}
 
+
 # TODO: Remove this, we don't use it that much
 validator = { version = "0.19", features = ["derive"] }
 dotenv = {workspace = true}

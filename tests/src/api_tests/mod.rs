@@ -1,4 +1,7 @@
-use std::{process::Child, sync::RwLock};
+use std::{
+    process::Child,
+    sync::{RwLock, RwLockWriteGuard},
+};
 
 use dotenv::dotenv;
 use std::sync::LazyLock;
@@ -32,3 +35,17 @@ pub static SERVER_PROCESS: RwLock<Option<Child>> = RwLock::new(None);
 pub static PROJECT_ID: RwLock<Option<String>> = RwLock::new(None);
 
 pub static USER_COOKIE: RwLock<Option<String>> = RwLock::new(None);
+
+pub fn read_project_id() -> String {
+    let project_id = PROJECT_ID
+        .read()
+        .unwrap_or_else(|err| panic!("failed to read PROJECT_ID, error: {err}"));
+    (*project_id).clone().expect("PROJECT_ID is empty")
+}
+
+pub fn write_project_id<'a>() -> RwLockWriteGuard<'a, Option<String>> {
+    match PROJECT_ID.write() {
+        Ok(project_id) => project_id,
+        Err(err) => panic!("failed to get a writeable PROJECT_ID, error: {err}"),
+    }
+}

@@ -9,6 +9,7 @@ use docubase::{
     models::{Report, ReportType},
     DocuBase,
 };
+
 use google_generative_ai_rs::v1::api::Client;
 use tracing::{instrument, trace};
 use uuid::Uuid;
@@ -127,42 +128,52 @@ pub async fn generate_project_content(
         project_info
     );
 
-    let project_content = generate_report(
+    let chapter_3 = docuai::request_plain(
         model.as_ref(),
-        DocuRequest::new().with_filled_info(&project_info),
+        DocuRequest::new().to_chapter_3(&project_info),
+        100,
     )
-    .await?;
+    .await
+    .unwrap();
 
-    match update_action {
-        UpdateAction::No => {
-            db.create_report(&payload.project_id, &user_id, &project_content)
-                .await?;
-        }
-        UpdateAction::Yes => {
-            db.update_report(&payload.project_id, &user_id, &project_content)
-                .await?;
-        }
-        UpdateAction::YesIfExist => {
-            if db
-                .report_type_exists(&payload.project_id, ReportType::ProjectContent)
-                .await?
-            {
-                db.delete_report_with_type(
-                    ReportType::ProjectContent,
-                    &payload.project_id,
-                    &user_id,
-                )
-                .await?;
-            }
-            db.create_report(&payload.project_id, &user_id, &project_content)
-                .await?;
-        }
-    }
+    println!("{}", chapter_3);
 
-    trace!(
-        "\n>> Generated project content: \n\n{:#?}\n",
-        project_content
-    );
+    //let project_content = generate_report(
+    //    model.as_ref(),
+    //    DocuRequest::new().with_filled_info(&project_info),
+    //)
+    //.await?;
+    //
+    //match update_action {
+    //    UpdateAction::No => {
+    //        db.create_report(&payload.project_id, &user_id, &project_content)
+    //            .await?;
+    //    }
+    //    UpdateAction::Yes => {
+    //        db.update_report(&payload.project_id, &user_id, &project_content)
+    //            .await?;
+    //    }
+    //    UpdateAction::YesIfExist => {
+    //        if db
+    //            .report_type_exists(&payload.project_id, ReportType::ProjectContent)
+    //            .await?
+    //        {
+    //            db.delete_report_with_type(
+    //                ReportType::ProjectContent,
+    //                &payload.project_id,
+    //                &user_id,
+    //            )
+    //            .await?;
+    //        }
+    //        db.create_report(&payload.project_id, &user_id, &project_content)
+    //            .await?;
+    //    }
+    //}
+    //
+    //trace!(
+    //    "\n>> Generated project content: \n\n{:#?}\n",
+    //    project_content
+    //);
 
-    Ok(HttpResponse::Ok().json(project_content))
+    Ok(HttpResponse::Ok().json(project_info))
 }

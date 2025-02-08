@@ -5,7 +5,9 @@ pub mod tests {
     use docuai::docu_requests::schemas::ProjectInfo;
     use serde_json::json;
 
-    use super::super::{CLIENT, PROJECT_ID};
+    use crate::api_tests::write_project_id;
+
+    use super::super::CLIENT;
 
     pub async fn test_empty_project_info_title() {
         let client = &*CLIENT;
@@ -18,7 +20,7 @@ pub mod tests {
                 }),
             )
             .await
-            .unwrap();
+            .unwrap_or_else(|err| panic!("project-info failed, error: {err}"));
 
         assert_eq!(res.status().as_u16(), 400);
 
@@ -41,7 +43,7 @@ pub mod tests {
                 }),
             )
             .await
-            .unwrap();
+            .unwrap_or_else(|err| panic!("project-info failed, error: {err}"));
 
         assert_eq!(res.status().as_u16(), 200);
 
@@ -62,8 +64,6 @@ pub mod tests {
 
         assert!(!json_body.project_title.is_empty());
 
-        if let Ok(mut project_id_state) = PROJECT_ID.write() {
-            *project_id_state = Some(project_id.trim_matches('"').to_string());
-        }
+        *write_project_id() = Some(project_id.trim_matches('"').to_string());
     }
 }

@@ -10,6 +10,7 @@ serde = {workspace = true}
 serde_json = {workspace = true}
 thiserror = {workspace = true}
 
+json2markdown = "0.2.0"
 schema2struct = "0.1"
 
 docubase = { path = "../docubase" }

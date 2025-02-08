@@ -1,5 +1,8 @@
 pub mod additional_instruction;
 pub mod alter_titles;
+pub mod chapter_1;
+pub mod chapter_2;
+pub mod chapter_3;
 pub mod project_abstract;
 pub mod project_appendices;
 pub mod project_conclusion;
@@ -10,6 +13,9 @@ pub mod project_structure;
 
 pub use additional_instruction::*;
 pub use alter_titles::*;
+pub use chapter_1::*;
+pub use chapter_2::*;
+pub use chapter_3::*;
 pub use project_abstract::*;
 pub use project_appendices::*;
 pub use project_conclusion::*;

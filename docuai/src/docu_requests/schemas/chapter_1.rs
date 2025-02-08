@@ -1,0 +1,46 @@
+use crate::{
+    docu_requests::{context::ProcessRequest, sysinsts, RequestSchema, ToMessage},
+    DocuRequest,
+};
+
+#[derive(Default, Debug)]
+pub struct Chapter1;
+
+impl RequestSchema for Chapter1 {
+    fn to_json_value() -> serde_json::Value {
+        serde_json::Value::Null
+    }
+
+    fn to_system_instruction<'a>(_is_plain: bool) -> &'a str {
+        sysinsts::CHAPTER_1_PLAIN_SYSTEM_INSTRUCTION
+    }
+}
+
+impl ProcessRequest for Chapter1 {
+    fn process_request(
+        request: &crate::DocuRequest<Self>,
+        message: &mut String,
+        system_instruction: &mut String,
+        is_plain: bool,
+    ) -> Result<(), crate::DocuError>
+    where
+        Self: Sized,
+    {
+        match request {
+            DocuRequest {
+                filled_info: Some(info),
+                ..
+            } => {
+                let info = json2arkdown::MarkdownRenderer::default()
+                    .render(&serde_json::to_value(info).unwrap());
+
+                message.push_str(&format!("project info: {info}"));
+
+                system_instruction.push_str(Self::to_system_instruction(is_plain));
+            }
+            _ => unreachable!(),
+        }
+
+        Ok(())
+    }
+}

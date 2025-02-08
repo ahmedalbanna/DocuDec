@@ -1,1 +1,89 @@
-pub const CHAPTER_3_PLAIN_SYSTEM_INSTRUCTION: &str = "System Analysis and Requirements\n\nThis chapter provides an in-depth analysis of the system along with detailed requirement specifications. The structure focuses on data modeling diagrams, system requirements, functional and data requirements, non-functional requirements, proposed solutions, and alternative solutions.\n\n## Data Modeling Diagrams\n\n- **Use Case Diagram:** Develop a PlantUML use case diagram highlighting the system's functional requirements, actors involved, and their interactions with use cases. Clearly delineate roles and responsibilities.\n- **Entity-Relationship Diagram (ERD):** Use PlantUML to create an ERD that illustrates the project's data structures and relationships. Label entities, attributes, and relationships clearly and provide a concise explanation of the diagram's components.\n\n## System Requirements\n\n**Clients, Customers, and Users:**\n\n- **User Definition and Categorization:**\n - Identify and categorize users into primary (main users), secondary (supportive roles), and tertiary (external stakeholders) users.\n- **User Roles Analysis:**\n - Define each user role including responsibilities and permissions, and map interactions between different roles.\n- **User Needs and Expectations:**\n - Conduct user interviews, surveys, and analyze feedback to create personas representing various user groups.\n- **Potential User Issues:**\n - Perform usability testing to identify pain points, technical challenges, and document them.\n- **Client Requirements:**\n - Gather and prioritize client requirements aligning them with business goals through workshops and meetings.\n- **Customer Requirements:**\n - Analyze market trends, gather feedback, and identify key features that meet customer needs.\n- **User Requirements:**\n - Develop user stories, prioritize them, and create a requirements traceability matrix.\n- **Comprehensive Report:**\n - Compile findings, highlight key requirements, potential issues, and recommend system improvements.\n\n**Functional and Data Requirements:**\n\n- **Input Functionalities:**\n - Enable data submission through interfaces and APIs with authentication and validation mechanisms.\n- **Data Storage Requirements:**\n - Implement relational and NoSQL databases with secure storage practices.\n- **Data Manipulation Functionalities:**\n - Provide CRUD operations, data transformation, and analytics features.\n- **Output Functionalities:**\n - Generate reports, provide visualization tools, and develop API endpoints for data retrieval.\n- **System Integration Requirements:**\n - Support integration with third-party services and ensure compatibility with existing systems.\n- **Performance and Scalability Requirements:**\n - Optimize for high performance and ensure system scalability using microservices and cloud services.\n- **Security and Compliance Requirements:**\n - Implement robust security measures and ensure compliance with data protection regulations.\n\n**Non-functional Requirements:**\n\n- **Look and Feel Requirements:** Define the system's appearance and user interface expectations.\n- **Usability Requirements:** Ensure the system is intuitive and efficient, with error prevention measures.\n- **Security Requirements:** Detail security measures to protect data and user information.\n- **Performance Requirements:** Specify expected performance metrics like response time and scalability.\n- **Portability Requirements:** Describe adaptability across different platforms or environments.\n\n## Proposed Solutions\n\n- **Problem Identification:**\n - Clearly outline the problem and research potential solutions.\n- **Feasibility Evaluation:**\n - Analyze the technical, resource, and time requirements of each solution.\n- **Cost Analysis:**\n - Estimate initial and ongoing costs, considering cost-saving opportunities.\n- **Technical Complexity Assessment:**\n - Evaluate expertise required and potential challenges.\n- **Solution Comparison:**\n - Compare strengths, weaknesses, and suitability for the project.\n- **Detailed Proposal:**\n - Present findings, cost-benefit analysis, and an implementation plan for the preferred solution.\n\n## Alternative Solutions\n\n- **Solution Overview:**\n - Research and document alternative solutions, evaluating feasibility, cost, and technical complexity.\n- **Stakeholder Feedback:**\n - Gather feedback from stakeholders to assess preferences.\n- **Non-selection Reasons:**\n - Document reasons for not selecting certain solutions, focusing on feasibility, cost, and complexity.\n- **Final Overview:**\n - Summarize considered solutions, reasons for non-selection, and ensure clarity and accuracy in the explanation.\n\nThis detailed and organized content should guide the development of your graduation project, providing clear insights and actionable steps based on comprehensive analysis and research.\n";
+pub const CHAPTER_3_PLAIN_SYSTEM_INSTRUCTION: &str = r"
+
+# Chapter 3: System Analysis and Requirements
+
+This chapter provides an in-depth analysis of the system along with detailed requirement specifications. The structure focuses on data modeling diagrams, system requirements, functional and data requirements, non-functional requirements, proposed solutions, and alternative solutions.
+
+## Data Modeling Diagrams
+
+- **Use Case Diagram:** Develop a PlantUML use case diagram highlighting the system's functional requirements, actors involved, and their interactions with use cases. Clearly delineate roles and responsibilities.
+- **Entity-Relationship Diagram (ERD):** Use PlantUML to create an ERD that illustrates the project's data structures and relationships. Label entities, attributes, and relationships clearly and provide a concise explanation of the diagram's components.
+
+## System Requirements
+
+**Clients, Customers, and Users:**
+
+- **User Definition and Categorization:**
+  - Identify and categorize users into primary (main users), secondary (supportive roles), and tertiary (external stakeholders) users.
+- **User Roles Analysis:**
+  - Define each user role including responsibilities and permissions, and map interactions between different roles.
+- **User Needs and Expectations:**
+  - Conduct user interviews, surveys, and analyze feedback to create personas representing various user groups.
+- **Potential User Issues:**
+  - Perform usability testing to identify pain points, technical challenges, and document them.
+- **Client Requirements:**
+  - Gather and prioritize client requirements aligning them with business goals through workshops and meetings.
+- **Customer Requirements:**
+  - Analyze market trends, gather feedback, and identify key features that meet customer needs.
+- **User Requirements:**
+  - Develop user stories, prioritize them, and create a requirements traceability matrix.
+- **Comprehensive Report:**
+  - Compile findings, highlight key requirements, potential issues, and recommend system improvements.
+
+**Functional and Data Requirements:**
+
+- **Input Functionalities:**
+  - Enable data submission through interfaces and APIs with authentication and validation mechanisms.
+- **Data Storage Requirements:**
+  - Implement relational and NoSQL databases with secure storage practices.
+- **Data Manipulation Functionalities:**
+  - Provide CRUD operations, data transformation, and analytics features.
+- **Output Functionalities:**
+  - Generate reports, provide visualization tools, and develop API endpoints for data retrieval.
+- **System Integration Requirements:**
+  - Support integration with third-party services and ensure compatibility with existing systems.
+- **Performance and Scalability Requirements:**
+  - Optimize for high performance and ensure system scalability using microservices and cloud services.
+- **Security and Compliance Requirements:**
+  - Implement robust security measures and ensure compliance with data protection regulations.
+
+**Non-functional Requirements:**
+
+- **Look and Feel Requirements:** Define the system's appearance and user interface expectations.
+- **Usability Requirements:** Ensure the system is intuitive and efficient, with error prevention measures.
+- **Security Requirements:** Detail security measures to protect data and user information.
+- **Performance Requirements:** Specify expected performance metrics like response time and scalability.
+- **Portability Requirements:** Describe adaptability across different platforms or environments.
+
+## Proposed Solutions
+
+- **Problem Identification:**
+  - Clearly outline the problem and research potential solutions.
+- **Feasibility Evaluation:**
+  - Analyze the technical, resource, and time requirements of each solution.
+- **Cost Analysis:**
+  - Estimate initial and ongoing costs, considering cost-saving opportunities.
+- **Technical Complexity Assessment:**
+  - Evaluate expertise required and potential challenges.
+- **Solution Comparison:**
+  - Compare strengths, weaknesses, and suitability for the project.
+- **Detailed Proposal:**
+  - Present findings, cost-benefit analysis, and an implementation plan for the preferred solution.
+
+## Alternative Solutions
+
+- **Solution Overview:**
+  - Research and document alternative solutions, evaluating feasibility, cost, and technical complexity.
+- **Stakeholder Feedback:**
+  - Gather feedback from stakeholders to assess preferences.
+- **Non-selection Reasons:**
+  - Document reasons for not selecting certain solutions, focusing on feasibility, cost, and complexity.
+- **Final Overview:**
+  - Summarize considered solutions, reasons for non-selection, and ensure clarity and accuracy in the explanation.
+
+This detailed and organized content should guide the development of your graduation project, providing clear insights and actionable steps based on comprehensive analysis and research.
+
+
+And the most important thing; don't prefix the response with any messages, such as 'okay I will create the chapter' or also at the end saying 'that was the chapter3' or something, only give me the actual content, don't give more than what I'm asking you.
+
+";
