@@ -2,7 +2,7 @@ pub mod docu_requests;
 
 mod error;
 
-use docu_requests::{config, context::ProcessRequest, requests, RequestSchema};
+use docu_requests::{config, context::ProcessRequest, RequestSchema};
 pub use error::DocuError;
 
 //pub use docu_requests::DocuRequest;

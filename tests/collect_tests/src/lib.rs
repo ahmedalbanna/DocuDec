@@ -1,8 +1,9 @@
+#![allow(clippy::missing_panics_doc)]
+
 use proc_macro::TokenStream;
 use quote::quote;
 use syn::{parse_macro_input, Item, ItemFn, ItemMod};
 
-/// Custom macro to register all functions in a module as tests.
 #[proc_macro_attribute]
 pub fn collect_tests(_attr: TokenStream, item: TokenStream) -> TokenStream {
     // Parse the input item as a module
@@ -13,11 +14,11 @@ pub fn collect_tests(_attr: TokenStream, item: TokenStream) -> TokenStream {
     let test_functions: Vec<_> = input
         .content
         .as_ref()
-        .unwrap()
+        .expect("there is no content")
         .1
         .iter()
-        .filter_map(|item| {
-            if let Item::Fn(ItemFn { sig, .. }) = item {
+        .filter_map(|inner_item| {
+            if let Item::Fn(ItemFn { sig, .. }) = inner_item {
                 Some(sig)
             } else {
                 None
@@ -51,17 +52,13 @@ pub fn collect_tests(_attr: TokenStream, item: TokenStream) -> TokenStream {
         }
     });
 
-    // Generate the code that will register the tests
-    let expanded = quote! {
+    quote! {
         #input
 
-        // This code will be injected into the module
         pub fn register_tests(tests: &mut Vec<libtest_mimic::Trial>) {
             #(#generated_tests)*
         }
 
-    };
-
-    // Return the expanded code as TokenStream
-    TokenStream::from(expanded)
+    }
+    .into()
 }

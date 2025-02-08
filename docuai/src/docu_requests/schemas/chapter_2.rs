@@ -1,5 +1,5 @@
 use crate::{
-    docu_requests::{context::ProcessRequest, sysinsts, RequestSchema, ToMessage},
+    docu_requests::{context::ProcessRequest, sysinsts, RequestSchema},
     DocuRequest,
 };
 
@@ -31,8 +31,11 @@ impl ProcessRequest for Chapter2 {
                 filled_info: Some(info),
                 ..
             } => {
-                let info = json2arkdown::MarkdownRenderer::default()
-                    .render(&serde_json::to_value(info).unwrap());
+                let info = json2arkdown::MarkdownRenderer::default().render(
+                    &serde_json::to_value(info).unwrap_or_else(|err| {
+                        panic!("failed to convert project info to a json value, error: {err}")
+                    }),
+                );
 
                 message.push_str(&format!("project info: {info}"));
 

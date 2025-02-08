@@ -12,7 +12,7 @@ use super::schemas::{
 pub struct Empty;
 
 pub trait ProcessRequest {
-    /// # Errors 
+    /// # Errors
     /// ```rust
     /// DocuError::JsonConversion(serde_json::Error)
     /// ```
@@ -37,7 +37,7 @@ pub struct DocuRequest<'a, S = Empty> {
     pub(crate) abstrak: Option<&'a ProjectAbstract>,
     pub(crate) conclusion: Option<&'a ProjectConclusion>,
     pub(crate) references: Option<&'a ProjectReferences>,
-    pub(crate) appendices: Option<&'a ProjectAppendices>,
+    //pub(crate) appendices: Option<&'a ProjectAppendices>,
     _marker: PhantomData<S>,
 }
 
@@ -191,23 +191,3 @@ impl<'a> DocuRequest<'a, ProjectReferences> {
         }
     }
 }
-
-//impl<'a> DocuRequest<'a, ProjectAppendices> {
-//    #[must_use]
-//    pub fn with_project_appendices(
-//        self,
-//        appendices: &'a ProjectAppendices,
-//    ) -> DocuRequest<'a, ProjectAppendices> {
-//        DocuRequest {
-//            filled_info: self.filled_info,
-//            content: self.content,
-//            structure: self.structure,
-//            additional_instruction: self.additional_instruction,
-//            abstrak: self.abstrak,
-//            conclusion: self.conclusion,
-//            references: self.references,
-//            appendices: Some(appendices),
-//            ..Default::default()
-//        }
-//    }
-//}
