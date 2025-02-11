@@ -3,7 +3,8 @@ use std::marker::PhantomData;
 use crate::DocuError;
 
 use super::schemas::{
-    AdditionalInstruction, AlternativeTitles, Chapter1, Chapter2, Chapter3, ProjectAbstract,
+    AdditionalInstruction, AlternativeTitles, Chapter1, Chapter10, Chapter11, Chapter12, Chapter2,
+    Chapter3, Chapter4, Chapter5, Chapter6, Chapter7, Chapter8, Chapter9, ProjectAbstract,
     ProjectAppendices, ProjectConclusion, ProjectContent, ProjectInfo, ProjectReferences,
     ProjectStructure,
 };
@@ -81,6 +82,78 @@ impl<'a> DocuRequest<'a, Empty> {
 
     #[must_use]
     pub fn to_chapter_3(self, info: &'a ProjectInfo) -> DocuRequest<'a, Chapter3> {
+        DocuRequest {
+            filled_info: Some(info),
+            ..Default::default()
+        }
+    }
+
+    #[must_use]
+    pub fn to_chapter_4(self, info: &'a ProjectInfo) -> DocuRequest<'a, Chapter4> {
+        DocuRequest {
+            filled_info: Some(info),
+            ..Default::default()
+        }
+    }
+
+    #[must_use]
+    pub fn to_chapter_5(self, info: &'a ProjectInfo) -> DocuRequest<'a, Chapter5> {
+        DocuRequest {
+            filled_info: Some(info),
+            ..Default::default()
+        }
+    }
+
+    #[must_use]
+    pub fn to_chapter_6(self, info: &'a ProjectInfo) -> DocuRequest<'a, Chapter6> {
+        DocuRequest {
+            filled_info: Some(info),
+            ..Default::default()
+        }
+    }
+
+    #[must_use]
+    pub fn to_chapter_7(self, info: &'a ProjectInfo) -> DocuRequest<'a, Chapter7> {
+        DocuRequest {
+            filled_info: Some(info),
+            ..Default::default()
+        }
+    }
+
+    #[must_use]
+    pub fn to_chapter_8(self, info: &'a ProjectInfo) -> DocuRequest<'a, Chapter8> {
+        DocuRequest {
+            filled_info: Some(info),
+            ..Default::default()
+        }
+    }
+
+    #[must_use]
+    pub fn to_chapter_9(self, info: &'a ProjectInfo) -> DocuRequest<'a, Chapter9> {
+        DocuRequest {
+            filled_info: Some(info),
+            ..Default::default()
+        }
+    }
+
+    #[must_use]
+    pub fn to_chapter_10(self, info: &'a ProjectInfo) -> DocuRequest<'a, Chapter10> {
+        DocuRequest {
+            filled_info: Some(info),
+            ..Default::default()
+        }
+    }
+
+    #[must_use]
+    pub fn to_chapter_11(self, info: &'a ProjectInfo) -> DocuRequest<'a, Chapter11> {
+        DocuRequest {
+            filled_info: Some(info),
+            ..Default::default()
+        }
+    }
+
+    #[must_use]
+    pub fn to_chapter_12(self, info: &'a ProjectInfo) -> DocuRequest<'a, Chapter12> {
         DocuRequest {
             filled_info: Some(info),
             ..Default::default()

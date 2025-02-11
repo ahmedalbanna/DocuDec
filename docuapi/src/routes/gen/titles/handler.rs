@@ -1,7 +1,8 @@
 use std::sync::Arc;
 
 use actix_web::{
-    web::{self, Json},
+    http::header,
+    web::{self, head, Json},
     HttpRequest, HttpResponse,
 };
 use docuai::DocuRequest;
@@ -20,6 +21,10 @@ use super::request::TitleRequest;
 ///     "title": "..."
 /// }
 /// ```
+/// ## You must provide your jwt token inside an ``Authorization`` header
+///
+/// Authorization: Bearer JWT_TOKEN_HERE
+///
 ///
 /// # Success
 ///
@@ -38,15 +43,20 @@ use super::request::TitleRequest;
 ///
 /// // if the validation failed, it will return what field is wrong, and what's the error
 /// // it might return like this {
-///          "title": "Title must be between 30 and 80 characters"
+///          "title": "Title must be between 20 and 80 characters"
 ///     }
-/// // the rules are min = 30, max = 80
+/// // the rules are min = 20, max = 80
 /// // other validation error => [
 ///     "Title cannot be purely numeric",
 ///     "Excessive special characters in title",
 /// ]
 ///
 /// GenError::ValidationError(...) => (400, "{field}: {error}")
+///
+/// // if there is no ``Bearer `` in the header
+/// GenError::NoBearerInHeader => (400, "unable to parse the Bearer prefixed in the header")
+///
+/// GenError::HeaderIsNotInASCII => (400, "the header contains non ascii character")
 ///
 /// GenError::DBError => {
 ///        // something wrong with validating the user jwt
@@ -76,10 +86,15 @@ pub async fn generate_titles(
     payload: Json<TitleRequest>,
 ) -> Result<HttpResponse, GenError> {
     let jwt_token = req
-        .cookie(crate::utils::constants::JWT_COOKIE)
-        .expect("the endpoint is not accessable without the cookie, so we're fine");
+        .headers()
+        .get(header::AUTHORIZATION)
+        .expect("the endpoint is not accessable without the header, so we're fine")
+        .to_str()
+        .map_err(|_| GenError::HeaderIsNotInASCII)?
+        .strip_prefix("Bearer ")
+        .ok_or(GenError::NoBearerInHeader)?;
 
-    docubase::utils::validate_jwt(jwt_token.value())?;
+    docubase::utils::validate_jwt(jwt_token)?;
 
     validate_title_content(&payload.title)?;
 

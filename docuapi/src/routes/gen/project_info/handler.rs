@@ -1,6 +1,7 @@
 use std::str::FromStr;
 use std::sync::Arc;
 
+use actix_web::http::header;
 use actix_web::web::{self, Json};
 use actix_web::{HttpRequest, HttpResponse};
 use docuai::DocuRequest;
@@ -46,9 +47,9 @@ use super::super::validators::validate_title_content;
 ///
 /// // if the validation failed, it will return what field is wrong, and what's the error
 /// // it might return like this {
-///          "title": "Title must be between 30 and 80 characters"
+///          "title": "Title must be between 20 and 80 characters"
 ///     }
-/// // the rules are min = 30, max = 80
+/// // the rules are min = 20, max = 80
 /// // other validation error => [
 ///     "Title cannot be purely numeric",
 ///     "Excessive special characters in title",
@@ -99,10 +100,15 @@ pub async fn generate_project_info(
     payload: Json<ProjectInfoRequest>,
 ) -> Result<HttpResponse, GenError> {
     let jwt_token = req
-        .cookie(crate::utils::constants::JWT_COOKIE)
-        .expect("the endpoint is not accessable without the cookie, so we're fine");
+        .headers()
+        .get(header::AUTHORIZATION)
+        .expect("the endpoint is not accessable without the header, so we're fine")
+        .to_str()
+        .map_err(|_| GenError::HeaderIsNotInASCII)?
+        .strip_prefix("Bearer ")
+        .ok_or(GenError::NoBearerInHeader)?;
 
-    let user_id = docubase::utils::validate_jwt(jwt_token.value()).map(|s| {
+    let user_id = docubase::utils::validate_jwt(jwt_token).map(|s| {
         Uuid::from_str(&s).unwrap_or_else(|e| {
             panic!("can't convert the id to a Uuid, original is: {s}, error: {e}")
         })

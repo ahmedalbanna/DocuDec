@@ -1,4 +1,4 @@
-use std::{str::FromStr as _, sync::Arc};
+use std::{io::Write, str::FromStr as _, sync::Arc};
 
 use actix_web::{
     web::{self, Json},
@@ -128,6 +128,117 @@ pub async fn generate_project_content(
         project_info
     );
 
+    //let chapter_1 =
+    //    docuai::request_plain(&model, &DocuRequest::new().to_chapter_1(&project_info), 100)
+    //        .await
+    //        .expect("failed to generate chapter 1");
+    //
+    //println!("{}", chapter_1);
+    //
+    //let chapter_2 =
+    //    docuai::request_plain(&model, &DocuRequest::new().to_chapter_2(&project_info), 100)
+    //        .await
+    //        .expect("failed to generate chapter 2");
+    //
+    //println!("{}", chapter_2);
+    //
+    //let chapter_3 =
+    //    docuai::request_plain(&model, &DocuRequest::new().to_chapter_3(&project_info), 100)
+    //        .await
+    //        .expect("failed to generate chapter 3");
+    //
+    //println!("{}", chapter_3);
+    //
+    //let chapter_4 =
+    //    docuai::request_plain(&model, &DocuRequest::new().to_chapter_4(&project_info), 100)
+    //        .await
+    //        .expect("failed to generate chapter 4");
+    //
+    //println!("{}", chapter_4);
+    //
+    //let chapter_5 =
+    //    docuai::request_plain(&model, &DocuRequest::new().to_chapter_5(&project_info), 100)
+    //        .await
+    //        .expect("failed to generate chapter 5");
+    //
+    //println!("{}", chapter_5);
+    //
+    //let chapter_6 =
+    //    docuai::request_plain(&model, &DocuRequest::new().to_chapter_6(&project_info), 100)
+    //        .await
+    //        .expect("failed to generate chapter 6");
+    //
+    //println!("{}", chapter_6);
+    //
+    //let chapter_7 =
+    //    docuai::request_plain(&model, &DocuRequest::new().to_chapter_7(&project_info), 100)
+    //        .await
+    //        .expect("failed to generate chapter 7");
+    //
+    //println!("{}", chapter_7);
+    //
+    //let chapter_8 =
+    //    docuai::request_plain(&model, &DocuRequest::new().to_chapter_8(&project_info), 100)
+    //        .await
+    //        .expect("failed to generate chapter 8");
+    //
+    //println!("{}", chapter_8);
+    //
+    //let chapter_9 =
+    //    docuai::request_plain(&model, &DocuRequest::new().to_chapter_9(&project_info), 100)
+    //        .await
+    //        .expect("failed to generate chapter 9");
+    //
+    //println!("{}", chapter_9);
+    //
+    //let chapter_10 = docuai::request_plain(
+    //    &model,
+    //    &DocuRequest::new().to_chapter_10(&project_info),
+    //    100,
+    //)
+    //.await
+    //.expect("failed to generate chapter 10");
+    //
+    //println!("{}", chapter_10);
+    //
+    //let chapter_11 = docuai::request_plain(
+    //    &model,
+    //    &DocuRequest::new().to_chapter_11(&project_info),
+    //    100,
+    //)
+    //.await
+    //.expect("failed to generate chapter 11");
+    //
+    //println!("{}", chapter_11);
+    //
+    //let chapter_12 = docuai::request_plain(
+    //    &model,
+    //    &DocuRequest::new().to_chapter_12(&project_info),
+    //    100,
+    //)
+    //.await
+    //.expect("failed to generate chapter 12");
+    //
+    //println!("{}", chapter_12);
+    //
+    //let final_output = chapter_1
+    //    + &chapter_2
+    //    + &chapter_3
+    //    + &chapter_4
+    //    + &chapter_5
+    //    + &chapter_6
+    //    + &chapter_7
+    //    + &chapter_8
+    //    + &chapter_9
+    //    + &chapter_10
+    //    + &chapter_11
+    //    + &chapter_12;
+    //
+    //std::fs::File::create_new("output.txt")
+    //    .unwrap()
+    //    .write_fmt(format_args!("{final_output}"))
+    //    .unwrap();
+    //
     let project_content = generate_report(
         model.as_ref().as_ref(),
         &DocuRequest::new().with_filled_info(&project_info),

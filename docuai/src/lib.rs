@@ -86,7 +86,7 @@ pub fn get_text(req_result: PostResult) -> Option<String> {
 #[must_use]
 pub fn get_model() -> Option<Client> {
     Some(Client::new_from_model(
-        Model::Gemini2_0Flash,
+        Model::Custom("gemini-2.0-flash-lite-preview-02-05".into()),
         std::env::var("GOOGLE_API_KEY").ok()?,
     ))
 }

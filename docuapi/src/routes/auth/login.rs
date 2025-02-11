@@ -7,6 +7,7 @@ use actix_web::{
 };
 use docubase::DocuBase;
 use serde::{Deserialize, Serialize};
+use serde_json::json;
 use tracing::{debug, instrument};
 
 use super::error::AuthError;
@@ -28,9 +29,11 @@ struct Login {
 /// # Success
 /// ```json
 /// {
-///     "jwt_token": "23fkjnd-sdkcnas-akajshcs",
+///     "token": "23fkjnd-sdkcnas-akajshcs",
 /// }
 /// ```
+/// ## Returned Headers
+/// #### It will return a www-authentication header, containing the jwt token prefixed with Bearer
 ///
 /// # Errors
 /// ```rust
@@ -48,17 +51,24 @@ pub async fn login(
     let user_id = db.get_user_id(&payload.username).await?;
     let token = docubase::utils::generate_jwt(&user_id.to_string())?;
 
-    let cookie = Cookie::build(crate::utils::constants::JWT_COOKIE, token.clone())
-        .path("/") // The cookie is accessible across all paths on the domain
-        .max_age(Duration::days(7)) // Set the cookie to expire in 7 days
-        .http_only(true) // Prevent JavaScript access to the cookie
-        .same_site(SameSite::Strict) // Prevent CSRF attacks
-        .secure(false) // TODO: change it in production
-        .finish();
+    //let cookie = Cookie::build(crate::utils::constants::JWT_COOKIE, token.clone())
+    //    .path("/") // The cookie is accessible across all paths on the domain
+    //    .max_age(Duration::days(7)) // Set the cookie to expire in 7 days
+    //    .http_only(true) // Prevent JavaScript access to the cookie
+    //    .same_site(SameSite::Strict) // Prevent CSRF attacks
+    //    .secure(false) // TODO: change it in production
+    //    .finish();
 
     debug!("login successful for user: {}", payload.username);
 
+    //Ok(HttpResponse::Ok()
+    //    .cookie(cookie)
+    //    .json(serde_json::json!({ "jwt_token": token })))
+    //
     Ok(HttpResponse::Ok()
-        .cookie(cookie)
-        .json(serde_json::json!({ "jwt_token": token })))
+        .insert_header((
+            actix_web::http::header::WWW_AUTHENTICATE,
+            format!("Bearer {token}"),
+        ))
+        .json(json!({"token": token})))
 }

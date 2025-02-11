@@ -17,6 +17,14 @@ struct Signup {
     password: String,
 }
 
+/// # Request
+/// ```json
+/// {
+///     "username": "",
+///     "password": "",
+///     "email": ""
+/// }
+/// ```
 /// # Success
 /// ```rust
 /// {

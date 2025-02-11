@@ -103,7 +103,7 @@ mod tests {
             .do_post(
                 "/gen/titles",
                 json!({
-                    "title": " @ ".repeat(10)
+                    "title": "@".repeat(40)
                 }),
             )
             .await
@@ -115,6 +115,8 @@ mod tests {
         let error_json = json_body["error"]
             .as_str()
             .expect("Failed to get the error value");
+
+        dbg!(&error_json);
 
         assert!(error_json.contains("Excessive special characters in title"));
     }

@@ -13,7 +13,7 @@ pub fn run() {
         .arg("docuapi")
         .env("TEST_MODE", "1")
         .current_dir("../")
-        .stdout(std::process::Stdio::null())
+        //.stdout(std::process::Stdio::null())
         .spawn();
 
     if let Ok(child) = result {

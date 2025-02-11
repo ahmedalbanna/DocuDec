@@ -3,7 +3,9 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, thiserror::Error)]
 pub enum MiddlewareError {
-    #[error("you can't access the endpoint without the jwt cookie")]
+    #[error(
+        "you can't access the endpoint without the Authorization header set to the user jwt token"
+    )]
     NoJwtTokenProvided,
 
     #[error("the jwt token is invalid")]
