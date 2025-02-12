@@ -56,6 +56,17 @@ async fn main() {
 
     HttpServer::new(move || {
         App::new()
+            .wrap(
+                actix_cors::Cors::default()
+                    // TODO: restrict it
+                    .allow_any_origin()
+                    .allowed_methods(vec!["GET", "POST", "PUT", "DELETE"]) // Restrict HTTP methods
+                    .allowed_headers(vec![
+                        actix_web::http::header::CONTENT_TYPE,
+                        actix_web::http::header::AUTHORIZATION,
+                    ])
+                    .supports_credentials(), // Allow cookies/auth headers if necessary
+            )
             .app_data(
                 web::JsonConfig::default().error_handler(json_error_handler::json_error_handler),
             )

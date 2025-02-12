@@ -5,6 +5,7 @@ edition = "2021"
 
 [dependencies]
 actix-web = {workspace = true}
+actix-cors = "0.7"
 
 
 dotenv = {workspace = true}
