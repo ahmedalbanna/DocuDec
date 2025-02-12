@@ -17,80 +17,130 @@ use super::request::ProjectInfoRequest;
 
 use super::super::validators::validate_title_content;
 
+/// # Endpoint Documentation: Project Info
 ///
-/// # Request
+/// ## Endpoint
+/// ```
+///     /gen/project-info
+/// ```
+///
+/// ## Request
+///
 /// ```json
 /// {
 ///     "title": "..."
 /// }
 /// ```
 ///
-/// # SUCCESS
+/// ### Headers:
+/// You must provide your JWT token inside the `Authorization` header:
+///
+/// ```
+/// Authorization: Bearer JWT_TOKEN_HERE
+/// ```
+///
+/// ## Successful Response
+///
+/// On success, the response will return a project ID and the project content.
+///
 /// ```json
 /// {
-///     // save this somewhere
 ///     "project_id": "6efac080-55e7-495f-a6a6-e9641440034e",
 ///     "content": { // ProjectInfo }
 /// }
-///
 /// ```
-/// [`ProjectInfo`](../../../../../docuai/docu_requests/schemas/project_info/struct.ProjectInfo.html)
+///  You must save the project_id somewhere to use it later on.
 ///
-/// # Errors
+/// For details on the `ProjectInfo`, refer to the [`ProjectInfo`](../../../../../docuai/docu_requests/schemas/project_info/struct.ProjectInfo.html) struct.
+///
+/// ## Error Handling
+///
+/// ### 1. **API Request Error**
+///
+/// If there is an issue with the AI API, the server will respond with:
 ///
 /// ```rust
-/// // if there is something wrong with the ai api
-/// GenError::ApiRequestError => (500 , "Internal AI error: { String }"),
-///
-/// // if there is something wrong with the provided json
-/// GenError::SyntaxError => (400, "Syntax error: { String }")
-///
-/// // if the validation failed, it will return what field is wrong, and what's the error
-/// // it might return like this {
-///          "title": "Title must be between 20 and 80 characters"
-///     }
-/// // the rules are min = 20, max = 80
-/// // other validation error => [
-///     "Title cannot be purely numeric",
-///     "Excessive special characters in title",
-/// ]
-///
-/// GenError::ValidationError(...) => (400, "{field}: {error}")
-///
-/// GenError::DBError => {
-///        // something wrong with validating the user jwt
-///        DocuBaseError::JwtError(...) => (500, "jwt error: { jsonwebtoken::errors::Error }"),
-///
-///        // internal database error
-///        DocuBaseError::SqlxError => (500, "sqlx error: { sqlx::Error }")
-///
-///
-///        // if for some reason the user have a valid jwt, but the user got deleted
-///        DocuBaseError::UserDoesNotExist => (404, "user does not exist"),
-///
-///        // this will not happen in `project-info` but for other, it might happen
-///        DocuBaseError::ProjectDoesNotExist => (404, "project does not exist"),
-///
-///        // if the user provided a project-id that does not belong to him
-///        // again this will not happen in `project-info`
-///        DocuBaseError::UserDoesNotOwnProject => (403, "user does not own the project"),
-///
-///        // this might happen if the user provided a report that he already did before
-///        // this also will not happen in `project-info`
-///        DocuBaseError::ReportExist => (409, "report (type) already exist"),
-///
-///        // if the user is trying to generate a project with the exact same title
-///        DocuBaseError::ProjectExist => (409, "project already exist"),
-///
-///
-///     }
+/// GenError::ApiRequestError => (500, "Internal AI error: { String }")
 /// ```
 ///
-/// # Panics
+/// ### 2. **Syntax Error**
 ///
-/// it will panic if it couldn't get the cookie, which is impossible
+/// If there’s a problem with the provided JSON:
 ///
-/// or the user_id is not convertable to a Uuid
+/// ```rust
+/// GenError::SyntaxError => (400, "Syntax error: { String }")
+/// ```
+///
+/// ### 3. **Validation Errors**
+///
+/// If validation fails, the response will contain the specific field and error:
+///
+/// ```json
+/// {
+///     "title": "Title must be between 20 and 80 characters"
+/// }
+/// ```
+///
+/// #### Validation Rules:
+/// - Title: Min length = 20, Max length = 80
+/// - Other possible validation errors include:
+///     - "Title cannot be purely numeric"
+///     - "Excessive special characters in title"
+///
+/// ```rust
+/// GenError::ValidationError(...) => (400, "{field}: {error}")
+/// ```
+///
+/// ### 4. **Database Errors**
+///
+/// These errors occur due to issues with user authentication or database operations.
+///
+/// #### JWT Errors:
+/// If there is an issue with validating the user’s JWT:
+///
+/// ```rust
+/// DocuBaseError::JwtError(...) => (500, "JWT error: { jsonwebtoken::errors::Error }")
+/// ```
+///
+/// #### Database Errors:
+/// For internal database errors:
+///
+/// ```rust
+/// DocuBaseError::SqlxError => (500, "SQLx error: { sqlx::Error }")
+/// ```
+///
+/// #### User-Related Errors:
+/// - If the user doesn’t exist:
+///
+/// ```rust
+/// DocuBaseError::UserDoesNotExist => (404, "User does not exist")
+/// ```
+///
+/// - If the user doesn’t own the project (not applicable for this endpoint):
+///
+/// ```rust
+/// DocuBaseError::UserDoesNotOwnProject => (403, "User does not own the project")
+/// ```
+///
+/// - If the report already exists (not applicable for this endpoint):
+///
+/// ```rust
+/// DocuBaseError::ReportExist => (409, "Report (type) already exists")
+/// ```
+///
+/// - If the project with the same title already exists:
+///
+/// ```rust
+/// DocuBaseError::ProjectExist => (409, "Project already exists")
+/// ```
+///
+/// ## Panics
+///
+/// This endpoint will panic in the following rare scenarios:
+///
+/// 1. If it fails to retrieve the ``AUTHORIZATION``, which is practically impossible.
+/// 2. If the `user_id` cannot be converted into a `Uuid`.
+/// ```
 #[instrument(skip(model, db), fields(title = payload.title))]
 #[actix_web::post("/project-info")]
 pub async fn generate_project_info(

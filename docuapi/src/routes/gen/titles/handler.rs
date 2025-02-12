@@ -15,69 +15,121 @@ use crate::routes::gen::generate_report;
 use super::super::validators::validate_title_content;
 use super::request::TitleRequest;
 
-/// # Request
+/// # Endpoint Documentation: Project Title Handling
+///
+/// # Endpoint
+/// ```
+///     /ge/titles
+/// ```
+///
+/// ## Request
+///
 /// ```json
 /// {
 ///     "title": "..."
 /// }
 /// ```
-/// ## You must provide your jwt token inside an ``Authorization`` header
 ///
+/// ### Headers:
+/// You must provide your JWT token inside the `Authorization` header:
+///
+/// ```
 /// Authorization: Bearer JWT_TOKEN_HERE
-///
-///
-/// # Success
-///
-/// {
-///     [`AlternativeTitles`](../../../../../docuai/docu_requests/schemas/alter_titles/struct.AlternativeTitles.html)
-/// }
-///
-/// # Errors
-///
-/// ```rust
-/// // if there is something wrong with the ai api
-/// GenError::ApiRequestError => (500 , "Internal AI error: { String }"),
-///
-/// // if there is something wrong with the provided json
-/// GenError::SyntaxError => (400, "Syntax error: { String }")
-///
-/// // if the validation failed, it will return what field is wrong, and what's the error
-/// // it might return like this {
-///          "title": "Title must be between 20 and 80 characters"
-///     }
-/// // the rules are min = 20, max = 80
-/// // other validation error => [
-///     "Title cannot be purely numeric",
-///     "Excessive special characters in title",
-/// ]
-///
-/// GenError::ValidationError(...) => (400, "{field}: {error}")
-///
-/// // if there is no ``Bearer `` in the header
-/// GenError::NoBearerInHeader => (400, "unable to parse the Bearer prefixed in the header")
-///
-/// GenError::HeaderIsNotInASCII => (400, "the header contains non ascii character")
-///
-/// GenError::DBError => {
-///        // something wrong with validating the user jwt
-///        DocuBaseError::JwtError(...) => (500, "jwt error: { jsonwebtoken::errors::Error }"),
-///
-///        // internal database error
-///        DocuBaseError::SqlxError => (500, "sqlx error: { sqlx::Error }")
-///
-///
-///        // if for some reason the user have a valid jwt, but the user got deleted
-///        DocuBaseError::UserDoesNotExist => (404, "user does not exist"),
-///
-///
-///     }
 /// ```
 ///
-/// # Panics
+/// ## Successful Response
 ///
-/// it will panic if it couldn't get the cookie, which is impossible
+/// If the request is successful, the response will return alternative titles as the
+/// AlternativeTitles struct
 ///
-/// or the user_id is not convertable to a Uuid
+///
+/// For details on the `AlternativeTitles`, refer to the [`AlternativeTitles`](../../../../../docuai/docu_requests/schemas/alter_titles/struct.AlternativeTitles.html) struct.
+///
+///
+/// ## Error Handling
+///
+/// ### 1. **API Request Error**
+///
+/// If there is an issue with the AI API, the server will respond with:
+///
+/// ```rust
+/// GenError::ApiRequestError => (500, "Internal AI error: { String }")
+/// ```
+///
+/// ### 2. **Syntax Error**
+///
+/// If there’s an issue with the provided JSON:
+///
+/// ```rust
+/// GenError::SyntaxError => (400, "Syntax error: { String }")
+/// ```
+///
+/// ### 3. **Validation Errors**
+///
+/// If validation fails, the response will contain the specific field and error:
+///
+/// ```json
+/// {
+///     "title": "Title must be between 20 and 80 characters"
+/// }
+/// ```
+///
+/// #### Validation Rules:
+/// - Title: Min length = 20, Max length = 80
+/// - Other possible validation errors include:
+///     - "Title cannot be purely numeric"
+///     - "Excessive special characters in title"
+///
+/// ```rust
+/// GenError::ValidationError(...) => (400, "{field}: {error}")
+/// ```
+///
+/// ### 4. **Bearer Token Issues**
+///
+/// - If the `Authorization` header is missing the `Bearer` prefix:
+///
+/// ```rust
+/// GenError::NoBearerInHeader => (400, "Unable to parse the Bearer token from the header")
+/// ```
+///
+/// - If the header contains non-ASCII characters:
+///
+/// ```rust
+/// GenError::HeaderIsNotInASCII => (400, "The header contains non-ASCII characters")
+/// ```
+///
+/// ### 5. **Database Errors**
+///
+/// These errors occur due to issues with user authentication or database operations.
+///
+/// #### JWT Errors:
+/// If there is an issue with validating the user’s JWT:
+///
+/// ```rust
+/// DocuBaseError::JwtError(...) => (500, "JWT error: { jsonwebtoken::errors::Error }")
+/// ```
+///
+/// #### Database Errors:
+/// For internal database errors:
+///
+/// ```rust
+/// DocuBaseError::SqlxError => (500, "SQLx error: { sqlx::Error }")
+/// ```
+///
+/// #### User-Related Errors:
+/// - If the user doesn’t exist:
+///
+/// ```rust
+/// DocuBaseError::UserDoesNotExist => (404, "User does not exist")
+/// ```
+///
+/// ## Panics
+///
+/// This endpoint will panic in the following rare scenarios:
+///
+/// 1. If it fails to retrieve the ``AUTHORIZATION`` header, which is practically impossible.
+/// 2. If the `user_id` cannot be converted into a `Uuid`.
+/// """
 #[instrument(skip(model), fields(title = payload.title))]
 #[actix_web::post("/titles")]
 pub async fn generate_titles(
